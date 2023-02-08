@@ -185,8 +185,7 @@
     });
 
     map.addControl(sidebar);
-    sidebar.show();
-
+   
     L.easyButton('fa-repeat', function(btn, map){
         clearSearch();
     }).addTo( map );
