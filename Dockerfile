@@ -24,15 +24,16 @@ RUN pip3 install mysql-connector-python
 COPY db.sql /home/db.sql
 COPY gps_search.sql /home/hashmap.sql
 # docker build -t search .
-# docker run -it -v path.to.show:/var/www/html/ --name search_gps -p 8090:80 search
+# docker run -dit -v path.to.show:/var/www/html/ --name search_gps -p 8090:80 search
 # after build and run
-# docker container attach [name of container]
+
+# docker container exec -it search_gps /bin/bash
 #  service apache2 start
 #  service mysql start
 #  mysql -u root < /home/db.sql
 #  mysql -u root hashcode < /home/hashmap.sql
 
-# docker start [container name]
+# docker container exec -it search_gps /bin/bash
 # check runnig services .. if apache or mysql not running, start them as below
 #  service --status-all  
 # RUN service start apache2

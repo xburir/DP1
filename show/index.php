@@ -54,6 +54,7 @@
     <div class="row">
         <div class="col-lg-12">
                 <h3>Parameters</h3>
+                <a class="close" onclick="sidebar.hide()">x</a>
                 <form class="form-inline alg-form">
                     <p>                   
                         <strong>Box count: <span id="psize">0</span></strong>
@@ -141,7 +142,7 @@
 </div>
 
 
-    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
     <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
     <script src="https://npmcdn.com/leaflet-geometryutil"></script>
@@ -180,7 +181,7 @@
     }).addTo(map);
 
     var sidebar = L.control.sidebar('sidebar', {
-        position: 'right'
+        position: 'left'
     });
 
     map.addControl(sidebar);
@@ -188,6 +189,10 @@
 
     L.easyButton('fa-repeat', function(btn, map){
         clearSearch();
+    }).addTo( map );
+
+    L.easyButton('fa-search', function(btn, map){
+        sidebar.toggle();
     }).addTo( map );
 
     function clearSearch(){
