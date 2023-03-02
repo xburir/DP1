@@ -329,7 +329,7 @@
             
             for (var i in boxes){
                 boxes[i].removeFrom(map);
-                boxes[i].addTo(map).bindPopup("Box "+(parseInt(i)+1)+" <br> <a href='#' onclick='removeBox("+i+")>Remove</a>");
+                boxes[i].addTo(map).bindPopup("Box "+(parseInt(i)+1)+" <br> <a href='#' onclick='removeBox("+i+")'>Remove</a>");
             }
         });
 
