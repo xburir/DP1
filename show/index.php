@@ -11,6 +11,7 @@
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/toastr.css" rel="stylesheet"/>
 
     <script src="js/ie-emulation-modes-warning.js"></script>
 
@@ -25,6 +26,9 @@
     <script src="js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="css/L.Control.Sidebar.css" />
     <script src="js/L.Control.Sidebar.js"></script>
+    <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+    <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+    <script src="js/toastr.js"></script>
 
     <style>
         html, body {
@@ -50,7 +54,6 @@
 <div id='map'></div>
 
 <div class="container" id="sidebar">
-    
     <div class="row">
         <div class="col-lg-12">
                 <h3>Parameters</h3>
@@ -99,16 +102,13 @@
                     </div>
                     
                 </form>
-                
+                <div style="margin-top: 5%;"><button onclick="findPaths()">Refresh</button></div>
         </div> 
     </div>
     <div class="row">
         <div class="col-lg-12">
             <h3>Results</h3>
-            <p> Draw at least 2 areas of interest, in right order. </p>
-        
-
-            <div id="resultsbox" style="display: none; ">
+            <div id="resultsbox" style="display: none;">
                 <p>Found <span id="totalfound"></span> - <button onclick="showAll()">Show all</button></p>
                 <div id="pathbox"></div>
                 <div style="height: 400px; overflow-y:auto;">
@@ -129,8 +129,13 @@
             </div>
         </div>
     </div>
-
-    <div style="position: absolute; bottom: 0;">
+    <div class="row">
+        <div class="col-lg-12" id="chartContainer" style="height: 300px; width: 90%; margin-top: 5%;"></div>
+    </div>  
+    <div class="row">
+        <div class="col-lg-12" id="chart2Container" style="height: 300px; width: 90%; margin-top: 5%;"></div>
+    </div> 
+    <div style="position: relative; bottom: 0%; margin-top:10%">
        
         <div class="col-lg-12">
             <a href="https://mcomputing.eu">Algorithm &copy; mcomputing.eu</a> <br>
@@ -148,14 +153,54 @@
     <script src="https://npmcdn.com/leaflet-geometryutil"></script>
     <script src="js/geohash.js"></script>
 
+
     <script>
+    var chart = new CanvasJS.Chart("chartContainer", {
+        theme: "light2", // "light1", "light2", "dark1", "dark2"
+        animationEnabled: true,
+        zoomEnabled: true,
+        title: {
+            text: "Number of trajectories found per selected point"
+        },
+        axisX:{
+            valueFormatString: "#",
+            interval: 1
+        },
+        axisY:{
+            valueFormatString: "#",
+            interval: 10
+        },
+        data: [{
+            type: "column",
+            dataPoints: dps
+        }]
+    });
+
+    var chart2 = new CanvasJS.Chart("chart2Container", {
+        theme: "light2", // "light1", "light2", "dark1", "dark2"
+        animationEnabled: true,
+        zoomEnabled: true,
+        title: {
+            text: "Number of matches"
+        },
+        axisX:{
+            valueFormatString: "#",
+            interval: 1
+        },
+        axisY:{ 
+            valueFormatString: "#",
+            interval: 10
+        },
+        data: [{
+            type: "column",
+            dataPoints: dps2
+        }]
+    });
+
     var map = L.map('map').setView([39.93685568995833, 116.37027740478517], 13);
-    //var map = L.map('fa-star', {scrollWheelZoom: false}).setView([39.93685568995833, 116.37027740478517], 13);
 
     var gdata;
     var resultGroup = [];
-    var pattern =  L.polyline([], {color: 'red'}).addTo(map);
-    var preview = L.polyline([], {color: 'red'}).addTo(map);
     var isDrawingPattern = false;
     var geoPattern = null , geoResult = null, geoAllResult = null;
     var distance = 0;
@@ -164,18 +209,47 @@
     var lastpos = null;
     var interpolated = [];
     var boxes = [];
+    var graph_x_axis = [];
+    var graph_y_axis = [];
+    var graph2_x_axis = [];
+    var graph2_y_axis = [];
+    var dps = [];
+    var dps2 = [];
+    var line_colors = [
+            '#056fe8', '#fa05fa', '#f2f202',
+            '#02f246', '#9a05eb', '#f7c600',
+            '#f08902', '#94793e', '#787369'
+        ];
 
     var patternStyle = {
         "color": "#e20fcd",
         "weight": 5
     };
-
     
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": true,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+
+
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFyb3NjIiwiYSI6ImNrb3B4b2QxeTBweG0ycWw0bTBiYWVwcWgifQ.g79td3RKqhZ9DEOLF9nGlA', {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
             'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>, <a href="https://www.microsoft.com/en-us/download/details.aspx?id=52367">Geolife Data set</a>',
-        id: 'mapbox/streets-v11',
+        id: 'mapbox/streets-v12',
         tileSize: 512,
         zoomOffset: -1
     }).addTo(map);
@@ -200,9 +274,12 @@
         }
         boxes = [];
         interpolated = [];
+        dps = [];
+        dps2 = [];
         $("#psize").html("0");
         $("#resultsbox").hide();
-
+        $("#chartContainer").hide()
+        $("#chart2Container").hide()
         if (geoAllResult!=null){
             map.removeLayer(geoAllResult);
         }
@@ -216,8 +293,8 @@
         interpolated.push(hash);
         $("#psize").html(interpolated.length);
         var box = decodeGeoHash(hash);
-        var rect = L.rectangle([[box['latitude'][0],box['longitude'][0]],[box['latitude'][1],box['longitude'][1]]], {color: "#ff7800", weight: 1});
-        rect.bindPopup("Box "+(boxes.length+1)+" <br> <a href='#'>Remove</a>");   
+        var rect = L.rectangle([[box['latitude'][0],box['longitude'][0]],[box['latitude'][1],box['longitude'][1]]], {color: "#eb3a05", weight: 2, fillOpacity: 0});
+        rect.bindPopup("Box "+(boxes.length+1)+" <br> <a href='#' onclick='removeBox("+boxes.length+")'>Remove</a>");
         boxes.push(rect);
         rect.addTo(map);
 
@@ -258,19 +335,92 @@
     //     }
     // });
    
-   
     function showResults(){
         
         $("#resultsbox").show();
+        $("#chartContainer").show();
+        $("#chart2Container").show();
         var x = "";
+        graph_array = [];
+        graph2_array = [[],[]];
+        graph_x_axis = [];
+        graph_y_axis = [];
+        graph2_x_axis = [];
+        graph2_y_axis = [];
+        point = 1;
+        count = 0;
+        match_number = 0;
+        match_count = 0;
+
         for (var i in gdata){
             x+= "<tr><td><button onclick=\"showTrack("+i+")\">"+i+"</button></td><td>"+gdata[i][1]+"</td><td>"+gdata[i][2]+"</td><td>"+gdata[i][3]+"</td><td>"+gdata[i][4]+"</td></tr>";
+            graph2_array[1].push(i);
+            graph2_array[0].push(gdata[i][1]);
+            for(var j in gdata[i][5]){
+                graph_array.push(gdata[i][5][j]);
+            }
+        }
+
+        graph_array.sort();
+
+        for(var i in graph_array){
+            if(graph_array[i] == point){
+                count = count+1;
+                //console.log(graph_array[i]);
+            }else{
+                graph_x_axis.push(point);
+                graph_y_axis.push(count);
+                count = 0;
+                point = point +1;
+            }
+        }
+
+        for(var i in graph2_array[0]){
+            if(i == 0){
+                match_number = graph2_array[0][i];
+                match_count++;
+            }
+            else{
+                if(match_number == graph2_array[0][i]){
+                    match_count++;
+                }
+                else{
+                    graph2_x_axis.push(match_number);
+                    graph2_y_axis.push(match_count);
+                    match_number = graph2_array[0][i];
+                    match_count = 1;
+                }
+            }
+        }
+
+        count = count+1;
+        graph_x_axis.push(point);
+        graph_y_axis.push(count);
+
+        graph2_x_axis.push(match_number);
+        graph2_y_axis.push(match_count);
+
+        for(var i in graph_x_axis){
+            dps.push({
+                x: graph_x_axis[i],
+                y: graph_y_axis[i]
+            });
+        };
+
+        for(var i in graph2_x_axis){
+            dps2.push({
+                x: graph2_x_axis[i],
+                y: graph2_y_axis[i]
+            });
         }
         $("#totalfound").html(gdata.length);
         $("#results").html(x);
-        // $("#datatable").tablesorter({
-        //     theme : 'blue'
-        // });
+        chart.options.data[0].dataPoints = dps;
+        chart2.options.data[0].dataPoints = dps2;
+        chart.render();
+        chart2.render();
+        dps = [];
+        dps2 = [];
     }
 
     function showTrack(id){
@@ -286,7 +436,6 @@
                 }
         });   
         geoResult.addTo(map);
-
         $("#pathbox").html(JSON.stringify(gdata[id][5]));
 
     }
@@ -296,6 +445,15 @@
             map.removeLayer(geoResult);
         }
         geoAllResult.addTo(map);
+    }
+
+    function removeBox(id){
+        boxes[id].removeFrom(map);
+        boxes.splice(id, 1);
+        interpolated.splice(id, 1);
+        $("#gsMatch").val(Math.max(1,Math.floor(boxes.length*0.8)));
+        $("#gaps").val(Math.round(boxes.length*0.2));
+        findPaths();
     }
 
     function findPaths(){
@@ -309,7 +467,7 @@
             data: {"pattern": interpolated, "match": $("#gsMatch").val(), "start": $("#gsStart").val(), "end": Math.max(0,interpolated.length+1-parseInt($("#gsEnd").val())), "gap": $("#gaps").val()}
         })
         .done(function (json) {
-            console.log(json);
+            //console.log(json);
             gdata = json;
             showResults();
             if (geoAllResult!=null){
@@ -320,20 +478,27 @@
                 "features": json.map(function myFunction(item) { return JSON.parse(item[6]);})
             };
             console.log(geojson);
+            
             geoAllResult = L.geoJSON(geojson, {
-                style: function (feature) {
-                    return {fill: false, fillOpacity: 0.6, stroke: true};
+                style: function (feature, layer) {
+                    return {weight: 4, opacity: 0.6, color: line_colors[Math.floor(Math.random() * 4)], fillOpacity: 0.6};
                 }
             });   
+
             geoAllResult.addTo(map);
             
             for (var i in boxes){
                 boxes[i].removeFrom(map);
-                boxes[i].addTo(map).bindPopup("Box "+(parseInt(i)+1)+" <br> <a href='#' onclick='removeBox("+i+")'>Remove</a>");
+                boxes[i].bindPopup("Box "+(parseInt(i)+1)+" <br> <a href='#' onclick='removeBox("+i+")'>Remove</a>");
+                boxes[i].addTo(map);
             }
         });
 
     }
+
+    $(document).ready(function onDocumentReady() {  
+        toastr["info"]("Draw at least 2 areas of interest in the right order")
+    });
 
 </script>
 <script src="js/jquery.tablesorter.min.js"></script>
