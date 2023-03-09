@@ -20,6 +20,7 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
     <script src="js/jquery.min.js"></script>
@@ -44,7 +45,13 @@
        .alg-form input{
             width: 65px !important;
        }
-    
+
+       html * {
+            font-size: 14px;
+            color: #2020131;
+            font-family: 'Roboto', sans-serif;
+
+        }
     </style>
 
 </head>
@@ -56,7 +63,7 @@
 <div class="container" id="sidebar">
     <div class="row">
         <div class="col-lg-12">
-                <h3>Parameters</h3>
+                <h1>Parameters</h1>
                 <a class="close" onclick="sidebar.hide()">x</a>
                 <form class="form-inline alg-form">
                     <p>                   
@@ -107,21 +114,11 @@
     </div>
     <div class="row">
         <div class="col-lg-12">
-            <h3>Results</h3>
             <div id="resultsbox" style="display: none;">
                 <p>Found <span id="totalfound"></span> - <button onclick="showAll()">Show all</button></p>
-                <div id="pathbox"></div>
-                <div style="height: 400px; overflow-y:auto;">
+                <div style="height: fit-content; overflow-y:auto;">
                     <table class="table" id="datatable">
-                    <thead>
-                        <tr>
-                        <th data-tablesort-type="int">#</th>
-                        <th data-tablesort-type="int">Match</th>
-                        <th data-tablesort-type="int>">Start</th>
-                        <th data-tablesort-type="int">End</th>
-                        <th data-tablesort-type="int">Gap</th>
-                        </tr>
-                    </thead>
+
                     <tbody id="results">
                     </tbody>
                     </table>
@@ -129,14 +126,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12" id="chartContainer" style="height: 300px; width: 90%; margin-top: 5%;"></div>
-    </div>  
-    <div class="row">
-        <div class="col-lg-12" id="chart2Container" style="height: 300px; width: 90%; margin-top: 5%;"></div>
-    </div> 
     <div style="position: relative; bottom: 0%; margin-top:10%">
-       
         <div class="col-lg-12">
             <a href="https://mcomputing.eu">Algorithm &copy; mcomputing.eu</a> <br>
             <a href="nwa.php">Needleman–Wunsch</a> |
@@ -146,8 +136,22 @@
 
 </div>
 
+<div class="container" id="sidebarRight">
+    <div class="row">
+        <div class="col-lg-12">
+                <a class="close" onclick="sidebarRight.hide()">x</a>
+        </div> 
+    </div>
+    <div class="row">
+        <div class="col-lg-12" id="chartContainer" style="height: 300px; width: 90%; margin-top: 5%;"></div>
+    </div>  
+    <div class="row">
+        <div class="col-lg-12" id="chart2Container" style="height: 300px; width: 90%; margin-top: 5%;"></div>
+    </div>
+</div>
 
-    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
     <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
     <script src="https://npmcdn.com/leaflet-geometryutil"></script>
@@ -160,7 +164,9 @@
         animationEnabled: true,
         zoomEnabled: true,
         title: {
-            text: "Number of trajectories found per selected point"
+            text: "Number of trajectories found per selected point",
+            fontFamily: "Roboto, sans-serif",
+            fontWeight: "lighter"
         },
         axisX:{
             valueFormatString: "#",
@@ -181,7 +187,9 @@
         animationEnabled: true,
         zoomEnabled: true,
         title: {
-            text: "Number of matches"
+            text: "Number of matches",
+            fontFamily: "Roboto, sans-serif",
+            fontWeight: "lighter"
         },
         axisX:{
             valueFormatString: "#",
@@ -215,6 +223,8 @@
     var graph2_y_axis = [];
     var dps = [];
     var dps2 = [];
+    var svg = [];
+    var testSvg = [];
     var line_colors = [
             '#056fe8', '#fa05fa', '#f2f202',
             '#02f246', '#9a05eb', '#f7c600',
@@ -244,7 +254,6 @@
         "hideMethod": "fadeOut"
     }
 
-
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFyb3NjIiwiYSI6ImNrb3B4b2QxeTBweG0ycWw0bTBiYWVwcWgifQ.g79td3RKqhZ9DEOLF9nGlA', {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
@@ -258,15 +267,33 @@
         position: 'left'
     });
 
+    var sidebarRight = L.control.sidebar('sidebarRight', {
+        position: 'right'
+    });
+
     map.addControl(sidebar);
-   
+    map.addControl(sidebarRight);
+
     L.easyButton('fa-repeat', function(btn, map){
         clearSearch();
     }).addTo( map );
 
-    L.easyButton('fa-search', function(btn, map){
+    L.easyButton('fa-list', function(btn, map){
         sidebar.toggle();
     }).addTo( map );
+
+    L.easyButton('fa-bar-chart', function(btn, map){
+        sidebarRight.toggle();
+    }).addTo( map );
+
+    //SVG string to DOM element
+    function render_xml(id, xml_string){
+        var doc = new DOMParser().parseFromString(xml_string, 'application/xml');
+        var el = document.getElementById(id)
+        el.appendChild(
+            el.ownerDocument.importNode(doc.documentElement, true)
+        )
+    }
 
     function clearSearch(){
         for (var i in boxes){
@@ -303,6 +330,8 @@
         $("#gaps").val(Math.round(boxes.length*0.2));
     }
 
+
+
     function onMapClick(e) {
         addToPath(e.latlng);
         findPaths(); 
@@ -318,28 +347,97 @@
 
     map.on('click', onMapClick);
 
-    // var paramType = 0;
-    // $('input[name="paramtype"]').on('click change', function(e) {
-    //     paramType = $(this).filter(":checked").val();
-    //     if (paramType == 0){
-            
-    //     }else{
-    //         var match = interpolated.length*(parseInt($("#gsMatchP").val())/100);
-    //         var start = interpolated.length*(parseInt($("#gsStartP").val())/100);
-    //         var end =  interpolated.length*(parseInt($("#gsEndP").val())/100);
-    //         var gaps = interpolated.length*(parseInt($("#gapsP").val())/100);
-    //         $("#gsMatch").val(Math.floor(match));
-    //         $("#gsStart").val(Math.floor(start));
-    //         $("#gsEnd").val(Math.floor(end));
-    //         $("#gaps").val(Math.floor(gaps));
-    //     }
-    // });
+    function drawTrackZoomed(coordinates){
+        // Create an SVG element to hold the polyline.
+        let minX = coordinates[0][0], maxX = coordinates[0][0];
+        let minY = coordinates[0][1], maxY = coordinates[0][1];
+        coordinates.forEach(coord => {
+            if (coord[0] < minX) minX = coord[0];
+            if (coord[0] > maxX) maxX = coord[0];
+            if (coord[1] < minY) minY = coord[1];
+            if (coord[1] > maxY) maxY = coord[1];
+        });
+        
+        // Calculate the width and height of the viewable area.
+        const width = maxX - minX;
+        const height = maxY - minY;
+        
+        // Create an SVG element with the viewBox attribute set based on the coordinates of the polyline.
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', `${minX} ${minY} ${width} ${height}`);
+        svg.setAttribute('width', '80');
+        svg.setAttribute('height', '80');
+        
+        // Create a polyline element and set its attributes.
+        const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        polyline.setAttribute('points', coordinates.map(c => `${c[0]},${c[1]}`).join(' '));
+        polyline.setAttribute('stroke', 'black');
+        polyline.setAttribute('stroke-width', Math.max(width, height) / 100);
+        polyline.setAttribute('fill', 'none');
+        
+        // Append the polyline element to the SVG element and the SVG element to the DOM.
+        svg.appendChild(polyline);
+        document.getElementById("mapArea").replaceChildren(svg);
+    }
    
+    function drawTrackScaledWithoutZoom(coordinates, svgWidth, svgHeight, i){
+        // Find the minimum and maximum values for x and y coordinates.
+        let minX = coordinates[0][0], maxX = coordinates[0][0];
+        let minY = coordinates[0][1], maxY = coordinates[0][1];
+        coordinates.forEach(coord => {
+            if (coord[0] < minX) minX = coord[0];
+            if (coord[0] > maxX) maxX = coord[0];
+            if (coord[1] < minY) minY = coord[1];
+            if (coord[1] > maxY) maxY = coord[1];
+        });
+        
+        // Calculate the width and height of the viewable area.
+        const width = maxX - minX;
+        const height = maxY - minY;
+        
+        // Calculate the scaling factor for the polyline.
+        const xScale = svgWidth / width;
+        const yScale = svgHeight / height;
+        const scale = Math.min(xScale, yScale);
+        
+        // Calculate the points for the SVG polyline by scaling the polyline coordinates.
+        const scaledPoints = coordinates.map(coord => {
+            const x = (coord[0] - minX) * scale;
+            const y = (coord[1] - minY) * scale;
+            return `${x},${y}`;
+        }).join(' ');
+        
+        // Create an SVG element and set its dimensions.
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', svgWidth);
+        svg.setAttribute('height', svgHeight);
+        
+        // Create a polyline element and set its attributes.
+        const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        polyline.setAttribute('points', scaledPoints);
+        polyline.setAttribute('stroke', '#1959d1');
+        polyline.setAttribute('stroke-width', '2');
+        polyline.setAttribute('fill', 'none');
+        
+        // Append the polyline element to the SVG element and the SVG element to the DOM.
+        divname = "mapArea" + i;
+        svg.appendChild(polyline);
+        document.getElementById(divname).replaceChildren(svg);
+    }
+
     function showResults(){
         
         $("#resultsbox").show();
         $("#chartContainer").show();
         $("#chart2Container").show();
+
+        if (geoAllResult!=null){
+            map.removeLayer(geoAllResult);
+        }
+        if (geoResult!=null){
+            map.removeLayer(geoResult);
+        }
+
         var x = "";
         graph_array = [];
         graph2_array = [[],[]];
@@ -353,7 +451,9 @@
         match_count = 0;
 
         for (var i in gdata){
-            x+= "<tr><td><button onclick=\"showTrack("+i+")\">"+i+"</button></td><td>"+gdata[i][1]+"</td><td>"+gdata[i][2]+"</td><td>"+gdata[i][3]+"</td><td>"+gdata[i][4]+"</td></tr>";
+            //x+= "<tr><td><div id='mapArea"+i+"' style='width:80px;height:80px;' onclick=\"showTrack("+i+")\"></div></td><td>"+gdata[i][1]+"</td><td>"+gdata[i][2]+"</td><td>"+gdata[i][3]+"</td><td>"+gdata[i][4]+"</td></tr>";
+            //x+= "<tr><td><div id='mapArea"+i+"' style='width:80px;height:80px;' onclick=\"showTrack("+i+")\"></div></td><td><div onclick=\"showTrack("+i+")\">Track ID: <b>"+gdata[i][0]+"</b><br>Matched fields: <b>"+gdata[i][1]+"</b> ("+gdata[i][5]+")<br>Starting box: <b>"+gdata[i][2]+"</b><br>Ending box: <b>"+gdata[i][3]+"</b><br>Gaps: <b>"+gdata[i][4]+"</b><br></div></td></tr>"
+            x+= "<tr><td><div id='mapArea"+i+"' style='width:80px;height:80px;' onclick=\"showTrack("+i+")\"></div></td><td><div onclick=\"showTrack("+i+")\"><h5><b>"+gdata[i][0]+"</b></h5>Path stars on box <b>"+gdata[i][2]+"</b> and ends on box <b>"+gdata[i][3]+"</b><br>In total, <b>"+gdata[i][1]+"</b> fields matched, with <b>"+gdata[i][4]+"</b> gaps<br>Matched fields: <b>"+gdata[i][5]+"</b></div></td></tr>";
             graph2_array[1].push(i);
             graph2_array[0].push(gdata[i][1]);
             for(var j in gdata[i][5]){
@@ -415,6 +515,10 @@
         }
         $("#totalfound").html(gdata.length);
         $("#results").html(x);
+
+        for(i in gdata){
+            drawTrackScaledWithoutZoom(JSON.parse(gdata[i][6]).geometry.coordinates, 80, 80, i);
+        }
         chart.options.data[0].dataPoints = dps;
         chart2.options.data[0].dataPoints = dps2;
         chart.render();
@@ -436,8 +540,6 @@
                 }
         });   
         geoResult.addTo(map);
-        $("#pathbox").html(JSON.stringify(gdata[id][5]));
-
     }
 
     function showAll(){
@@ -477,8 +579,7 @@
                 "type": "FeatureCollection",
                 "features": json.map(function myFunction(item) { return JSON.parse(item[6]);})
             };
-            console.log(geojson);
-            
+
             geoAllResult = L.geoJSON(geojson, {
                 style: function (feature, layer) {
                     return {weight: 4, opacity: 0.6, color: line_colors[Math.floor(Math.random() * 4)], fillOpacity: 0.6};
@@ -486,14 +587,15 @@
             });   
 
             geoAllResult.addTo(map);
-            
+
             for (var i in boxes){
                 boxes[i].removeFrom(map);
                 boxes[i].bindPopup("Box "+(parseInt(i)+1)+" <br> <a href='#' onclick='removeBox("+i+")'>Remove</a>");
                 boxes[i].addTo(map);
             }
         });
-
+        svg = [];
+        testSvg = [];
     }
 
     $(document).ready(function onDocumentReady() {  
