@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
     <meta charset="utf-8">
     <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -63,12 +64,12 @@
 <div class="container" id="sidebar">
     <div class="row">
         <div class="col-lg-12">
-                <h1>Parameters</h1>
+                <!-- <h1>Parameters</h1> -->
                 <a class="close" onclick="sidebar.hide()">x</a>
                 <form class="form-inline alg-form">
-                    <p>                   
-                        <strong>Box count: <span id="psize">0</span></strong>
-                    </p>
+                    <h1>                   
+                        <strong style="font-size: 24px;">Boxes drawn: <span id="psize" style="font-size: 24px;">0</span></strong>
+                    </h1>
                    
                     <br>
                     <div class="form-group">
@@ -109,13 +110,13 @@
                     </div>
                     
                 </form>
-                <div style="margin-top: 5%;"><button onclick="findPaths()">Refresh</button></div>
+                <div style="margin-top: 2%; margin-bottom: 5%;"><button class="btn btn-success" onclick="findPaths()">Apply</button></div>
         </div> 
     </div>
     <div class="row">
         <div class="col-lg-12">
             <div id="resultsbox" style="display: none;">
-                <p>Found <span id="totalfound"></span> - <button onclick="showAll()">Show all</button></p>
+                <p>Found <span id="totalfound"></span> - <button class="btn btn-secondary" onclick="showAll()">Show all</button></p>
                 <div style="height: fit-content; overflow-y:auto;">
                     <table class="table" id="datatable">
 
@@ -148,6 +149,11 @@
     <div class="row">
         <div class="col-lg-12" id="chart2Container" style="height: 300px; width: 90%; margin-top: 5%;"></div>
     </div>
+    <div style="position: relative; bottom: 0%; margin-top:10%">
+        <div class="col-lg-12">
+            <h1 style="font-size: 18px;">Click on individual columns to show or hide selected values on the map</h1>
+        </div>
+    </div>
 </div>
 
 
@@ -178,6 +184,10 @@
         },
         data: [{
             type: "column",
+            color: "#1959d1",
+            click: function(e){
+                showSelectedColumnPerPoint(e.dataPoint.x);
+            },
             dataPoints: dps
         }]
     });
@@ -187,7 +197,7 @@
         animationEnabled: true,
         zoomEnabled: true,
         title: {
-            text: "Number of matches",
+            text: "Number of trajectories passing through number of boxes",
             fontFamily: "Roboto, sans-serif",
             fontWeight: "lighter"
         },
@@ -201,6 +211,10 @@
         },
         data: [{
             type: "column",
+            color: "#1959d1",
+            click: function(e){
+                showSelectedColumn(e.dataPoint.x);
+            },
             dataPoints: dps2
         }]
     });
@@ -214,7 +228,9 @@
     var distance = 0;
     var lastLat = 0;
     var lastLon = 0;
+    var isFirstToDisplay = 0;
     var lastpos = null;
+    var graphButton;
     var interpolated = [];
     var boxes = [];
     var graph_x_axis = [];
@@ -225,6 +241,10 @@
     var dps2 = [];
     var svg = [];
     var testSvg = [];
+    var gdataPrintResult = [];
+    var gdataPrintResultPerPoint = [];
+    var fieldsTicked = [];
+    var fieldsTickedPerPoint = [];
     var line_colors = [
             '#056fe8', '#fa05fa', '#f2f202',
             '#02f246', '#9a05eb', '#f7c600',
@@ -282,10 +302,9 @@
         sidebar.toggle();
     }).addTo( map );
 
-    L.easyButton('fa-bar-chart', function(btn, map){
-        sidebarRight.toggle();
-    }).addTo( map );
-
+    graphButton = L.easyButton('fa-bar-chart', function(btn, map){
+            sidebarRight.toggle();
+    });
     //SVG string to DOM element
     function render_xml(id, xml_string){
         var doc = new DOMParser().parseFromString(xml_string, 'application/xml');
@@ -295,7 +314,142 @@
         )
     }
 
+    function showSelectedColumn(point){
+        var gdataPrint = [];
+        var foundMatch = 0;
+        fieldsTickedPerPoint = [];
+
+        for(var i = 0; i < chart2.options.data[0].dataPoints.length; i++){
+            if(chart2.options.data[0].dataPoints[i].x == point){
+                if(chart2.options.data[0].dataPoints[i].color == "#538efc"){
+                    chart2.options.data[0].dataPoints[i].color = "#1959d1";
+                }
+                else{
+                    chart2.options.data[0].dataPoints[i].color = "#538efc";
+                }
+            }
+        }
+        chart2.render();
+
+        for(var i = 0; i < chart.options.data[0].dataPoints.length; i++){
+            chart.options.data[0].dataPoints[i].color = "#1959d1";
+        }
+        chart.render();
+
+        for(var i in fieldsTicked){
+            if(fieldsTicked[i] == point && foundMatch == 0){
+                fieldsTicked.splice(i, 1);
+                foundMatch = 1;
+            }
+        }
+        if(foundMatch == 0){
+            fieldsTicked.push(point)
+        }
+        if (gdataPrintResult!=null){
+                map.removeLayer(gdataPrintResult);
+        }
+        if (gdataPrintResultPerPoint!=null){
+                map.removeLayer(gdataPrintResultPerPoint);
+        }
+        if (geoAllResult!=null){
+                map.removeLayer(geoAllResult);
+        }
+        if (geoResult!=null){
+                map.removeLayer(geoResult);
+        }
+
+        for(var j in fieldsTicked){
+            for(var i in gdata){
+                if(gdata[i][5].length == fieldsTicked[j]){
+                    gdataPrint.push(gdata[i]);
+                }
+            }
+        }
+
+
+        geojson = {
+                "type": "FeatureCollection",
+                "features": gdataPrint.map(function myFunction(item) { return JSON.parse(item[6]);})
+        };
+
+        gdataPrintResult = L.geoJSON(geojson, {
+                style: function (feature, layer) {
+                    return {weight: 4, opacity: 0.6, color: line_colors[Math.floor(Math.random() * 4)], fillOpacity: 0.6};
+                }
+        });
+        gdataPrintResult.addTo(map);
+    }
+
+    function showSelectedColumnPerPoint(point){
+        var gdataPrint = [];
+        var foundMatch = 0;
+        fieldsTicked = [];
+
+        for(var i = 0; i < chart.options.data[0].dataPoints.length; i++){
+            if(chart.options.data[0].dataPoints[i].x == point){
+                if(chart.options.data[0].dataPoints[i].color == "#538efc"){
+                    chart.options.data[0].dataPoints[i].color = "#1959d1";
+                }
+                else{
+                    chart.options.data[0].dataPoints[i].color = "#538efc";
+                }
+            }
+        }
+        chart.render();
+
+        for(var i = 0; i < chart2.options.data[0].dataPoints.length; i++){
+            chart2.options.data[0].dataPoints[i].color = "#1959d1";
+        }
+        chart2.render();
+
+        for(var i in fieldsTickedPerPoint){
+            if(fieldsTickedPerPoint[i] == point && foundMatch == 0){
+                fieldsTickedPerPoint.splice(i, 1);
+                foundMatch = 1;
+            }
+        }
+        if(foundMatch == 0){
+            fieldsTickedPerPoint.push(point)
+        }
+        if (gdataPrintResult!=null){
+                map.removeLayer(gdataPrintResult);
+        }
+        if (gdataPrintResultPerPoint!=null){
+                map.removeLayer(gdataPrintResultPerPoint);
+        }
+        if (geoAllResult!=null){
+                map.removeLayer(geoAllResult);
+        }
+        if (geoResult!=null){
+                map.removeLayer(geoResult);
+        }
+
+        for(var j in fieldsTickedPerPoint){
+            for(var i in gdata){
+                for(var k in gdata[i][5]){
+                    if(gdata[i][5][k] == fieldsTickedPerPoint[j]){
+                        gdataPrint.push(gdata[i]);
+                    }
+                }
+            }
+        }
+
+        geojson = {
+                "type": "FeatureCollection",
+                "features": gdataPrint.map(function myFunction(item) { return JSON.parse(item[6]);})
+        };
+
+        gdataPrintResultPerPoint = L.geoJSON(geojson, {
+                style: function (feature, layer) {
+                    return {weight: 4, opacity: 0.6, color: line_colors[Math.floor(Math.random() * 4)], fillOpacity: 0.6};
+                }
+        });
+        gdataPrintResultPerPoint.addTo(map);
+    }
+
     function clearSearch(){
+        sidebarRight.hide();
+        graphButton.removeFrom(map);
         for (var i in boxes){
                 boxes[i].removeFrom(map);
         }
@@ -312,6 +466,12 @@
         }
         if (geoResult!=null){
             map.removeLayer(geoResult);
+        }
+        if (gdataPrintResult!=null){
+            map.removeLayer(gdataPrintResult);
+        }
+        if (gdataPrintResultPerPoint!=null){
+                map.removeLayer(gdataPrintResultPerPoint);
         }
     }
 
@@ -347,39 +507,6 @@
 
     map.on('click', onMapClick);
 
-    function drawTrackZoomed(coordinates){
-        // Create an SVG element to hold the polyline.
-        let minX = coordinates[0][0], maxX = coordinates[0][0];
-        let minY = coordinates[0][1], maxY = coordinates[0][1];
-        coordinates.forEach(coord => {
-            if (coord[0] < minX) minX = coord[0];
-            if (coord[0] > maxX) maxX = coord[0];
-            if (coord[1] < minY) minY = coord[1];
-            if (coord[1] > maxY) maxY = coord[1];
-        });
-        
-        // Calculate the width and height of the viewable area.
-        const width = maxX - minX;
-        const height = maxY - minY;
-        
-        // Create an SVG element with the viewBox attribute set based on the coordinates of the polyline.
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('viewBox', `${minX} ${minY} ${width} ${height}`);
-        svg.setAttribute('width', '80');
-        svg.setAttribute('height', '80');
-        
-        // Create a polyline element and set its attributes.
-        const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-        polyline.setAttribute('points', coordinates.map(c => `${c[0]},${c[1]}`).join(' '));
-        polyline.setAttribute('stroke', 'black');
-        polyline.setAttribute('stroke-width', Math.max(width, height) / 100);
-        polyline.setAttribute('fill', 'none');
-        
-        // Append the polyline element to the SVG element and the SVG element to the DOM.
-        svg.appendChild(polyline);
-        document.getElementById("mapArea").replaceChildren(svg);
-    }
-   
     function drawTrackScaledWithoutZoom(coordinates, svgWidth, svgHeight, i){
         // Find the minimum and maximum values for x and y coordinates.
         let minX = coordinates[0][0], maxX = coordinates[0][0];
@@ -427,15 +554,24 @@
 
     function showResults(){
         
+        graphButton.addTo(map);
         $("#resultsbox").show();
         $("#chartContainer").show();
         $("#chart2Container").show();
+        fieldsTicked = [];
+        fieldsTickedPerPoint = [];
 
         if (geoAllResult!=null){
             map.removeLayer(geoAllResult);
         }
         if (geoResult!=null){
             map.removeLayer(geoResult);
+        }
+        if (gdataPrintResult!=null){
+                map.removeLayer(gdataPrintResult);
+        }
+        if (gdataPrintResultPerPoint!=null){
+                map.removeLayer(gdataPrintResultPerPoint);
         }
 
         var x = "";
@@ -525,6 +661,7 @@
         chart2.render();
         dps = [];
         dps2 = [];
+        isFirstToDisplay = 0;
     }
 
     function showTrack(id){
@@ -533,6 +670,12 @@
         }
         if (geoResult!=null){
             map.removeLayer(geoResult);
+        }
+        if (gdataPrintResult!=null){
+                map.removeLayer(gdataPrintResult);
+        }
+        if (gdataPrintResultPerPoint!=null){
+                map.removeLayer(gdataPrintResultPerPoint);
         }
         geoResult = L.geoJSON(JSON.parse(gdata[id][6]), {
                 style: function (feature) {
@@ -545,6 +688,12 @@
     function showAll(){
         if (geoResult!=null){
             map.removeLayer(geoResult);
+        }
+        if (gdataPrintResult!=null){
+                map.removeLayer(gdataPrintResult);
+        }
+        if (gdataPrintResultPerPoint!=null){
+                map.removeLayer(gdataPrintResultPerPoint);
         }
         geoAllResult.addTo(map);
     }
