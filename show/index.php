@@ -27,8 +27,6 @@
     ::-webkit-scrollbar-thumb:hover {
     background: #999;  
     }
-
-    
     </style>
 
     <title>Search</title>
@@ -75,11 +73,12 @@
             font-family: 'Roboto', sans-serif;
 
         }
-        
+
         .btn:focus,.btn:active:focus,.btn.active:focus,
         .btn.focus,.btn:active.focus,.btn.active.focus {
             outline: none;
         }
+
     </style>
 
 </head>
@@ -97,7 +96,6 @@
                     <h1>                   
                         <strong style="font-size: 24px;">Boxes drawn: <span id="psize" style="font-size: 24px;">0</span></strong>
                     </h1>
-                   
                     <br>
                     <div class="form-group">
                         <label class="sr-only" for="gsStart">Start </label>
@@ -783,6 +781,29 @@
             geoAllResult = L.geoJSON(geojson, {
                 style: function (feature, layer) {
                     return {weight: 4, opacity: 0.6, color: line_colors[Math.floor(Math.random() * 4)], fillOpacity: 0.6};
+                },
+
+                onEachFeature: function(feature, layer){
+                    layer.on('mouseover', function(){
+                        console.log(this);
+                        geoAllResult.setStyle({weight: 4, opacity: 0.25, fillOpacity: 0.25});
+                        this.setStyle({
+                            weight : 8,
+                            opacity: 1,
+                            //color: '#ff0000',
+                            fillOpacity: 0.6
+                        });
+                        this.bringToFront();
+                    });
+                    layer.on('mouseout', function(){
+                        geoAllResult.setStyle({weight: 4, opacity: 0.6, fillOpacity: 0.6});
+                        this.setStyle({
+                            weight : 4,
+                            opacity: 0.6,
+                            //color: line_colors[Math.floor(Math.random() * 4)],
+                            fillOpacity: 0.6
+                        });
+                    });
                 }
             });   
 
