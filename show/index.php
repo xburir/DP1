@@ -170,15 +170,18 @@
         animationEnabled: true,
         zoomEnabled: true,
         title: {
-            text: "Number of trajectories found per selected point",
+            text: "Trajectories passing through box",
             fontFamily: "Roboto, sans-serif",
-            fontWeight: "lighter"
+            fontWeight: "lighter",
+            fontSize: 22
         },
         axisX:{
+            title: "Box number",
             valueFormatString: "#",
             interval: 1
         },
         axisY:{
+            title: "Number of trajectories",
             valueFormatString: "#",
             interval: 10
         },
@@ -197,15 +200,18 @@
         animationEnabled: true,
         zoomEnabled: true,
         title: {
-            text: "Number of trajectories passing through number of boxes",
+            text: "Trajectories including amount of boxes",
             fontFamily: "Roboto, sans-serif",
-            fontWeight: "lighter"
+            fontWeight: "lighter",
+            fontSize: 22
         },
         axisX:{
+            title: "Box count",
             valueFormatString: "#",
             interval: 1
         },
-        axisY:{ 
+        axisY:{
+            title: "Number of trajectories",
             valueFormatString: "#",
             interval: 10
         },
@@ -358,14 +364,23 @@
                 map.removeLayer(geoResult);
         }
 
+        $(".result-item").hide();
+
         for(var j in fieldsTicked){
             for(var i in gdata){
                 if(gdata[i][5].length == fieldsTicked[j]){
                     gdataPrint.push(gdata[i]);
+                    $("#"+gdata[i][0]).show();
+                    $("#totalfound").html(gdataPrint.length);
                 }
             }
         }
 
+        if(gdataPrint.length == 0){
+            $(".result-item").show();
+            geoAllResult.addTo(map);
+            $("#totalfound").html(gdata.length);
+        }
 
         geojson = {
                 "type": "FeatureCollection",
@@ -424,16 +439,25 @@
                 map.removeLayer(geoResult);
         }
 
+        $(".result-item").hide();
         for(var j in fieldsTickedPerPoint){
             for(var i in gdata){
                 for(var k in gdata[i][5]){
                     if(gdata[i][5][k] == fieldsTickedPerPoint[j]){
                         gdataPrint.push(gdata[i]);
+                        $("#"+gdata[i][0]).show();
+                        $("#totalfound").html(gdataPrint.length);
                     }
                 }
             }
         }
 
+        if(gdataPrint.length == 0){
+            $(".result-item").show();
+            geoAllResult.addTo(map);
+            $("#totalfound").html(gdata.length);
+        }
+        
         geojson = {
                 "type": "FeatureCollection",
                 "features": gdataPrint.map(function myFunction(item) { return JSON.parse(item[6]);})
@@ -589,7 +613,7 @@
         for (var i in gdata){
             //x+= "<tr><td><div id='mapArea"+i+"' style='width:80px;height:80px;' onclick=\"showTrack("+i+")\"></div></td><td>"+gdata[i][1]+"</td><td>"+gdata[i][2]+"</td><td>"+gdata[i][3]+"</td><td>"+gdata[i][4]+"</td></tr>";
             //x+= "<tr><td><div id='mapArea"+i+"' style='width:80px;height:80px;' onclick=\"showTrack("+i+")\"></div></td><td><div onclick=\"showTrack("+i+")\">Track ID: <b>"+gdata[i][0]+"</b><br>Matched fields: <b>"+gdata[i][1]+"</b> ("+gdata[i][5]+")<br>Starting box: <b>"+gdata[i][2]+"</b><br>Ending box: <b>"+gdata[i][3]+"</b><br>Gaps: <b>"+gdata[i][4]+"</b><br></div></td></tr>"
-            x+= "<tr><td><div id='mapArea"+i+"' style='width:80px;height:80px;' onclick=\"showTrack("+i+")\"></div></td><td><div onclick=\"showTrack("+i+")\"><h5><b>"+gdata[i][0]+"</b></h5>Path stars on box <b>"+gdata[i][2]+"</b> and ends on box <b>"+gdata[i][3]+"</b><br>In total, <b>"+gdata[i][1]+"</b> fields matched, with <b>"+gdata[i][4]+"</b> gaps<br>Matched fields: <b>"+gdata[i][5]+"</b></div></td></tr>";
+            x+= "<tr class='result-item' id='"+gdata[i][0]+"'><td><div id='mapArea"+i+"' style='width:80px;height:80px;' onclick=\"showTrack("+i+")\"></div></td><td><div onclick=\"showTrack("+i+")\"><h5><b>"+gdata[i][0]+"</b></h5>Path stars on box <b>"+gdata[i][2]+"</b> and ends on box <b>"+gdata[i][3]+"</b><br>In total, <b>"+gdata[i][1]+"</b> fields matched, with <b>"+gdata[i][4]+"</b> gaps<br>Matched fields: <b>"+gdata[i][5]+"</b></div></td></tr>";
             graph2_array[1].push(i);
             graph2_array[0].push(gdata[i][1]);
             for(var j in gdata[i][5]){
