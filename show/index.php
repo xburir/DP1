@@ -775,7 +775,11 @@
             }
             geojson = {
                 "type": "FeatureCollection",
-                "features": json.map(function myFunction(item) { return JSON.parse(item[6]);})
+                "features": json.map(function myFunction(item) {
+                    var x = JSON.parse(item[6]);
+                    x.properties['id']=item[0];
+                    return x;
+                })
             };
 
             geoAllResult = L.geoJSON(geojson, {
@@ -785,24 +789,24 @@
 
                 onEachFeature: function(feature, layer){
                     layer.on('mouseover', function(){
-                        console.log(this);
                         geoAllResult.setStyle({weight: 4, opacity: 0.25, fillOpacity: 0.25});
                         this.setStyle({
                             weight : 8,
                             opacity: 1,
-                            //color: '#ff0000',
                             fillOpacity: 0.6
                         });
                         this.bringToFront();
+                        $(".result-item").hide();
+                        $("#"+this.feature.properties.id).show();
                     });
                     layer.on('mouseout', function(){
                         geoAllResult.setStyle({weight: 4, opacity: 0.6, fillOpacity: 0.6});
                         this.setStyle({
                             weight : 4,
                             opacity: 0.6,
-                            //color: line_colors[Math.floor(Math.random() * 4)],
                             fillOpacity: 0.6
                         });
+                        $(".result-item").show();
                     });
                 }
             });   
