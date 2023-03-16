@@ -27,6 +27,8 @@
     ::-webkit-scrollbar-thumb:hover {
     background: #999;  
     }
+
+    
     </style>
 
     <title>Search</title>
@@ -72,6 +74,11 @@
             color: #2020131;
             font-family: 'Roboto', sans-serif;
 
+        }
+        
+        .btn:focus,.btn:active:focus,.btn.active:focus,
+        .btn.focus,.btn:active.focus,.btn.active.focus {
+            outline: none;
         }
     </style>
 
