@@ -7,13 +7,33 @@
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <meta content="Bio inspired tracks comparison" name="description">
     <meta content="mComputing.eu, Maros Cavojsky" name="author">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #ccc;  
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+    background: #999;  
+    }
+    </style>
 
     <title>Search</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/toastr.css" rel="stylesheet"/>
-
     <script src="js/ie-emulation-modes-warning.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
