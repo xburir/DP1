@@ -250,7 +250,7 @@
         }]
     });
 
-    var map = L.map('map').setView([39.93685568995833, 116.37027740478517], 13);
+    var map = L.map('map').setView([48.15470635456156, 17.074255943298343], 13);
 
     var gdata;
     var resultGroup = [];
