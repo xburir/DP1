@@ -21,5 +21,5 @@ CREATE TABLE `tracks` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 SET GLOBAL local_infile=1;
-load data local infile '/home/data/path.csv' into table path fields terminated by ',' lines terminated by '\n' ignore 1 lines (hash, track);
-load data local infile '/home/data/track.csv' into table tracks fields terminated by ';' lines terminated by '\n' ignore 1 lines (route, track);
+load data local infile '/home/data/import/files/path.csv' into table path fields terminated by ',' lines terminated by '\n' ignore 1 lines (hash, track);
+load data local infile '/home/data/import/files/track.csv' into table tracks fields terminated by ';' lines terminated by '\n' ignore 1 lines (route, track);

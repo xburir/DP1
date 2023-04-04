@@ -11,7 +11,7 @@ $input = "$path $min $max $gap $matches";
 
 //$output = shell_exec("C:\Users\maros\.virtualenvs\zobrazenie-SYSuuEtd\Scripts\python.exe .\geohash.py $input");
 
-$output = shell_exec("python3 geohash.py ".$input);
+$output = shell_exec("python3 /home/data/search/geohash.py ".$input);
 echo $output;
  
 ?>

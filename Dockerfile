@@ -26,10 +26,17 @@ RUN pip3 install mysql-connector-python
 
 # docker build -t search .
 # docker run -dit -v C:\Users\maros\Documents\dockeer\mcomputing\search_web\show:/var/www/html/ -v C:\Users\maros\Documents\dockeer\mcomputing\search_web\data:/home/data --name search_gps -p 8090:80 search 
-# after build and run
 
+# PLACE csv file with columns track,lat,lon  in data.csv file inside data/import/files
+
+# FIRST TIME
 #  docker container exec -it search_gps /bin/bash
 #  service apache2 start
 #  service mysql start
-#  python3 /home/data/csv_to_geohash.py
-#  mysql --local-infile=1 -u root -p1 < /home/data/db.sql
+#  python3 /home/data/import/csv_to_geohash.py
+#  mysql --local-infile=1 -u root -p1 < /home/data/import/db.sql
+
+# After another start of container
+#  docker container exec -it search_gps /bin/bash
+#  service apache2 start
+#  service mysql start
