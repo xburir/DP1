@@ -29,7 +29,35 @@
     }
     </style>
 
-    <title>Search</title>
+<?php
+    function endsWith( $haystack, $needle ) {
+        $length = strlen( $needle );
+        if( !$length ) {
+            return true;
+        }
+        return substr( $haystack, -$length ) === $needle;
+    }
+    
+    $files = scandir("center");
+    $datasets = array();
+    foreach ($files as $key => $value){
+        if (endsWith($value, ".json")){
+            array_push($datasets, json_decode(file_get_contents("center/$value"),true));
+        }
+    }
+
+    $queryDB = (isset($_GET['db']) && $_GET['db']!="") ? $_GET['db'] : $datasets[0]['dbname'];
+    $DBinfo = array();
+    
+    foreach ($datasets as $key => $value){
+        if ($queryDB == $value['dbname']){
+            $DBinfo = $value;
+        }
+    }
+    ?>
+
+
+    <title>COhaveSearch - <?php echo $DBinfo['title']; ?></title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -54,7 +82,7 @@
 
     <style>
         html, body {
-        height: 100%;
+            height: 100%;
         }
         body {
         text-align: center;
@@ -68,7 +96,7 @@
        }
 
        html * {
-            font-size: 14px;
+            /* font-size: 14px; */
             color: #2020131;
             font-family: 'Roboto', sans-serif;
 
@@ -80,6 +108,12 @@
         }
 
     </style>
+
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+    <script src="https://npmcdn.com/leaflet-geometryutil"></script>
+    <script src="js/geohash.js"></script>
 
 </head>
 
@@ -93,9 +127,10 @@
                 <!-- <h1>Parameters</h1> -->
                 <a class="close" onclick="sidebar.hide()">x</a>
                 <form class="form-inline alg-form">
-                    <h1>                   
-                        <strong style="font-size: 24px;">Boxes drawn: <span id="psize" style="font-size: 24px;">0</span></strong>
-                    </h1>
+                    <h2> <?php echo $DBinfo['title']; ?></h2>
+                    <h4>                   
+                        <strong>Boxes drawn: <span id="psize">0</span></strong>
+                    </h4>
                     <br>
                     <div class="form-group">
                         <label class="sr-only" for="gsStart">Start </label>
@@ -154,6 +189,16 @@
     </div>
     <div style="position: relative; bottom: 0%; margin-top:10%">
         <div class="col-lg-12">
+            <?php
+                     
+            foreach ($datasets as $key => $value){
+                echo "<a href='?db=".$value['dbname']."'>".$value['title']."</a>";
+                if ($key<count($datasets)){
+                    echo " | ";
+                }
+            }
+            ?>
+
             <a href="https://mcomputing.eu">Algorithm &copy; mcomputing.eu</a> <br>
             <a href="nwa.php">Needleman–Wunsch</a> |
             <a href="swa.php">Smith–Waterman</a>
@@ -182,11 +227,7 @@
 </div>
 
 
-    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
-    <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
-    <script src="https://npmcdn.com/leaflet-geometryutil"></script>
-    <script src="js/geohash.js"></script>
+
 
 
     <script>
@@ -250,7 +291,9 @@
         }]
     });
 
-    var map = L.map('map').setView([48.15470635456156, 17.074255943298343], 13);
+
+    var queryDB = "<?php echo $queryDB; ?>";
+    var map = L.map('map').setView([<?php echo $DBinfo['center']['lat'].", ".$DBinfo['center']['lon'];?>], 13);
 
     var gdata;
     var resultGroup = [];
@@ -308,7 +351,7 @@
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFyb3NjIiwiYSI6ImNrb3B4b2QxeTBweG0ycWw0bTBiYWVwcWgifQ.g79td3RKqhZ9DEOLF9nGlA', {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
-            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>, <a href="https://www.microsoft.com/en-us/download/details.aspx?id=52367">Geolife Data set</a>',
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>, <?php echo $DBinfo['attribution']; ?>',
         id: 'mapbox/streets-v12',
         tileSize: 512,
         zoomOffset: -1
@@ -764,7 +807,7 @@
             method: "POST",
             url: "geohash_py.php",
             dataType: "json",
-            data: {"pattern": interpolated, "match": $("#gsMatch").val(), "start": $("#gsStart").val(), "end": Math.max(0,interpolated.length+1-parseInt($("#gsEnd").val())), "gap": $("#gaps").val()}
+            data: {"dbName": queryDB, "pattern": interpolated, "match": $("#gsMatch").val(), "start": $("#gsStart").val(), "end": Math.max(0,interpolated.length+1-parseInt($("#gsEnd").val())), "gap": $("#gaps").val()}
         })
         .done(function (json) {
             //console.log(json);

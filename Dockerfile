@@ -24,17 +24,21 @@ RUN pip3 install pymysql
 RUN pip3 install numba
 RUN pip3 install mysql-connector-python
 
+# BUILD IMAGE AND CREATE CONTAINER
 # docker build -t search .
 # docker run -dit -v C:\Users\maros\Documents\dockeer\mcomputing\search_web\show:/var/www/html/ -v C:\Users\maros\Documents\dockeer\mcomputing\search_web\data:/home/data --name search_gps -p 8090:80 search 
-
-# PLACE csv file with columns track,lat,lon  in data.csv file inside data/import/files
 
 # FIRST TIME
 #  docker container exec -it search_gps /bin/bash
 #  service apache2 start
 #  service mysql start
-#  python3 /home/data/import/csv_to_geohash.py
-#  mysql --local-infile=1 -u root -p1 < /home/data/import/db.sql
+#  mysql -u root < /home/data/import/db.sql
+
+# WHEN ADDING DATASET: place csv file with columns track,lat,lon 
+#  python3 /home/data/import/csv_to_geohash.py path.to.csv dbName
+#
+#  EXAMPLE:
+#  python3 /home/data/import/csv_to_geohash.py /home/data/import/files/geolife.csv geolife
 
 # After another start of container
 #  docker container exec -it search_gps /bin/bash

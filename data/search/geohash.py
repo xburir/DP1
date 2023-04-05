@@ -3,12 +3,12 @@ import mysql.connector
 import json
 import sys
 
-def runQuery(patterns, start_pos, end_pos, max_gap, min_match):
+def runQuery(patterns, start_pos, end_pos, max_gap, min_match, dbName):
     mydb = mysql.connector.connect(
         host="localhost",
         user="search",
         password="password",
-        database="hashcode"
+        database=dbName
     )
     mycursor = mydb.cursor()
     mycursor.execute("CREATE TEMPORARY TABLE hladac (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, kod varchar(7)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4")
@@ -49,7 +49,7 @@ def runQuery(patterns, start_pos, end_pos, max_gap, min_match):
 
 if __name__ == '__main__':
     
-    # print(sys.argv[1][1:-1].split(","), sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
-    r = runQuery(sys.argv[1][1:-1].split(","), int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]))
+    # print(sys.argv[1][1:-1].split(","), sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
+    r = runQuery(sys.argv[1][1:-1].split(","), int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]), sys.argv[6])
 
     print(json.dumps(r.values.tolist()))
