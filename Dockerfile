@@ -35,10 +35,10 @@ RUN pip3 install mysql-connector-python
 #  mysql -u root < /home/data/import/db.sql
 
 # WHEN ADDING DATASET: place csv file with columns track,lat,lon 
-#  python3 /home/data/import/csv_to_geohash.py path.to.csv dbName
+#  python3 /home/data/import/csv_to_geohash.py path.to.csv dbName "name of dataset"
 #
 #  EXAMPLE:
-#  python3 /home/data/import/csv_to_geohash.py /home/data/import/files/geolife.csv geolife
+#  python3 /home/data/import/csv_to_geohash.py /home/data/import/files/geolife.csv geolife "Geolife Dataset"
 
 # After another start of container
 #  docker container exec -it search_gps /bin/bash
