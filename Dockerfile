@@ -16,25 +16,31 @@ RUN pip3 install geopy
 RUN pip3 install numpy
 RUN pip3 install six
 RUN pip3 install pandas
+RUN pip3 install sqlalchemy
+RUN pip3 install geojson
 RUN pip3 install libgeohash
 RUN pip3 install hausdorff
 RUN pip3 install pymysql
 RUN pip3 install numba
 RUN pip3 install mysql-connector-python
-COPY db.sql /home/db.sql
-COPY gps_search.sql /home/hashmap.sql
-# docker build -t search .
-# docker run -dit -v path.to.show:/var/www/html/ --name search_gps -p 8090:80 search
-# after build and run
 
-# docker container exec -it search_gps /bin/bash
+# BUILD IMAGE AND CREATE CONTAINER
+# docker build -t search .
+# docker run -dit -v C:\Users\maros\Documents\dockeer\mcomputing\search_web\show:/var/www/html/ -v C:\Users\maros\Documents\dockeer\mcomputing\search_web\data:/home/data --name search_gps -p 8090:80 search 
+
+# FIRST TIME
+#  docker container exec -it search_gps /bin/bash
 #  service apache2 start
 #  service mysql start
-#  mysql -u root < /home/db.sql
-#  mysql -u root hashcode < /home/hashmap.sql
+#  mysql -u root < /home/data/import/db.sql
 
-# docker container exec -it search_gps /bin/bash
-# check runnig services .. if apache or mysql not running, start them as below
-#  service --status-all  
-# RUN service start apache2
-# RUN service start mysql
+# WHEN ADDING DATASET: place csv file with columns track,lat,lon 
+#  python3 /home/data/import/csv_to_geohash.py path.to.csv dbName "name of dataset"
+#
+#  EXAMPLE:
+#  python3 /home/data/import/csv_to_geohash.py /home/data/import/files/geolife.csv geolife "Geolife Dataset"
+
+# After another start of container
+#  docker container exec -it search_gps /bin/bash
+#  service apache2 start
+#  service mysql start
