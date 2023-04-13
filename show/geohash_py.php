@@ -7,8 +7,8 @@ $min = intval($_POST['start']);
 $max = intval($_POST['end']);
 $gap = intval($_POST['gap']);
 $matches = intval($_POST['match']);
-$input = "$path $min $max $gap $matches $dbName";
-//echo $input;
+$input = "$path $min $max $gap $matches $dbName 2>&1";
+//echo "python3 /home/data/search/geohash.py $input";
 
 //$output = shell_exec("C:\Users\maros\.virtualenvs\zobrazenie-SYSuuEtd\Scripts\python.exe .\geohash.py $input");
 
