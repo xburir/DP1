@@ -868,7 +868,7 @@
 
     if (queryDB == "cohave"){
         $.getJSON( "coverage/cohave.geojson", function( data ) {
-                L.geoJSON(geojson).addTo(map);
+                L.geoJSON(data).addTo(map);
         });
     }
 
