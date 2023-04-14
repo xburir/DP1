@@ -866,6 +866,12 @@
         testSvg = [];
     }
 
+    if (queryDB == "cohave"){
+        $.getJSON( "coverage/cohave.geojson", function( data ) {
+                L.geoJSON(geojson).addTo(map);
+        });
+    }
+
     $(document).ready(function onDocumentReady() {  
         toastr["info"]("Draw at least 2 areas of interest in the right order")
     });
