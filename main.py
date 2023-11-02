@@ -7,7 +7,6 @@ import requests
 from shapely.geometry.linestring import LineString
 from pyproj import Geod
 
-
 # decode an encoded string
 def decode(encoded):
     inv = 1.0 / 1e6
@@ -36,55 +35,32 @@ def decode(encoded):
     # hand back the list of coordinates
     return decoded
 
+def save_geojson(df_response, name):
+    arr = []
+    for index, row in df_response.iterrows():
+        if row['location'] != [0.0, 0.0]:
+            arr.append(row['location'])
+    filee = open(name+'.geojson','w')
+    filee.write(create_json(arr))
+    filee.close()
 
-def tutorial_jedna(response_text):
-    search_1 = response_text.get('matchings')
-    search_2 = dict(search_1[0])
-    polyline6 = search_2.get('geometry')
-    search_3 = response_text.get('tracepoints')
+def create_json(arr):
+    pred = '{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"coordinates":['
 
-    lst_MapMatchingRoute = LineString(decode(polyline6))
-    gdf_MapMatchingRoute_linestring = gpd.GeoDataFrame(geometry=[lst_MapMatchingRoute], crs=4326)
-    gdf_MapMatchingRoute_points_temp = gdf_MapMatchingRoute_linestring.apply(
-        lambda x: [y for y in x['geometry'].coords], axis=1)
-    gdf_MapMatchingRoute_points = gpd.GeoDataFrame(
-        geometry=gpd.points_from_xy([a_tuple[0] for a_tuple in gdf_MapMatchingRoute_points_temp[0]],
-                                    [a_tuple[1] for a_tuple in gdf_MapMatchingRoute_points_temp[0]]), crs=4326)
-    gdf_MapMatchingRoute = gpd.GeoDataFrame(
-        pd.concat([gdf_MapMatchingRoute_linestring, gdf_MapMatchingRoute_points], ignore_index=True))
+    str = ""
+    for koordinat in arr:
+        """ str += '['+str(koordinat[0])+','+str(koordinat[1])+'],' """
+        str += f'[{koordinat[0]},{koordinat[1]}],'
+    str = str[:-1]
 
-    # TODO-riso tu som sa zasekl
-    df_mapmatchedGPS_points = pd.DataFrame(list([d['location'] for d in search_3 if 'location' in d]),
-                                           columns=['lon', 'lat'])
-    gdf_mapmatchedGPS_points = gpd.GeoDataFrame(
-        geometry=gpd.points_from_xy(df_mapmatchedGPS_points['lon'], df_mapmatchedGPS_points['lat']), crs=4326)
-
-    # %% RAW & MAP-MATCHING ROUTES - DRAW MAP
-    m = folium.Map([22.2783, -97.8643], tiles='cartodbdark_matter', zoom_start=14)
-    folium.GeoJson(gdf_rawGPS, style_function=lambda x: {'color': 'red'},
-                   marker=folium.CircleMarker(radius=4, weight=0, fill_color='red', fill_opacity=1),
-                   name='rawGPS_points').add_to(m)
-    folium.GeoJson(gdf_mapmatchedGPS_points,
-                   marker=folium.CircleMarker(radius=4, weight=0, fill_color='white', fill_opacity=1),
-                   name='MapMatching_rawGPS_points').add_to(m)
-    folium.GeoJson(gdf_MapMatchingRoute, style_function=lambda x: {'color': 'green'},
-                   marker=folium.CircleMarker(radius=4, weight=0, fill_color='green', fill_opacity=1),
-                   name='MapMatching_Route').add_to(m)
-    folium.LayerControl(position='topright', collapsed=False).add_to(m)
-    m.save('mapmatching.html')
-
-    # %% RAW & MAP-MATCHING ROUTES - CALCULATE DISTANCE
-    geod = Geod(ellps="WGS84")
-    rawGPS_linestring_distance = geod.geometry_length(gdf_rawGPS_linestring['geometry'][0])
-    MapMatchingRoute_linestring_distance = geod.geometry_length(gdf_MapMatchingRoute_linestring['geometry'][0])
-    print('rawGPS_linestring_distance = ', f"{rawGPS_linestring_distance:,.0f}")
-    print('MapMatchingRoute_linestring_distance = ', f"{MapMatchingRoute_linestring_distance:,.0f}")
+    po  = '],"type":"LineString"}}]}'
+    return pred + str + po 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # %% READ & FORMAT GPS INFO
-
-    geojson_file = 'second.geojson'
+    geojson_name = "search_web_input"
+    geojson_file = geojson_name+'.geojson'
     gdf_rawGPS_linestring = gpd.read_file(geojson_file)
     gdf_rawGPS_points_temp = gdf_rawGPS_linestring.apply(lambda x: [y for y in x['geometry'].coords], axis=1)
     gdf_rawGPS_points = gpd.GeoDataFrame(
@@ -98,7 +74,7 @@ if __name__ == '__main__':
     # %% VALHALLA REQUEST
     meili_coordinates = df_rawGPS_points.to_json(orient='records')
     meili_head = '{"shape":'
-    meili_tail = ""","search_radius": 150, "shape_match":"map_snap", "costing":"auto", "format":"osrm"}"""
+    meili_tail = ""","search_radius": 300, "shape_match":"map_snap", "costing":"auto", "format":"osrm"}"""
     meili_request_body = meili_head + meili_coordinates + meili_tail
 
     url = "http://localhost:8002/trace_route"
@@ -113,7 +89,6 @@ if __name__ == '__main__':
     else:
         print(f"bad thing happened {r.content}")
 
-    # tutorial_jedna(response_text)
 
     # There are a lot more information that we got from Meili
     # but I'm interested in just 'tracepoints'
@@ -135,9 +110,10 @@ if __name__ == '__main__':
 
     # Saving the columns that I actually need
     df_response = df_response[['name', 'distance', 'location']]
-
+    
+    
     # FORMAT for geojson.io
-    for index, row in df_response.iterrows():
-        if row['location'] != [0.0, 0.0]:
-            print(f"{row['location']},")
+    save_geojson(df_response, geojson_name+"_snapped")
+    
+   
 
