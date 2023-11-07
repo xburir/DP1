@@ -24,4 +24,4 @@ def create_json(file):
 
 
 
-create_json('search_web_input.txt')
+create_json('search_web.txt')

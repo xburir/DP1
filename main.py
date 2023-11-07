@@ -59,7 +59,7 @@ def create_json(arr):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # %% READ & FORMAT GPS INFO
-    geojson_name = "search_web_input"
+    geojson_name = "search_web_zahustene"
     geojson_file = geojson_name+'.geojson'
     gdf_rawGPS_linestring = gpd.read_file(geojson_file)
     gdf_rawGPS_points_temp = gdf_rawGPS_linestring.apply(lambda x: [y for y in x['geometry'].coords], axis=1)
