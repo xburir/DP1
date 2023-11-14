@@ -1,0 +1,6 @@
+zistit ako vela bodov mozem dat do tej api valhala - 16k
+zistit ako dlhu trasu mozem dat do valhala
+pripnianie nefunguje tak ako by sme chceli
+urobil som algoritmus na zahustenie
+urobit algorutmus na zahustenie ale take ze ked je vzdialenost bodov vacsia ako Xm tak pridat body
+vyskusat graphopper
