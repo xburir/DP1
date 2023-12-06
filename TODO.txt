@@ -15,3 +15,10 @@ pre routing dostaneme vsetky trasy rovnake? - vyzera to tak ze ano
 
 pre map matching vieme tiez ziskat geometriu a vyzera dobre snapnuta na cestu ale ide do protismeru 539_6 - da sa ignorovat?
 route z viac bodov - problem je, ze treba vediet typ dopravy - hotovo aj pre viac ako 20 bodov ale niekedy vojde do krizovatky, ked nemusi treba odstranit - odstranene
+
+
+vyfiltrovat body kde je speed  0 ?
+pri niektorych requestoch mi to pise invalidURL alebo invalidOPTIONS - nakoniec pouzivam map match
+pridat tam aj cas do requestu?
+pridat headers + idcko prepisat v seach.csv + linestring odstranit a zabalit coords do geometry + ked file neexistuje tak urobit header.
+ppri mapmatching je max 16k bodov, zatial som nemal aj tak viac 
