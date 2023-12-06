@@ -1,6 +1,17 @@
-zistit ako vela bodov mozem dat do tej api valhala - 16k
+zistit ako vela bodov mozem dat do tej api valhala map matching - 16k
 zistit ako dlhu trasu mozem dat do valhala
 pripnianie nefunguje tak ako by sme chceli
 urobil som algoritmus na zahustenie
 urobit algorutmus na zahustenie ale take ze ked je vzdialenost bodov vacsia ako Xm tak pridat body
 vyskusat graphopper
+
+routing spravit medzi kazdym bodom - nefungovalo moc dobre - mozno skusit ziskat geometriu a z toho body vykreslit tak ako pri route z viac bodov
+routing z viac bodov - este neviem - chyba, viem tam dat max 20 points, treba to nejak spojit 
+porovnat posunute body posunute trasy (map matching ked ma ine body, čakali by sme, že bude mať rovnake trasy ale nemá) obr. C:\Users\richard.buri\Pictures\Screenshots\Screenshot (39)
+pre routing dostaneme vsetky trasy rovnake? - vyzera to tak ze ano
+
+53_13 jje vlak + chodza
+539_6 ma vela bodov po sebe rovnakych ? mozem nejak filtrovat?
+
+pre map matching vieme tiez ziskat geometriu a vyzera dobre snapnuta na cestu ale ide do protismeru 539_6 - da sa ignorovat?
+route z viac bodov - problem je, ze treba vediet typ dopravy - hotovo aj pre viac ako 20 bodov ale niekedy vojde do krizovatky, ked nemusi treba odstranit - odstranene

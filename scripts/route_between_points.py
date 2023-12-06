@@ -1,6 +1,7 @@
 import requests,json
 from decode_polyline import decode_polyline
 from math import ceil
+from remove_points import remove_duplicite_points
 
 
 
@@ -38,11 +39,12 @@ def open_file(file):
     return data, coordinates
 
 data, coords = open_file('test.geojson')
-geometries = route(coords,"trough")
+geometries = route(coords,"via")
 body = []
 for geometry in geometries:
-    body.append(decode_polyline(geometry))
+    body.append(decode_polyline(geometry,True))
 body = [item for sublist in body for item in sublist]
+body = remove_duplicite_points(body)
 nieco = {u"type": u"LineString", u"coordinates": body}
 print(str(nieco).replace("'",'"'))
 

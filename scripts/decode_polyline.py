@@ -1,4 +1,4 @@
-def decode_polyline(polyline, is3d=False):
+def decode_polyline(polyline,onlypoints, is3d=False):
     """Decodes a Polyline string into a GeoJSON geometry.
     :param polyline: An encoded polyline, only the geometry.
     :type polyline: string
@@ -61,7 +61,10 @@ def decode_polyline(polyline, is3d=False):
 
     geojson = {u"type": u"LineString", u"coordinates": points}
 
-    return points
+    if onlypoints == True:
+        return points ## returns points to be displayed
+    else:
+        return str(geojson).replace("'",'"')  ## returns linestring with points to be displayed
 
 
-# print(decode_polyline("}|vs|Aycvjd@uCaDfExEhHrE~QfKnAr@nHlD`D|AhMnElCfDlEdOwAvEm@bFlEnCnBlAbAmEbAmEhEjBzF`@hc@~QhFvEvElGjSfZtXtZlB`CvGkM`FeL~F_QhFyRhGyV|CqKX}@pDwL~@uCnD{KbCoGfDoFpB{BzEoClDcB~EuBhP}G|EiB~R}IvEmDhEeFlB_DpBuDnBuF~A_GzAkGlAaK~@yLRyMGqNSwNzA?n@RDFEGo@S{A?I}FI{NAgAByMN{L\\sLPaEbAwMtCcMvHo]~CgMtE{RzFiVdAkErDiOxFuU^}AzEsRnH}YdA~EeA_F~DkPxArByAsBp@qC|EeSzAdA{AeARu@vD{Oz@oDdAmEhAuEXkA"))
+# print(decode_polyline("}|vs|Aycvjd@p@v@hHrEnTzLpMjGhMnElCfDlEdO~H|FhEjBzF`@hc@~QhFvEvElGjSfZtXtZlB`CvGkM`FeL~F_QhFyRhGyV|CqKjEuN~@uCnD{KbCoGfDoFpB{BzEoClDcB~EuBhP}G|EiB~R}IvEmDhEeFlB_DpBuDnBuF~A_GzAkGlAaK~@yLRyMGqNSwNI}FKcQByMN{L\\sLPaEbAwMtCcMvHo]~CgMvOqp@lM}h@jOqm@~DkPp@qC|EeSRu@rFkUdAmEhAuElC_LhW}gAGyXGgDOmNeC{aAaKk_EO}IIiH?}IsD?uCMoBm@_CAyAB"))
