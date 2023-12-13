@@ -33,6 +33,7 @@ def map_match(points):
         return response_text['matchings'][0]['geometry']
     else:
         print(f"bad thing happened {r.content}")
+        return None
 
 
     
