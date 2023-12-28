@@ -1,9 +1,29 @@
 import csv
 from os.path import exists
 from os import path
+import pandas as pd
+
+def hodinky_to_input(dir,filename):
+    df = pd.read_csv(dir+filename)
+    df = df[['LONGITUDE E/W','LATITUDE N/S']]
+    df = df.rename(columns={'LONGITUDE E/W': 'lon','LATITUDE N/S':'lat'})
+    for i, row in df.iterrows():
+        df.loc[i,"lon"] = df.loc[i,"lon"][:-1]
+        df.loc[i,"lat"] = df.loc[i,"lat"][:-1]
+    df.to_csv(dir+""+filename,index=False)
 
 
-def load_points_hodinky(filename):
+def load_points(filename):
+    with open(filename,'r', newline='') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',')
+        coords = []
+        for i,row in enumerate(spamreader):
+            if  i != 0: 
+                coords.append([float(row[0]),float(row[1])])
+        return coords
+
+
+def load_points_hodinky(filename):  ##TODO urobit to tak aby sa vyberali columns a nie podla pozicie
     with open(filename,'r', newline='') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=',')
         coords = []
@@ -44,11 +64,11 @@ def create_file_for_db(filename,data,track): # na konci to hodi error lebo sa bu
         if not exists(filename):
             file = open(filename,'a')
             file.write("track,lat,lon\n")
-            file.write(track+","+str(data[i][1])+","+str(data[i][0])+"\n")
+            file.write(track+"_0,"+str(data[i][1])+","+str(data[i][0])+"\n")
             file.close()
         else:
             file = open(filename,'a')
-            file.write(track+","+str(data[i][1])+","+str(data[i][0])+"\n")
+            file.write(track+"_0,"+str(data[i][1])+","+str(data[i][0])+"\n")
             file.close()
 
 
