@@ -23,6 +23,9 @@ RUN pip3 install hausdorff
 RUN pip3 install pymysql
 RUN pip3 install numba
 RUN pip3 install mysql-connector-python
+RUN pip3 install csv
+RUN pip3 install requests
+RUN pip3 install json
 
 # BUILD IMAGE AND CREATE CONTAINER
 # docker build -t search .
