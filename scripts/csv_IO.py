@@ -12,6 +12,12 @@ def hodinky_to_input(dir,filename):
         df.loc[i,"lat"] = df.loc[i,"lat"][:-1]
     df.to_csv(dir+""+filename,index=False)
 
+def mobil_to_input(dir,filename):
+    df = pd.read_csv(dir+filename)
+    df = df[['longitude','latitude','transport_type']]
+    df = df.rename(columns={'longitude': 'lon','latitude':'lat'})
+    df.to_csv(dir+""+filename,index=False)
+
 
 def load_points(filename):
     with open(filename,'r', newline='') as csvfile:
@@ -59,7 +65,7 @@ def save_to_search(filename,track_id,data):
         file.write(track_id+";"+data+"\n")
         file.close()
 
-def create_file_for_db(filename,data,track): # na konci to hodi error lebo sa bude snazit nacitt prazdny riadok
+def create_file_for_db(filename,data,track): 
     for i in range(len(data)):
         if not exists(filename):
             file = open(filename,'a')
