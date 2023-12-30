@@ -59,7 +59,7 @@ def decode_polyline(polyline):
     return points 
 
 ## Map match the points
-def map_match(points,costing):
+def map_match(points,container_name,costing):
     strr = ""
     for pt in points:
         strr += '{"lat":'+str(pt[1])+',"lon":'+str(pt[0])+'},'
@@ -69,8 +69,8 @@ def map_match(points,costing):
     meili_head = '{"shape":['
     meili_tail = """],"search_radius": 300, "shape_match":"map_snap", "costing": \""""+costing+"""\",  "format":"osrm"}"""
     meili_request_body = meili_head + meili_coordinates + meili_tail
-
-    url = "http://localhost:8002/trace_route"
+    port = 8002
+    url = f"http://{container_name}:{port}/trace_route"
     headers = {'Content-type': 'application/json'}
     data = str(meili_request_body)
 
@@ -94,7 +94,7 @@ def load_points(filename):
         return coords
 
 
-def folder_process(dir, debug = False):
+def folder_process(dir, debug, container_name):
 
     ## Check if path contains files as it should
     if len(os.listdir(dir)) != 2:
@@ -118,9 +118,9 @@ def folder_process(dir, debug = False):
             ## MAPMATCH
             geometry = None
             if subdir == "Walk":
-                geometry = map_match(points,costing = "pedestrian")
+                geometry = map_match(points,container_name,costing = "pedestrian")
             if subdir == "Drive":
-                geometry = map_match(points,costing = "auto")
+                geometry = map_match(points,container_name, costing = "auto")
             if geometry != None:
                 name = file[:str(file).find(".")]
                 pts = decode_polyline(geometry)
@@ -136,12 +136,13 @@ def folder_process(dir, debug = False):
                 print(f"{file} could not been map matched.")
 
 if __name__ == "__main__":
-    if len(sys.argv)<2:
-        print("Specify path")
+    if len(sys.argv)<3:
+        print("Specify path and valhalla container name")
     else:
         dir = sys.argv[1]
-        if len(sys.argv) == 3 and sys.argv[2] == "debug":
-            folder_process(dir,True)
+        container_name = sys.argv[2]
+        if len(sys.argv) == 4 and sys.argv[3] == "debug":
+            folder_process(dir,True,container_name)
         else:
-            folder_process(dir,False)
+            folder_process(dir,False,container_name)
         
