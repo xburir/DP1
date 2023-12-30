@@ -20,9 +20,18 @@ ex: docker inspect web_server
 
 You can run the container either with a linked directory, in which you have downloaded  your maps or you can run the container with a one line command which downloads the latest map specified by url (slower).
 
+### Linked directory
+
 ```
 docker run -dit --name CONTAINER_NAME --network BRIDGE_NAME -p PORT:PORT -v PATH\custom_files:/custom_files ghcr.io/gis-ops/docker-valhalla/valhalla:latest
 ex: docker run -dit --name valhalla --network web_server -p 8002:8002 -v C:\Users\richard.buri\search_web\doker\custom_files:/custom_files ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+```
+
+### One line
+
+```
+docker run -dit --name CONTAINER_NAME --network BRIDGE_NAME -p PORT:PORT -e tile_urls=MAP_URL ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+ex: docker run -dit --name valhalla --network web_server -p 8002:8002 -e tile_urls=https://download.geofabrik.de/europe/slovakia-latest.osm.pbf ghcr.io/gis-ops/docker-valhalla/valhalla:latest
 ```
 
 Note: If you change the port, you need to change the `port` variable in `map_match.py` in `map_match` function.
