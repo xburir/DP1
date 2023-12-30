@@ -47,14 +47,14 @@ docker build -t IMAGE_NAME .
 ex: docker build -t search .
 ```
 
-### Create container
+### Run container
 
 ```
 docker run -dit -v PATH\show:/var/www/html/ -v PATH\data:/home/data --network BRIDGE_NAME --name CONTAINER_NAME -p PORT:PORT IMAGE_NAME 
 ex: docker run -dit -v C:\Users\richard.buri\search_web\DP1\show:/var/www/html/ -v C:\Users\richard.buri\search_web\DP1\data:/home/data --network web_server --name search_gps -p 8090:80 search 
 ```
 
-### Run container
+### Exec container
 
 You can either run the container from Docker Desktop or run it from CLI:
 
