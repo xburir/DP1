@@ -124,4 +124,4 @@ ex: python3 /home/data/import/map_match.py /home/data/test/ valhalla debug
 ex: python3 /home/data/import/map_match.py /home/data/test/ valhalla
 ```
 
-Running the script with debug parameter will generate 2 geojsons for each csv file for easy visualization. First file is the original points, the second one is mapmatched points.
+Running the script with debug parameter will generate 2 geojsons for each csv file for easy visualization. First file is the original points, the second one is mapmatched points. When the script is done, you will have a `database.csv` file in your ROOT folder, which can be added to Search_Web
