@@ -93,8 +93,20 @@ def load_points(filename):
                 coords.append([float(row[0]),float(row[1])])
         return coords
 
+## Get points from geojson file
+def load_points_from_geojson(file):
+    f = open(file, "r")
+    text = f.read()
+    data = json.loads(text)
+    features = data['features']
+    feature = features[0]
+    geometry = feature['geometry']
+    coordinates = geometry['coordinates']
+    f.close()
+    return  coordinates
 
-def folder_process(dir, debug, container_name):
+
+def folder_process(dir, debug, container_name, format):
 
     ## Check if path contains files as it should
     if len(os.listdir(dir)) != 2:
@@ -113,7 +125,10 @@ def folder_process(dir, debug, container_name):
         for file in os.listdir(dir+subdir+'/'):
             
             ## Get points from file
-            points = load_points(dir+subdir+'/'+file)
+            if format == "csv":
+                points = load_points(dir+subdir+'/'+file)
+            if format == "geojson":
+                points = load_points_from_geojson(dir+subdir+'/'+file)
 
             ## MAPMATCH
             geometry = None
@@ -125,6 +140,7 @@ def folder_process(dir, debug, container_name):
                 name = file[:str(file).find(".")]
                 pts = decode_polyline(geometry)
                 create_file_for_db(dir+"database.csv",pts,name)
+                create_file_for_db(dir+"database_original.csv",points,name)
 
                 if debug:
                     output_folder_path = os.path.join(dir, name + "_output")
@@ -136,13 +152,14 @@ def folder_process(dir, debug, container_name):
                 print(f"{file} could not been map matched.")
 
 if __name__ == "__main__":
-    if len(sys.argv)<3:
-        print("Specify path and valhalla container name")
+    if len(sys.argv)<4:
+        print("Specify path, valhalla container name, file format, debug[optional]")
     else:
         dir = sys.argv[1]
         container_name = sys.argv[2]
-        if len(sys.argv) == 4 and sys.argv[3] == "debug":
-            folder_process(dir,True,container_name)
+        format = sys.argv[3]
+        if len(sys.argv) == 5 and sys.argv[4] == "debug":
+            folder_process(dir,True,container_name,format)
         else:
-            folder_process(dir,False,container_name)
+            folder_process(dir,False,container_name,format)
         

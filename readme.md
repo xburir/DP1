@@ -88,7 +88,7 @@ First, you need to prepare files for the script.
 
 You should have one directory, which contains two directories "Walk" and "Drive".
 
-In each directory put the csv files, which contain your path data. For example:
+In each directory put the csv or geojson files, which contain your path data. For example:
 
 ```
 root
@@ -116,12 +116,23 @@ lon,lat
 17.073011,48.151714
 ```
 
+### Geojson structure
+
+Your files should have format like this:
+
+```
+
+```
+
+
+
 ### Running script in docker container
 
 ```
-python3 PATH_TO_map_match.py PATH_TO_ROOT CONTAINER_NAME debug[optional]
-ex: python3 /home/data/import/map_match.py /home/data/test/ valhalla debug
-ex: python3 /home/data/import/map_match.py /home/data/test/ valhalla
+python3 PATH_TO_map_match.py PATH_TO_ROOT CONTAINER_NAME FILE_FORMAT debug[optional]
+ex: python3 /home/data/import/map_match.py /home/data/test/ valhalla csv debug
+ex: python3 /home/data/import/map_match.py /home/data/test/ valhalla csv
+ex: python3 /home/data/import/map_match.py /home/data/test/ valhalla geojson debug
 ```
 
 Running the script with debug parameter will generate 2 geojsons for each csv file for easy visualization. First file is the original points, the second one is mapmatched points. When the script is done, you will have a `database.csv` file in your ROOT folder, which can be added to Search_Web
