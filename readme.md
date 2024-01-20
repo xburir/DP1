@@ -121,7 +121,28 @@ lon,lat
 Your files should have format like this:
 
 ```
-
+{
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "geometry": {
+          "coordinates": [
+            [
+              17.073124,
+              48.152729
+            ],
+            [
+              17.073124,
+              48.152729
+            ]
+          ],
+          "type": "LineString"
+        },
+        "properties": {},
+        "type": "Feature"
+      }
+    ]
+  }
 ```
 
 
