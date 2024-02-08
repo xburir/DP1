@@ -1,0 +1,1 @@
+to start server `PORT=8090 npm run start`
