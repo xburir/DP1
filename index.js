@@ -13,7 +13,6 @@ const PORT = process.env.PORT || 3000;
 // Parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.urlencoded({ extended: true }));
 
-
 // Sessions settings
 app.use(session({
   secret: 'secret-key',
@@ -90,9 +89,6 @@ app.post('/login', async (req, res) => {
   });
 });
 
-
-
-
 app.get('/login', (req, res) => {
   if (req.session.username != null){
     res.redirect("/")
@@ -100,8 +96,6 @@ app.get('/login', (req, res) => {
   }
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
   });
-
-
 
 app.get('/register', (req, res) => {
   if (req.session.username != null){
@@ -118,8 +112,6 @@ app.get('/', (req, res) => {
   }
    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-
-
   
 // Serve static files from the public directory
 app.use(express.static('public'));

@@ -1,0 +1,22 @@
+#trackModal {
+    position: absolute; 
+    display: flex; 
+    z-index: 2;
+    background-color: white; 
+    width: 100px; 
+    height: 100px; 
+    align-items: center;
+    top: 30%;
+    left: 50%;
+    border: 2px black solid;
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
+}
+
+#trackModal > p{
+    text-align: center;
+}
+
+.fade-in {
+    opacity: 1;
+}
