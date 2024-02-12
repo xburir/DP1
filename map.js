@@ -8,6 +8,21 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 let inputBox = document.getElementById("input")
 
+// Function to check if the cursor position intersects with a polyline's path
+function isCursorOnPolyline(cursorPos, polyline) {
+    var path = polyline.getLatLngs();
+    for (var i = 0; i < path.length - 1; i++) {
+        var p1 = path[i];
+        var p2 = path[i + 1];
+        if (L.GeometryUtil.belongsSegment(cursorPos, p1, p2)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
 document.getElementById('downloadButton').addEventListener('click', function() {
 
     map.eachLayer(function (layer) {
@@ -18,7 +33,9 @@ document.getElementById('downloadButton').addEventListener('click', function() {
         }
     });
 
+
     let div = document.getElementById("trackModal")
+    var hoveredLayers = []
 
     fetch(inputBox.value)
         .then(response => {
@@ -29,19 +46,43 @@ document.getElementById('downloadButton').addEventListener('click', function() {
         })
         .then(csvData => {
             const tracks = parseCSV(csvData);
-            console.log('Tracks:', tracks);
             for (const track in tracks){
-                const route = L.polyline(tracks[track], {color: 'red'}).addTo(map);
+                const route = L.polyline(tracks[track], {
+                    color: 'red',
+                    customData: track}).addTo(map);
+                
                 route.on('mouseover', function(event) {
                     // Display a popup on hover
                     div.style.opacity = "1"
                     div.style.pointerEvents = "auto"
-                    document.getElementById("trackModalText").innerHTML = "Track: "+track
+                    
+                    var cursorPos = event.latlng; // Get the cursor position
+                    map.eachLayer(function (polyline) {
+                        // Check if the layer is a polyline
+                        if (polyline instanceof L.Polyline) {
+                            if (isCursorOnPolyline(cursorPos, polyline)) {
+                                // Handle the hovered polyline accordingly
+                                // You can add it to a list of hovered layers or perform other actions
+                                hoveredLayers.push(polyline)
+                            }
+                        }
+                    });
+                    let str = ""
+                    for (var event of hoveredLayers){
+                        console.log();
+                        let key = event.options.customData
+                        str += '<br>'+key;
+                    }
+                    document.getElementById("trackModalText").innerHTML = "Tracks ("+hoveredLayers.length+") "+str
+                    
                 })
                 .on('mouseout', function(event) {
                     // Close the popup when mouse leaves the marker
                     div.style.opacity = "0"
                     div.style.pointerEvents = "none"
+
+                    hoveredLayers = []
+
                 });
             }
         })
