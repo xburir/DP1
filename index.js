@@ -52,7 +52,7 @@ app.post('/register',async (req, res) => {
         res.status(400).send('Registration failed');
         return;
       }
-      res.redirect('/login.html');
+      res.redirect('/login');
     });
   } catch (err) {
     console.error('Error registering user:', err);

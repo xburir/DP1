@@ -1,6 +1,7 @@
 DROP DATABASE if EXISTS dp_webserver;
 
 CREATE DATABASE dp_webserver;
+USE dp_webserver;
 
 DROP TABLE IF EXISTS users;
 
