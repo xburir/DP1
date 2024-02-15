@@ -16,3 +16,6 @@ after depenencies are instlled, you can just `node index.js`
  - urobil som to ze prekryvajuce sa trasy zobrazi vsetky v zozname
  - urobit ci matchinguju passwords
  - mozno este urobit nech sa uklada tema do session
+ - urobit upload suboru na server v ZIP
+ - zobrazit moje nahrane zip subory
+ - po zvoleni zip suboru nascrollovat mapu nejako rozumne
