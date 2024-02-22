@@ -4,7 +4,7 @@ RUN apt -y install npm
 RUN apt -y install mysql-server
 ENV TZ=Europe/Bratislava
 ARG DEBIAN_FRONTEND=noninteractive
-WORKDIR /DP1
+WORKDIR /DP1/webapp
 
 # RUN service mysql start  ### DOESNT WORK
 # RUN mysql < db.sql   
