@@ -75,3 +75,8 @@ after depenencies are instlled, you can just `node index.js`
 - urobit upload suboru na server v ZIP
 - zobrazit moje nahrane zip subory
 - po zvoleni zip suboru nascrollovat mapu nejako rozumne
+- premenovat unzipped priecinok (alebo vymazat) po tom ako sa urobi map match
+- teraz na stranku sa moze nahrat len ZIP s CSV, je tam moznost aj na geojson, treba otestovat
+- z nejakeho dovodu sa mi zacyklil asi python script
+- ked si to moc oddialim tak mi ukazuje tracks0
+- skusit mensie datasety

@@ -2,6 +2,11 @@ FROM ubuntu:22.04
 RUN apt-get -y update
 RUN apt -y install npm
 RUN apt -y install mysql-server
+RUN apt -y install python3
+RUN apt -y install python3-pip
+# RUN pip3 install python-csv
+RUN pip3 install requests
+
 ENV TZ=Europe/Bratislava
 ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /DP1/webapp

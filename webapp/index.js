@@ -6,6 +6,9 @@ const mysql = require('mysql');
 const path=require("path")
 const session = require('express-session');
 const app = express();
+const multer = require('multer');
+const fileHandler = require('./upload');
+
 app.use(express.static(path.resolve("")))
 
 const PORT = process.env.PORT || 3000;
@@ -111,6 +114,31 @@ app.get('/', (req, res) => {
     return
   }
    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+
+const upload = multer({ dest: 'uploads/' });
+
+// Route for handling file upload
+app.post('/upload', upload.single('file'), async (req, res) => {
+  if (req.session.username == null){
+    res.redirect("/login")
+    return
+  }
+  try {
+    if (!req.file) {
+      return res.status(400).send('No files were uploaded.');
+    }
+    
+    const zipName = path.parse(req.file.originalname).name
+    const uploadDir = __dirname + '/uploads/'+req.session.username;
+    const unzipDir = __dirname + '/uploads/unzipped/'+req.session.username+"/"+zipName
+    const message = await fileHandler.handleUploadAndUnzip(req.file, uploadDir, unzipDir, req.session.username, zipName);
+    res.send(message);
+  } catch (error) {
+    console.error('Error handling upload and unzip:', error);
+    res.status(500).send('Error handling upload and unzip.');
+  }
 });
   
 // Serve static files from the public directory
