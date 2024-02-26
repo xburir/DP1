@@ -124,6 +124,10 @@ app.get('/register', (req, res) => {
 
 // Function to retrieve file list
 function getFileList(dir,callback) {
+  // If users folder is not created, create it
+  if (!fs.existsSync(path.join("routes",dir))) {
+    fs.mkdirSync(path.join("routes",dir), { recursive: true });
+  }
   fs.readdir(path.join("routes",dir), (err, files) => {
     if (err) {
         return callback(err, null);

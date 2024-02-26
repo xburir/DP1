@@ -50,9 +50,8 @@
     </table>
 
     <h2>Upload a ZIP file</h2>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".zip">
-        <button type="submit">Upload</button>
+    <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
+        <input type="file" name="file" accept=".zip" id="fileInput">
     </form>
 
     <div id="trackModal" >
@@ -77,6 +76,16 @@
     console.log('Processing complete:', message);
     alert(message)
     // You can update the UI or perform any other action here
+  });
+
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("uploadForm");
+    const fileInput = document.getElementById("fileInput");
+  
+    fileInput.addEventListener("change", function() {
+      form.submit();
+    });
   });
 </script>
 </html>

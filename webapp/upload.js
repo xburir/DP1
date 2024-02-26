@@ -51,7 +51,7 @@ function handleUploadAndUnzip(file, uploadDir, unzipDir, user, zipName) {
                   fs.rmdirSync(uploadDir, { recursive: true }); // remove uploaded zip file
                   fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
 
-                  resolve(`File ${zipName} uploaded and map-matched succesfully`);
+                  resolve(`File ${zipName} uploaded and map-matched succesfully, please refresh the site to see the new file.`);
                 }
               });
 
