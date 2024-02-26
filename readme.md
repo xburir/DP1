@@ -68,12 +68,12 @@ after depenencies are instlled, you can just `node index.js`
 
 - zmenit db aby brala aj email a taketo srandy z registracie
 - ked bude csv obsahovat aj cas tak potom array v dict co sa vykresluje na mapu zoradit podla casu.
-- na konci csv suboru nemoze byt prazdny riadok
+- ~~na konci csv suboru nemoze byt prazdny riadok~~
 - urobil som to ze prekryvajuce sa trasy zobrazi vsetky v zozname
 - urobit ci matchinguju passwords
 - mozno este urobit nech sa uklada tema do session
 - ~~urobit upload suboru na server v ZIP~~
-- zobrazit moje nahrane zip subory
+- ~~zobrazit moje nahrane zip subory~~
 - po zvoleni zip suboru nascrollovat mapu nejako rozumne
 - ~~premenovat unzipped priecinok (alebo vymazat) po tom ako sa urobi map match~~
 - ~~teraz na stranku sa moze nahrat len ZIP s CSV, je tam moznost aj na geojson, treba otestovat~~
@@ -82,5 +82,5 @@ after depenencies are instlled, you can just `node index.js`
 - ~~unzipping empty folder does not create folder~~
 - ~~asynchronne urobit upload~~
 - troska upratat ten index.js ten auth
-- cas pri list of files je zly
-- nastavit pri uploade nech sa to automaticky posle bez stlacenia tlacidla a potom ked vyjde alert napisat ze musis dat refresh aby sa pridala ta vec do zoznamu
+- ~~cas pri list of files je zly~~
+- ~~nastavit pri uploade nech sa to automaticky posle bez stlacenia tlacidla a potom ked vyjde alert napisat ze musis dat refresh aby sa pridala ta vec do zoznamu~~

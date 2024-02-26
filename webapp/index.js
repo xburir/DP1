@@ -139,7 +139,7 @@ function getFileList(dir,callback) {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve({ name: file, createdAt: stats.birthtime });
+                    resolve({ name: file, createdAt: stats.mtime.toLocaleString() });
                 }
             });
         });
