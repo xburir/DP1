@@ -79,5 +79,5 @@ after depenencies are instlled, you can just `node index.js`
 - ~~teraz na stranku sa moze nahrat len ZIP s CSV, je tam moznost aj na geojson, treba otestovat~~
 - ~~z nejakeho dovodu sa mi zacyklil asi python script~~
 - ked si to moc oddialim tak mi ukazuje tracks0
-- skusit mensie datasety
 - ~~unzipping empty folder does not create folder~~
+- ~~asynchronne urobit upload~~

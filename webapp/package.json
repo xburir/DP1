@@ -15,6 +15,8 @@
       "fs":"^0.0.1-security",
       "csv-parser":"^3.0.0",
       "multer": "^1.4.5-lts.1",
-      "unzipper": "^0.10.14"
+      "unzipper": "^0.10.14",
+      "socket.io": "^4.7.4",
+      "ejs":"^3.1.9"
     }
   }

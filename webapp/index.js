@@ -8,10 +8,22 @@ const session = require('express-session');
 const app = express();
 const multer = require('multer');
 const fileHandler = require('./upload');
+const socketIo = require('socket.io');
+const http = require('http');
 
 app.use(express.static(path.resolve("")))
 
+const server = http.createServer(app);
+const io = socketIo(server);
 const PORT = process.env.PORT || 3000;
+
+// Set the views directory to 'public'
+app.set('views', path.join(__dirname, 'public'));
+
+// Set the view engine to use EJS
+app.set('view engine', 'ejs');
+
+app.use('/socket.io', express.static(path.join(__dirname, 'node_modules/socket.io/client-dist')));
 
 // Parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.urlencoded({ extended: true }));
@@ -113,7 +125,8 @@ app.get('/', (req, res) => {
     res.redirect("/login")
     return
   }
-   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  //  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.render('index.ejs',{username: req.session.username});
 });
 
 
@@ -129,22 +142,51 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     if (!req.file) {
       return res.status(400).send('No files were uploaded.');
     }
+    res.redirect('/');
     
     const zipName = path.parse(req.file.originalname).name
     const uploadDir = __dirname + '/uploads/'+req.session.username;
     const unzipDir = __dirname + '/uploads/unzipped/'+req.session.username+"/"+zipName
     const message = await fileHandler.handleUploadAndUnzip(req.file, uploadDir, unzipDir, req.session.username, zipName);
-    res.send(message);
+    console.log(message)
+
+    io.to(req.session.username).emit('processing_complete', message);
+
   } catch (error) {
     console.error('Error handling upload and unzip:', error);
     res.status(500).send('Error handling upload and unzip.');
   }
+});
+
+// Object to map each user to their corresponding socket ID
+const userSockets = {};
+
+// Socket.io connection
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  // Associate each socket connection with a user
+  socket.on('set_username', (username) => {
+    userSockets[username] = socket.id;
+    socket.join(username);
+  });
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    // Remove the user's entry from the mapping when they disconnect
+    Object.keys(userSockets).forEach((key) => {
+      if (userSockets[key] === socket.id) {
+        socket.leave(userSockets[key]);
+        delete userSockets[key];
+      }
+    });
+  });
 });
   
 // Serve static files from the public directory
 app.use(express.static('public'));
 
 // Start the server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

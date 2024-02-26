@@ -16,7 +16,11 @@
     #map { height: 900px; }
 </style>
 <body>
-
+    <% if (username) { %>
+        <p>Welcome, <%= username %>!</p>
+      <% } else { %>
+        <p>Welcome!</p>
+      <% } %>
     <form action="/logout" method="POST">
         <input type=submit value=Logout>
     </form>
@@ -38,4 +42,19 @@
     <div id="map" style="z-index: 1;"></div>
     <script type="module" src="map.js"></script>
 </body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script> 
+    const socket = io();
+    var username = '<%= username %>'
+    socket.emit('set_username', username);
+
+    // Listen for 'processing_complete' event
+    socket.on('processing_complete', (message) => {
+    // Handle the processing completion message
+    console.log('Processing complete:', message);
+    alert(message)
+    // You can update the UI or perform any other action here
+  });
+</script>
 </html>
