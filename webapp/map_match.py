@@ -17,17 +17,13 @@ def create_file_for_db(filename,data,track,user,zip_name):
     if not path.exists(path.join(base_folder,user,zip_name)):
         os.makedirs(path.join(base_folder,user,zip_name))
 
+    write_header = not exists(path.join(base_folder,user,zip_name,filename))    
+    file = open(path.join(base_folder,user,zip_name,filename),'a')
+    if write_header:
+        file.write("track,lat,lon")
     for i in range(len(data)):
-        print(i)
-        if not exists(path.join(base_folder,user,zip_name,filename)):
-            file = open(path.join(base_folder,user,zip_name,filename),'a')
-            file.write("track,lat,lon\n")
-            file.write(track+"_0,"+str(data[i][1])+","+str(data[i][0])+"\n")
-            file.close()
-        else:
-            file = open(path.join(base_folder,user,zip_name,filename),'a')
-            file.write(track+"_0,"+str(data[i][1])+","+str(data[i][0])+"\n")
-            file.close()
+        file.write("\n"+track+"_0,"+str(data[i][1])+","+str(data[i][0]))
+    file.close()
  
 ## Save points for easy displaying
 def save_points_to_geojson(filename,data):
@@ -118,8 +114,7 @@ def load_points_from_geojson(file):
     return  coordinates
 
 
-def folder_process(dir, container_name, format, user, zip_name):
-
+def folder_process(dir, container_name, user, zip_name):
     ## Check if path contains files as it should
     if len(os.listdir(dir)) != 2:
         print("The directory should have 2 subdirectiries \"Walk\" and \"Drive\"")
@@ -136,9 +131,10 @@ def folder_process(dir, container_name, format, user, zip_name):
     for subdir in os.listdir(dir):
         for file in os.listdir(path.join(dir,subdir)):
             ## Get points from file
-            if format == "csv":
+            format = os.path.splitext(file)[1]
+            if format == ".csv":
                 points = load_points(path.join(dir,subdir,file))
-            if format == "geojson":
+            if format == ".geojson":
                 points = load_points_from_geojson(path.join(dir,subdir,file))
 
             ## MAPMATCH
@@ -151,10 +147,7 @@ def folder_process(dir, container_name, format, user, zip_name):
                 name = file[:str(file).find(".")]
                 pts = decode_polyline(geometry)
                 create_file_for_db("database.csv",pts,name,user,zip_name)
-                # create_file_for_db("database_original.csv",points,name,user,zip_name)
-                print(f"{file} has been map matched.")
-        
-                
+                create_file_for_db("database_original.csv",points,name,user,zip_name)
             else:
                 print(f"{file} could not been map matched.")
 
@@ -164,8 +157,7 @@ if __name__ == "__main__":
     else:
         dir = sys.argv[1]
         container_name = sys.argv[2]
-        format = sys.argv[3]
-        user = sys.argv[4]
-        zip_name = sys.argv[5]
-        folder_process(dir,container_name,format,user,zip_name)
+        user = sys.argv[3]
+        zip_name = sys.argv[4]
+        folder_process(dir,container_name,user,zip_name)
         

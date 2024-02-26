@@ -72,11 +72,12 @@ after depenencies are instlled, you can just `node index.js`
 - urobil som to ze prekryvajuce sa trasy zobrazi vsetky v zozname
 - urobit ci matchinguju passwords
 - mozno este urobit nech sa uklada tema do session
-- urobit upload suboru na server v ZIP
+- ~~urobit upload suboru na server v ZIP~~
 - zobrazit moje nahrane zip subory
 - po zvoleni zip suboru nascrollovat mapu nejako rozumne
-- premenovat unzipped priecinok (alebo vymazat) po tom ako sa urobi map match
-- teraz na stranku sa moze nahrat len ZIP s CSV, je tam moznost aj na geojson, treba otestovat
-- z nejakeho dovodu sa mi zacyklil asi python script
+- ~~premenovat unzipped priecinok (alebo vymazat) po tom ako sa urobi map match~~
+- ~~teraz na stranku sa moze nahrat len ZIP s CSV, je tam moznost aj na geojson, treba otestovat~~
+- ~~z nejakeho dovodu sa mi zacyklil asi python script~~
 - ked si to moc oddialim tak mi ukazuje tracks0
 - skusit mensie datasety
+- ~~unzipping empty folder does not create folder~~

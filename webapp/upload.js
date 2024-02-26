@@ -23,19 +23,32 @@ function handleUploadAndUnzip(file, uploadDir, unzipDir, user, zipName) {
       } else {
         // Unzip the uploaded file
         fs.createReadStream(filePath)
-          .pipe(unzipper.Extract({ path: unzipDir }))
+          .pipe(unzipper.Parse())
+          .on('entry', (entry) => {
+            const entryPath = path.join(unzipDir, entry.path);
+            if (entry.type === 'Directory') {
+              // Create directory if it doesn't exist
+              if (!fs.existsSync(entryPath)) {
+                fs.mkdirSync(entryPath, { recursive: true });
+              }
+            } else {
+              entry.pipe(fs.createWriteStream(entryPath));
+            }
+          })
           .on('close', () => {
 
-            fs.rmdirSync(uploadDir, { recursive: true });
-
             const valhalla_container_name = 'valhalla'
-            const pythonScript = 'map_match.py '+unzipDir+' '+valhalla_container_name+' '+'csv'+' '+user+' '+zipName;
+            const pythonScript = 'map_match.py '+unzipDir+' '+valhalla_container_name+' '+user+' '+zipName;
 
             exec(`python3 ${pythonScript}`, (error, stdout, stderr) => {
                 if (error) {
                   reject(error);
                 } else {
                   console.log(stdout);
+
+                  fs.rmdirSync(uploadDir, { recursive: true }); // remove uploaded zip file
+                  fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
+
                   resolve(stdout);
                 }
               });
