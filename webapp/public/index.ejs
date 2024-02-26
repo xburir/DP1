@@ -11,6 +11,7 @@
      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
      crossorigin=""></script>
      <script src="https://unpkg.com/leaflet-geometryutil"></script>
+     <script src="/map.js" defer></script>
 </head>
 <style>
     #map { height: 900px; }
@@ -25,6 +26,29 @@
         <input type=submit value=Logout>
     </form>
 
+    <h1>List of Files</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>File Name</th>
+                <th>Creation Date</th>
+                <th>Original route</th>
+                <th>Map-matched route</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <% files.forEach(function(file) { %>
+                <tr>
+                    <td><%= file.name %></td>
+                    <td><%= file.createdAt %></td>
+                    <td><button onclick="showFileDetails('<%= file.name %>','<%= username %>','original')">Show</button></td>
+                    <td><button onclick="showFileDetails('<%= file.name %>','<%= username %>','map-match')">Show</button></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
     <h2>Upload a ZIP file</h2>
     <form action="/upload" method="POST" enctype="multipart/form-data">
         <input type="file" name="file" accept=".zip">
@@ -35,12 +59,10 @@
         <p id="trackModalText"></p>
     </div>
 
-    <input type="text" id="input" value="small.csv">
-    <button id="downloadButton">Download CSV File</button>
-    <div id="output"></div>
+    
 
     <div id="map" style="z-index: 1;"></div>
-    <script type="module" src="map.js"></script>
+    <!-- <script type="module" src="map.js"></script> -->
 </body>
 
 <script src="/socket.io/socket.io.js"></script>

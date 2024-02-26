@@ -42,6 +42,8 @@ function handleUploadAndUnzip(file, uploadDir, unzipDir, user, zipName) {
 
             exec(`python3 ${pythonScript}`, (error, stdout, stderr) => {
                 if (error) {
+                  fs.rmdirSync(uploadDir, { recursive: true }); // remove uploaded zip file
+                  fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
                   reject(error);
                 } else {
                   console.log(stdout);
@@ -55,6 +57,8 @@ function handleUploadAndUnzip(file, uploadDir, unzipDir, user, zipName) {
 
           })
           .on('error', (err) => {
+            fs.rmdirSync(uploadDir, { recursive: true }); // remove uploaded zip file
+            fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
             reject(err);
           });
       }

@@ -81,3 +81,6 @@ after depenencies are instlled, you can just `node index.js`
 - ked si to moc oddialim tak mi ukazuje tracks0
 - ~~unzipping empty folder does not create folder~~
 - ~~asynchronne urobit upload~~
+- troska upratat ten index.js ten auth
+- cas pri list of files je zly
+- nastavit pri uploade nech sa to automaticky posle bez stlacenia tlacidla a potom ked vyjde alert napisat ze musis dat refresh aby sa pridala ta vec do zoznamu

@@ -10,6 +10,7 @@ const multer = require('multer');
 const fileHandler = require('./upload');
 const socketIo = require('socket.io');
 const http = require('http');
+const fs = require('fs');
 
 app.use(express.static(path.resolve("")))
 
@@ -120,13 +121,49 @@ app.get('/register', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'register.html'));
 });
 
+
+// Function to retrieve file list
+function getFileList(dir,callback) {
+  fs.readdir(path.join("routes",dir), (err, files) => {
+    if (err) {
+        return callback(err, null);
+    }
+    // Map each file to an object with name and creation date
+    Promise.all(files.map(file => {
+        return new Promise((resolve, reject) => {
+            fs.stat(path.join("routes",dir, file), (err, stats) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve({ name: file, createdAt: stats.birthtime });
+                }
+            });
+        });
+    })).then(fileObjects => {
+        callback(null, fileObjects);
+    }).catch(err => {
+        callback(err, null);
+    });
+  });
+}
+
 app.get('/', (req, res) => {
   if (req.session.username == null){
     res.redirect("/login")
     return
   }
-  //  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  res.render('index.ejs',{username: req.session.username});
+
+  getFileList(req.session.username,(err, files) => {
+    if (err) {
+        console.log(err)
+        res.status(500).send('Error getting files');
+    } else {
+        // Render the index.ejs template and pass files as data
+        res.render('index.ejs',{username: req.session.username, files: files});
+    }
+});
+
+  
 });
 
 

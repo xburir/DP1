@@ -22,9 +22,7 @@ function isCursorOnPolyline(cursorPos, polyline) {
 }
 
 
-
-document.getElementById('downloadButton').addEventListener('click', function() {
-
+function showFileDetails(fileName,username,route) {
     map.eachLayer(function (layer) {
         // Check if the layer is a polyline
         if (layer instanceof L.Polyline) {
@@ -33,11 +31,18 @@ document.getElementById('downloadButton').addEventListener('click', function() {
         }
     });
 
-
     let div = document.getElementById("trackModal")
     var hoveredLayers = []
 
-    fetch(inputBox.value)
+    let path = '/routes/'+username+'/'+fileName+'/'
+    if (route === 'original'){
+        path = path+'database_original.csv'
+    }
+    if (route === 'map-match'){
+        path = path+'database.csv'
+    }
+
+    fetch(path)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -89,7 +94,9 @@ document.getElementById('downloadButton').addEventListener('click', function() {
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
-});
+}
+
+
 
 function parseCSV(csvData) {
     const tracks = {};
@@ -105,5 +112,4 @@ function parseCSV(csvData) {
     }
     return tracks;
 }
-
 
