@@ -13,54 +13,68 @@
      <script src="https://unpkg.com/leaflet-geometryutil"></script>
      <script src="/map.js" defer></script>
 </head>
-<style>
-    #map { height: 900px; }
-</style>
 <body>
-    <% if (username) { %>
-        <p>Welcome, <%= username %>!</p>
-      <% } else { %>
-        <p>Welcome!</p>
-      <% } %>
-    <form action="/logout" method="POST">
-        <input type=submit value=Logout>
-    </form>
 
-    <h1>List of Files</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>File Name</th>
-                <th>Creation Date</th>
-                <th>Original route</th>
-                <th>Map-matched route</th>
-            </tr>
-        </thead>
-        <tbody>
+    <div class="side-tools">
+        <img src="./icons/account.svg" alt="Account" class="user-image open-user-info">
+        <img src="./icons/files.svg" alt="Files" class="custom-button open-table-of-files">
+        <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
+            <label for="fileInput" class="custom-button">
+                <img src="./icons/upload.svg" alt="Upload Icon" />
+            </label>
+            <input type="file" name="file" accept=".zip" id="fileInput" class="inputfile">
+        </form>
+    </div>
+    
 
-            <% files.forEach(function(file) { %>
+
+    <div class="user-info">
+        <img src="./icons/close.svg" alt="close" class="close-user-info">
+        <img src="./icons/account.svg" alt="Account" class="user-image">
+        <% if (username) { %>
+            <p>Welcome, <%= username %>!</p>
+          <% } else { %>
+            <p>Welcome!</p>
+          <% } %>
+        <form action="/logout" method="POST">
+            <input type=submit value=Logout>
+        </form>
+    </div>
+    
+
+    <div class="table-of-files">
+       
+        <img src="./icons/close.svg" alt="close" class="close-table-of-files">
+        <h1>List of Files</h1>
+        <table>
+            <thead>
                 <tr>
-                    <td><%= file.name %></td>
-                    <td><%= file.createdAt %></td>
-                    <td><button onclick="showFileDetails('<%= file.name %>','<%= username %>','original')">Show</button></td>
-                    <td><button onclick="showFileDetails('<%= file.name %>','<%= username %>','map-match')">Show</button></td>
+                    <th>File Name</th>
+                    <th>Creation Date</th>
+                    <th>Original route</th>
+                    <th>Map-matched route</th>
                 </tr>
-            <% }); %>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
 
-    <h2>Upload a ZIP file</h2>
-    <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
-        <input type="file" name="file" accept=".zip" id="fileInput">
-    </form>
+                <% files.forEach(function(file) { %>
+                    <tr>
+                        <td><%= file.name %></td>
+                        <td><%= file.createdAt %></td>
+                        <td><button onclick="showFileDetails('<%= file.name %>','<%= username %>','original')">Show</button></td>
+                        <td><button onclick="showFileDetails('<%= file.name %>','<%= username %>','map-match')">Show</button></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+    
 
     <div id="trackModal" >
         <p id="trackModalText"></p>
     </div>
 
-    
-
-    <div id="map" style="z-index: 1;"></div>
+    <div id="map"></div>
     <!-- <script type="module" src="map.js"></script> -->
 </body>
 
@@ -87,5 +101,21 @@
       form.submit();
     });
   });
+</script>
+<script>
+    document.getElementsByClassName("close-user-info")[0].addEventListener("click",() =>{
+        document.getElementsByClassName("user-info")[0].style.display = "none"
+    })
+    document.getElementsByClassName("user-image")[0].addEventListener("click",() =>{
+        document.getElementsByClassName("user-info")[0].style.display = "flex"
+    })
+
+
+    document.getElementsByClassName("close-table-of-files")[0].addEventListener("click",() =>{
+        document.getElementsByClassName("table-of-files")[0].style.display = "none"
+    })
+    document.getElementsByClassName("open-table-of-files")[0].addEventListener("click",() =>{
+        document.getElementsByClassName("table-of-files")[0].style.display = "flex"
+    })
 </script>
 </html>
