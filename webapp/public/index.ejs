@@ -98,7 +98,13 @@
     const fileInput = document.getElementById("fileInput");
   
     fileInput.addEventListener("change", function() {
-      form.submit();
+      // form.submit();
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+      fetch("/upload", {
+        method: "POST",
+        body: formData
+      })
     });
   });
 </script>

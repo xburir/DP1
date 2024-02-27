@@ -83,4 +83,5 @@ after depenencies are instlled, you can just `node index.js`
 - ~~asynchronne urobit upload~~
 - troska upratat ten index.js ten auth
 - ~~cas pri list of files je zly~~
+- ~~skusit urobit aby sa pri uploade nerefreshla stranka~~
 - ~~nastavit pri uploade nech sa to automaticky posle bez stlacenia tlacidla a potom ked vyjde alert napisat ze musis dat refresh aby sa pridala ta vec do zoznamu~~
