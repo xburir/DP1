@@ -122,6 +122,11 @@ app.get('/register', (req, res) => {
 });
 
 
+app.get('/about', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'about.html'));
+});
+
+
 // Function to retrieve file list
 function getFileList(dir,callback) {
   // If users folder is not created, create it
@@ -165,9 +170,8 @@ app.get('/', (req, res) => {
         // Render the index.ejs template and pass files as data
         res.render('index.ejs',{username: req.session.username, files: files});
     }
-});
+  });
 
-  
 });
 
 

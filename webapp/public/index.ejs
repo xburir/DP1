@@ -17,6 +17,7 @@
 
     <div class="side-tools">
         <img src="./icons/account.svg" alt="Account" class="user-image open-user-info">
+        <img src="./icons/info.svg" alt="About" id="aboutButton" class="custom-button">
         <img src="./icons/files.svg" alt="Files" class="custom-button open-table-of-files">
         <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
             <label for="fileInput" class="custom-button">
@@ -122,6 +123,10 @@
     })
     document.getElementsByClassName("open-table-of-files")[0].addEventListener("click",() =>{
         document.getElementsByClassName("table-of-files")[0].style.display = "flex"
+    })
+
+    document.getElementById("aboutButton").addEventListener("click",()=>{
+        window.location.href = "./about";
     })
 </script>
 </html>

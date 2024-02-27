@@ -1,0 +1,66 @@
+
+<html lang="en">
+
+    <head>
+    <meta charset="UTF-8" />
+    <title>About</title>
+    </head>
+
+
+    <body>
+    <h1>Logout</h1>
+    <img src="./images/tutorial/logout.png" alt="">
+    <br><br><br>
+    <h1>Upload files</h1>
+    <img src="./images/tutorial/upload.png" alt="">
+    <p>Upload only a zip file, which contains 2 directories "Walk" and "Drive"</p>
+    <p>ZIP Structure:</p>
+    <pre>
+        |-- Drive
+        |   |-- 33718.csv
+        |   |-- 31783.geojson
+        |-- Walk
+        |   |-- 93293.csv
+        |   |-- 44352.csv
+        |   |-- 764555.geojson
+        |   |-- 354852.csv
+    </pre>
+    <p>CSV structure</p>
+    <pre>
+        lon,lat
+        17.07299,48.151611
+        17.073095,48.151878
+        17.073084,48.15184
+        17.073084,48.151733
+        17.073048,48.151672
+        17.073011,48.151714
+    </pre>
+    <p>GEOJSON structure</p>
+    <pre>
+        {
+            "type": "FeatureCollection",
+            "features": [
+              {
+                "geometry": {
+                  "coordinates": [
+                    [
+                      17.073124,
+                      48.152729
+                    ],
+                    [
+                      17.073124,
+                      48.152729
+                    ]
+                  ],
+                  "type": "LineString"
+                },
+                "properties": {},
+                "type": "Feature"
+              }
+            ]
+          }
+    </pre>
+    <h1>Display routes</h1>
+    <img src="./images/tutorial/show.png" alt="">
+    </body>
+</html>
