@@ -60,7 +60,7 @@ PORT=8090 npm run start
 
 ## Valhalla container
 
-You can run the container either with a linked directory, in which you have downloaded your maps or you can run the container with a one line command which downloads the latest map specified by url (slower).
+You can run the container either with a linked directory, in which you have downloaded your maps or you can run the container with a one line command which downloads the latest map specified by url (slower). The first startup of the container can take a while (several minutes), see the logs until the output says `[INFO] Running valhalla_build_tiles with 8 thread(s).`.
 
 ### Linked directory
 
