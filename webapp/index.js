@@ -16,7 +16,7 @@ app.use(express.static(path.resolve("")))
 
 const server = http.createServer(app);
 const io = socketIo(server);
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8090;
 
 // Set the views directory to 'public'
 app.set('views', path.join(__dirname, 'public'));

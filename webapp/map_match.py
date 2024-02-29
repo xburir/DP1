@@ -82,13 +82,16 @@ def map_match(points,container_name,costing):
     headers = {'Content-type': 'application/json'}
     data = str(meili_request_body)
 
-    r = requests.post(url, data=data, headers=headers)
-
-    if r.status_code == 200:
-        response_text = json.loads(r.text)
-        return response_text['matchings'][0]['geometry']
-    else:
-        print(f"Request did not succeed {r.content}")
+    try:
+        r = requests.post(url, data=data, headers=headers)
+        if r.status_code == 200:
+            response_text = json.loads(r.text)
+            return response_text['matchings'][0]['geometry']
+        else:
+            print(f"Request did not succeed {r.content}")
+            return None
+    except:
+        print(f"Request did not succeed.")
         return None
 
 ## Get points from csv file, which must be in "lon,lat" structure
@@ -150,6 +153,8 @@ def folder_process(dir, container_name, user, zip_name):
                 create_file_for_db("database_original.csv",points,name,user,zip_name)
             else:
                 print(f"{file} could not been map matched.")
+                return
+    print("map matched succesfully")
 
 if __name__ == "__main__":
     if len(sys.argv)<4:

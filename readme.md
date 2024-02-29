@@ -1,19 +1,28 @@
-## Docker
+# Web application for showing GPS routes and map-matching
 
-Run the following commands in windows powershell or wsl.
-
-### Create image
-
-```
-docker build -t IMAGE_NAME .
-ex: docker build -t dp_webapp .
-```
+## Bridge
 
 ### Create bridge
 
 ```
 docker network create BRIDGE_NAME --driver bridge
 ex: docker network create web_server --driver bridge
+```
+
+### To check bridge
+
+```
+docker inspect BRIDGE_NAME
+ex: docker inspect web_server
+```
+
+## Web application container
+
+### Create web application image
+
+```
+docker build -t IMAGE_NAME .
+ex: docker build -t dp_webapp .
 ```
 
 ### Run container
@@ -32,7 +41,7 @@ docker container exec -it CONTAINER_NAME /bin/bash
 ex: docker container exec -it dp_webapp /bin/bash
 ```
 
-## After container is running
+### After container is running
 
 Some commands to execute in bash
 
@@ -49,7 +58,81 @@ Note: the port must be the same as entered when running the container.
 PORT=8090 npm run start
 ```
 
-## 
+## Valhalla container
+
+You can run the container either with a linked directory, in which you have downloaded your maps or you can run the container with a one line command which downloads the latest map specified by url (slower).
+
+### Linked directory
+
+```
+docker run -dit --name CONTAINER_NAME --network BRIDGE_NAME -p PORT:PORT -v PATH\custom_files:/custom_files ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+ex: docker run -dit --name valhalla --network web_server -p 8002:8002 -v C:\Users\richard.buri\search_web\doker\custom_files:/custom_files ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+```
+
+### One line
+
+```
+docker run -dit --name CONTAINER_NAME --network BRIDGE_NAME -p PORT:PORT -e tile_urls=MAP_URL ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+ex: docker run -dit --name valhalla --network web_server -p 8002:8002 -e tile_urls=https://download.geofabrik.de/europe/slovakia-latest.osm.pbf ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+```
+
+Note: If you choose CONTAINER_NAME or PORT different than the one in example, you will have to change the `port` variable in `map_match.py` in `map_match` function, and `valhalla_container_name` variable in `upload.js` in `handleUploadAndUnzip` function.
+
+## Uploaded files structure
+
+### ZIP file
+
+The zip file should contain 2 directories 'Drive' and 'Walk'. The structure should look like this:
+
+        |-- Drive
+        |   |-- 33718.csv
+        |   |-- 31783.geojson
+        |-- Walk
+        |   |-- 93293.csv
+        |   |-- 44352.csv
+        |   |-- 764555.geojson
+        |   |-- 354852.csv
+
+### GEOjson file
+
+The structure should look like this:
+
+```
+{
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "geometry": {
+          "coordinates": [
+            [
+              17.073124,
+              48.152729
+            ],
+            [
+              17.073124,
+              48.152729
+            ]
+          ],
+          "type": "LineString"
+        },
+        "properties": {},
+        "type": "Feature"
+      }
+    ]
+  }
+```
+
+### CSV file
+
+The csv file should consist of two columns longitude and latitude.
+
+    lon,lat
+    17.07299,48.151611
+    17.073095,48.151878
+    17.073084,48.15184
+    17.073084,48.151733
+    17.073048,48.151672
+    17.073011,48.151714
 
 
 
@@ -85,3 +168,8 @@ after depenencies are instlled, you can just `node index.js`
 - ~~cas pri list of files je zly~~
 - ~~skusit urobit aby sa pri uploade nerefreshla stranka~~
 - ~~nastavit pri uploade nech sa to automaticky posle bez stlacenia tlacidla a potom ked vyjde alert napisat ze musis dat refresh aby sa pridala ta vec do zoznamu~~
+- neuspesne rozzipovanie/mapmatchnutie ->nevymazat zip ale zobrazit upozornenie na neskorsie stiahnutie a upravenie zip + tlacidlo znova spustit map match  + downlaod original zip + delete
+- dizajn
+- show -> prepinac
+- pridat .csv aj .CSV
+- ~~ked pridam zip s jednou fotkou vnutri tak sa tvari ze presiel map match v poriadku~~

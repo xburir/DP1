@@ -19,46 +19,56 @@ function handleUploadAndUnzip(file, uploadDir, unzipDir, user, zipName) {
     const filePath = path.join(uploadDir, file.originalname);
     fs.rename("/DP1/webapp/"+file.path,filePath, (err) => {
       if (err) {
+        console.log("Error in renaming zip file: "+err)
         reject(err);
       } else {
         // Unzip the uploaded file
         fs.createReadStream(filePath)
           .pipe(unzipper.Parse())
           .on('entry', (entry) => {
-            const entryPath = path.join(unzipDir, entry.path);
-            if (entry.type === 'Directory') {
-              // Create directory if it doesn't exist
-              if (!fs.existsSync(entryPath)) {
-                fs.mkdirSync(entryPath, { recursive: true });
+            try{
+              const entryPath = path.join(unzipDir, entry.path);
+              console.log(entry.type+"  "+entry.path);
+              if (entry.type === 'Directory') {
+                // Create directory if it doesn't exist
+                if (!fs.existsSync(entryPath)) {
+                  fs.mkdirSync(entryPath, { recursive: true });
+                }
+              } else {
+                entry.pipe(fs.createWriteStream(entryPath));
               }
-            } else {
-              entry.pipe(fs.createWriteStream(entryPath));
             }
+            catch(err){
+              console.log("error: "+err)
+            }
+            
           })
           .on('close', () => {
-
+            console.log("tuuuu");
             const valhalla_container_name = 'valhalla'
             const pythonScript = 'map_match.py '+unzipDir+' '+valhalla_container_name+' '+user+' '+zipName;
 
             exec(`python3 ${pythonScript}`, (error, stdout, stderr) => {
                 if (error) {
-                  fs.rmdirSync(uploadDir, { recursive: true }); // remove uploaded zip file
-                  fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
+                  console.log("Error in python script: "+error)
+                  // fs.rmdirSync(uploadDir, { recursive: true }); // remove uploaded zip file
+                  // fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
                   reject(error);
                 } else {
                   console.log(stdout);
 
-                  fs.rmdirSync(uploadDir, { recursive: true }); // remove uploaded zip file
-                  fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
+                  // fs.rmdirSync(uploadDir, { recursive: true }); // remove uploaded zip file
+                  // fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
 
-                  resolve(`File ${zipName} uploaded and map-matched succesfully, please refresh the site to see the new file.`);
+                  resolve(`File ${zipName} uploaded and ${stdout}, please refresh the site to see the new file or see the downloadable zip file that didnt succeed..`);
                 }
               });
 
           })
           .on('error', (err) => {
-            fs.rmdirSync(uploadDir, { recursive: true }); // remove uploaded zip file
-            fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
+            console.log("Error in unzipping zip: "+err)
+            // fs.rmdirSync(uploadDir, { recursive: true }); // remove uploaded zip file
+            // fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
             reject(err);
           });
       }
