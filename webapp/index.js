@@ -11,6 +11,7 @@ const fileHandler = require('./upload');
 const socketIo = require('socket.io');
 const http = require('http');
 const fs = require('fs');
+const { exec } = require('child_process');
 
 app.use(express.static(path.resolve("")))
 
@@ -189,19 +190,121 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     }
     res.redirect('/');
     
-    const zipName = path.parse(req.file.originalname).name
-    const uploadDir = __dirname + '/uploads/'+req.session.username;
-    const unzipDir = __dirname + '/uploads/unzipped/'+req.session.username+"/"+zipName
-    const message = await fileHandler.handleUploadAndUnzip(req.file, uploadDir, unzipDir, req.session.username, zipName);
+    const message = await fileHandler.handleUploadAndUnzip(req.file, __dirname, req.session.username);
     console.log(message)
 
     io.to(req.session.username).emit('processing_complete', message);
 
   } catch (error) {
     console.error('Error handling upload and unzip:', error);
-    res.status(500).send('Error handling upload and unzip.');
+    io.to(req.session.username).emit('processing_complete', "ERROR; Error in upload or in zip: "+error);
   }
 });
+
+app.get('/list-uploads',(req,res)=> {
+  if (req.session.username == null){
+    res.redirect("/login")
+    return
+  }
+
+  fs.readdir(path.join(__dirname,"/uploads/",req.session.username), { withFileTypes: true }, (err, files) => {
+    if (err) {
+        console.error('Error reading directory:', err);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+    }
+    const fileDetails = files.filter(file=>file.isFile()).map(file => ({
+      name: file.name,
+      path: path.join(__dirname,"/uploads/",req.session.username, file.name)
+    }));
+    res.json({ files: fileDetails });
+  });
+});
+
+app.get('/list-unzipped',(req,res)=> {
+  if (req.session.username == null){
+    res.redirect("/login")
+    return
+  }
+
+  fs.readdir(path.join(__dirname,"/uploads/",req.session.username,"unzipped"), { withFileTypes: true }, (err, files) => {
+    if (err) {
+        console.error('Error reading directory:', err);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+    }
+    const fileDetails = files.map(file => ({
+      name: file.name,
+      path: path.join(__dirname,"/uploads/",req.session.username, "unzipped", file.name)
+    }));
+    res.json({ files: fileDetails });
+  });
+});
+
+app.get('/mapmatch/:user/:directory',(req,res)=> {
+  
+  const directory = req.params.directory;
+  const name = req.params.user
+  const valhalla_container_name = 'valhalla'
+  const zipName = path.parse(directory).name
+  const dirPath = __dirname+"/uploads/"+name+"/unzipped/"+directory
+
+  const pythonScript = 'map_match.py '+dirPath+' '+valhalla_container_name+' '+name+' '+zipName;
+  exec(`python3 ${pythonScript}`, (error, stdout, stderr) => {
+    if (error) {
+      console.log("Error in python script: "+error)
+      io.to(req.session.username).emit('processing_complete', error);
+    } else {
+      io.to(req.session.username).emit('processing_complete', stdout+"Please delete the rerun directory manually.");
+    }
+  });
+});
+
+app.get('/delete/*',(req,res)=>{
+  if (req.session.username == null){
+    res.redirect("/login")
+    return
+  }
+  
+  const filePath = req.params[0];
+  reqUser = filePath.split("/")[1]
+
+  if(reqUser != req.session.username){
+    io.to(req.session.username).emit('message', "You are not allowed to delete others files");
+    return
+  }
+
+  fs.stat(filePath, (err, stats) => {
+    if (err) {
+      io.to(req.session.username).emit('message','Error accessing file stats:'+ err);
+      console.error('Error accessing file stats:', err);
+      return;
+    }
+    
+    if (stats.isFile()) {
+        // If it's a file, remove it
+        fs.unlink(filePath, (unlinkErr) => {
+            if (unlinkErr) {
+              io.to(req.session.username).emit('message', "Delete error.");
+            } else {
+              io.to(req.session.username).emit('message', "Delete successful.");
+            }
+        });
+    } else if (stats.isDirectory()) {
+        // If it's a directory, remove it recursively
+        fs.rmdir(filePath, { recursive: true }, (rmdirErr) => {
+            if (rmdirErr) {
+              io.to(req.session.username).emit('message', "Delete error.");
+            } else {
+                io.to(req.session.username).emit('message', "Delete successful.");
+            }
+        });
+    } else {
+        console.error('Invalid path:', filePath);
+    }
+});
+
+})
 
 // Object to map each user to their corresponding socket ID
 const userSockets = {};

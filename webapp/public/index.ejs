@@ -18,13 +18,14 @@
     <div class="side-tools">
         <img src="./icons/account.svg" alt="Account" class="user-image open-user-info">
         <img src="./icons/info.svg" alt="About" id="aboutButton" class="custom-button">
-        <img src="./icons/files.svg" alt="Files" class="custom-button open-table-of-files">
-        <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
-            <label for="fileInput" class="custom-button">
+        <img src="./icons/files.svg" alt="Files" class="custom-button" id="open-table-of-files">
+        <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm"  class="custom-button">
+            <label for="fileInput">
                 <img src="./icons/upload.svg" alt="Upload Icon" />
             </label>
             <input type="file" name="file" accept=".zip" id="fileInput" class="inputfile">
         </form>
+        <img src="./icons/error.svg" alt="Errors" class="custom-button" id="open-errors">
     </div>
     
 
@@ -43,9 +44,8 @@
     </div>
     
 
-    <div class="table-of-files">
-       
-        <img src="./icons/close.svg" alt="close" class="close-table-of-files">
+    <div class="custom-table" id="table-of-files">
+        <img src="./icons/close.svg" alt="close" class="close-table-icon" id="close-files">
         <h1>List of Files</h1>
         <table>
             <thead>
@@ -69,6 +69,29 @@
             </tbody>
         </table>
     </div>
+
+    <div class="custom-table" id="table-of-errors">
+        <img src="./icons/close.svg" alt="close" class="close-table-icon" id="close-errors">
+        <h1>List of Errors</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Download zip</th>
+                    <th>Rerun map-matching</th>
+                    <th>Delete zip and unzipped files</th>
+                </tr>
+            </thead>
+            <tbody id="table-of-errors-tbody">
+                    <tr>
+                        <td>nieco</td>
+                        <td>dsad</td>
+                        <td>dsad</td>
+                        <td>dsad</td>
+                    </tr>
+            </tbody>
+        </table>
+    </div>
     
 
     <div id="trackModal" >
@@ -88,10 +111,27 @@
     // Listen for 'processing_complete' event
     socket.on('processing_complete', (message) => {
     // Handle the processing completion message
-    console.log('Processing complete:', message);
-    alert(message)
+    let arr = message.split(";")
+    if (arr.includes("ERROR")){
+        console.log('Processing complete: '+ arr[1]+" check the output files to rerun the process.");
+        alert('Processing complete: '+ arr[1]+" check the output files to rerun the process.")
+    }
+    else{
+        console.log('Processing complete: '+"please refresh the site to see the routes");
+        alert('Processing complete: '+"please refresh the site to see the routes"+arr[1])
+    }
+
+    
     // You can update the UI or perform any other action here
   });
+
+  socket.on('message', (message) => {
+    alert(message)
+    if(message === "Delete successful."){
+        openErrors()
+    }
+  });
+
 
 
   document.addEventListener("DOMContentLoaded", function() {
@@ -118,15 +158,159 @@
     })
 
 
-    document.getElementsByClassName("close-table-of-files")[0].addEventListener("click",() =>{
-        document.getElementsByClassName("table-of-files")[0].style.display = "none"
+    document.getElementById("close-files").addEventListener("click",() =>{
+        document.getElementById("table-of-files").style.display = "none"
     })
-    document.getElementsByClassName("open-table-of-files")[0].addEventListener("click",() =>{
-        document.getElementsByClassName("table-of-files")[0].style.display = "flex"
+    document.getElementById("open-table-of-files").addEventListener("click",() =>{
+        document.getElementById("table-of-files").style.display = "flex"
     })
 
     document.getElementById("aboutButton").addEventListener("click",()=>{
         window.location.href = "./about";
     })
+
+    function openErrors(){
+        document.getElementById("table-of-errors").style.display = "flex"
+        let table = document.getElementById("table-of-errors-tbody")
+        table.innerHTML = ""
+
+        let added = []
+
+        //fetch priecinok 
+        let username = '<%= username %>'
+        
+        fetch("/list-unzipped")  // get directory
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        }).then(response =>{
+            ress = JSON.parse(response)
+            ress.files.forEach((file) =>{
+                let row = document.createElement("tr")
+
+                let name = document.createElement("td")
+                name.innerHTML = file.name
+                added.push(file.name)
+
+                let downloadZip = document.createElement("td")
+                fetch("/uploads/"+username+"/"+file.name+".zip").then(response =>{
+                    if (!response.ok) {
+                        downloadZip.innerHTML = "ZIP not found"
+                    }else{
+                        let downloadA = document.createElement("a")
+                        let downloadImage = document.createElement("img")
+                        downloadA.appendChild(downloadImage)
+                        downloadImage.src = "/public/icons/download.svg"
+                        downloadZip.appendChild(downloadA)
+                        downloadZip.style.cursor = "pointer"
+                        downloadA.href = "/uploads/"+username+"/"+file.name+".zip"
+                    }
+                })
+
+                let rerun = document.createElement("td")
+                let rerunImage = document.createElement("img")
+                rerunImage.src = "/public/icons/refresh.svg"
+                rerunImage.style.cursor = "pointer"
+                rerun.appendChild(rerunImage)
+                rerunImage.addEventListener("click",()=>{
+                    fetch("/mapmatch/"+username+"/"+file.name)
+                })
+
+                let deletetd = document.createElement("td")
+                let deleteFolderImage = document.createElement("img")
+                deleteFolderImage.src = "/public/icons/folder.svg"
+                deleteFolderImage.style.cursor = "pointer"
+                deleteFolderImage.addEventListener("click",()=>{
+                    fetch("/delete"+"/uploads/"+username+"/unzipped/"+file.name)
+                })
+                deletetd.appendChild(deleteFolderImage)
+                fetch("list-uploads").then(response=>{   // get zips
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text()
+                }).then(response=>{
+                    subress = JSON.parse(response)
+                    subress.files.forEach((subfile)=>{
+                        if (subfile.name.replace(/\.[^/.]+$/, "") === file.name){
+                            let deleteZipImage = document.createElement("img")
+                            deleteZipImage.src = "/public/icons/zip.svg"
+                            deleteZipImage.style.cursor = "pointer"
+                            deleteZipImage.addEventListener("click",()=>{
+                                fetch("/delete"+"/uploads/"+username+"/"+subfile.name)
+                            })
+                            deletetd.appendChild(deleteZipImage)
+                        }
+                    })
+                })
+
+                row.appendChild(name)
+                row.appendChild(downloadZip)
+                row.appendChild(rerun)
+                row.appendChild(deletetd)
+                table.appendChild(row)
+            })
+
+            fetch("list-uploads")
+                .then(response=>{
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text()
+                }).then(response =>{
+                    ress = JSON.parse(response)
+                    ress.files.forEach((file) =>{
+                        let filewithoutextension = file.name.replace(/\.[^/.]+$/, "")
+                        if (!added.includes(filewithoutextension)){
+
+                            let row = document.createElement("tr")
+            
+                            let name = document.createElement("td")
+                            name.innerHTML = file.name
+            
+                            let downloadZip = document.createElement("td")
+                            let downloadA = document.createElement("a")
+                            let downloadImage = document.createElement("img")
+                            downloadA.appendChild(downloadImage)
+                            downloadImage.src = "/public/icons/download.svg"
+                            downloadZip.appendChild(downloadA)
+                            downloadZip.style.cursor = "pointer"
+                            downloadA.href = "/uploads/"+username+"/"+file.name+".zip"
+            
+                            let rerun = document.createElement("td")
+                            
+                            let deletetd = document.createElement("td")
+                            let deleteZipImage = document.createElement("img")
+                            deleteZipImage.src = "/public/icons/zip.svg"
+                            deleteZipImage.style.cursor = "pointer"
+                            deleteZipImage.addEventListener("click",()=>{
+                                fetch("/delete"+"/uploads/"+username+"/"+file.name)
+                            })
+                            deletetd.appendChild(deleteZipImage)
+            
+                            row.appendChild(name)
+                            row.appendChild(downloadZip)
+                            row.appendChild(rerun)
+                            row.appendChild(deletetd)
+                            table.appendChild(row)
+                        }
+                    }
+
+                    
+                    );
+                });
+        })
+    }
+
+    document.getElementById("open-errors").addEventListener("click",()=>{
+        openErrors()
+    })
+
+    document.getElementById("close-errors").addEventListener("click",() =>{
+        document.getElementById("table-of-errors").style.display = "none"
+    })
+
 </script>
 </html>

@@ -88,10 +88,10 @@ def map_match(points,container_name,costing):
             response_text = json.loads(r.text)
             return response_text['matchings'][0]['geometry']
         else:
-            print(f"Request did not succeed {r.content}")
+            print(f"ERROR;{r.content}")
             return None
     except:
-        print(f"Request did not succeed.")
+        print(f"ERROR;Request did not succeed.")
         return None
 
 ## Get points from csv file, which must be in "lon,lat" structure
@@ -119,15 +119,12 @@ def load_points_from_geojson(file):
 
 def folder_process(dir, container_name, user, zip_name):
     ## Check if path contains files as it should
-    if len(os.listdir(dir)) != 2:
-        print("The directory should have 2 subdirectiries \"Walk\" and \"Drive\"")
-        return
     for subdir in os.listdir(dir):
         if not path.isdir(path.join(dir,subdir)):
-            print(f"{dir}/{subdir} is not a directory.")
+            print(f"ERROR;{dir}/{subdir} is not a directory, check the zip structure.")
             return
         if subdir not in ['Walk','Drive']:
-            print(f"{subdir} does not match the specified subdirectory name \"Walk\" or \"Drive\"")
+            print(f"ERROR;{subdir} does not match the specified directory name \"Walk\" or \"Drive\", check the zip structure.")
             return
         
 
@@ -137,9 +134,12 @@ def folder_process(dir, container_name, user, zip_name):
             format = os.path.splitext(file)[1]
             if format == ".csv":
                 points = load_points(path.join(dir,subdir,file))
-            if format == ".geojson":
+            elif format == ".geojson":
                 points = load_points_from_geojson(path.join(dir,subdir,file))
-
+            else:
+                print(f"ERROR;{file}'s points couldn't been extracted.")
+                return
+            
             ## MAPMATCH
             geometry = None
             if subdir == "Walk":
@@ -152,13 +152,13 @@ def folder_process(dir, container_name, user, zip_name):
                 create_file_for_db("database.csv",pts,name,user,zip_name)
                 create_file_for_db("database_original.csv",points,name,user,zip_name)
             else:
-                print(f"{file} could not been map matched.")
+                print(f"ERROR;{file} could not been map matched.")
                 return
-    print("map matched succesfully")
+    print("SUCCESS;")
 
 if __name__ == "__main__":
     if len(sys.argv)<4:
-        print("Specify path, valhalla container name, file format")
+        print("ERROR;Specify path, valhalla container name, file format.")
     else:
         dir = sys.argv[1]
         container_name = sys.argv[2]

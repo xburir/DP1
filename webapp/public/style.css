@@ -100,7 +100,7 @@
     cursor: pointer;
 }
 
-.table-of-files{
+.custom-table{
     top: 1%;
     background-color: white;
     position: absolute;
@@ -118,7 +118,7 @@
 
 }
 
-.table-of-files > table{
+.custom-table > table{
     width: 90%;
 }
 
@@ -126,7 +126,7 @@ table td{
     text-align: center;
 }
 
-.table-of-files > .close-table-of-files{
+.custom-table > .close-table-icon{
     position: relative;
     right: -47%;
     top: 15px;

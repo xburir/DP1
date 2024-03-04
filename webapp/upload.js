@@ -2,10 +2,17 @@ const fs = require('fs');
 const unzipper = require('unzipper');
 const path = require('path');
 const { exec } = require('child_process');
+const { log } = require('console');
+const { unzip } = require('zlib');
 
-function handleUploadAndUnzip(file, uploadDir, unzipDir, user, zipName) {
+function handleUploadAndUnzip(file, baseFolder, username) {
   return new Promise((resolve, reject) => {
     // Create a directory for unzipping files if it doesn't exist
+    
+    const zipName = path.parse(file.originalname).name
+    const uploadDir = path.join(baseFolder,"uploads",username)
+    const unzipDir = path.join(baseFolder,"uploads",username,"unzipped",zipName) 
+
     if (!fs.existsSync(unzipDir)) {
       fs.mkdirSync(unzipDir, { recursive: true });
     }
@@ -17,58 +24,34 @@ function handleUploadAndUnzip(file, uploadDir, unzipDir, user, zipName) {
 
     // Move the uploaded file to the upload directory
     const filePath = path.join(uploadDir, file.originalname);
-    fs.rename("/DP1/webapp/"+file.path,filePath, (err) => {
+    fs.rename(path.join(baseFolder,file.path),filePath, (err) => {
       if (err) {
-        console.log("Error in renaming zip file: "+err)
         reject(err);
       } else {
         // Unzip the uploaded file
         fs.createReadStream(filePath)
-          .pipe(unzipper.Parse())
-          .on('entry', (entry) => {
-            try{
-              const entryPath = path.join(unzipDir, entry.path);
-              console.log(entry.type+"  "+entry.path);
-              if (entry.type === 'Directory') {
-                // Create directory if it doesn't exist
-                if (!fs.existsSync(entryPath)) {
-                  fs.mkdirSync(entryPath, { recursive: true });
-                }
-              } else {
-                entry.pipe(fs.createWriteStream(entryPath));
-              }
-            }
-            catch(err){
-              console.log("error: "+err)
-            }
-            
-          })
+        .pipe(unzipper.Extract({path: unzipDir}))
           .on('close', () => {
-            console.log("tuuuu");
             const valhalla_container_name = 'valhalla'
-            const pythonScript = 'map_match.py '+unzipDir+' '+valhalla_container_name+' '+user+' '+zipName;
+            const pythonScript = 'map_match.py '+unzipDir+' '+valhalla_container_name+' '+username+' '+zipName;
 
             exec(`python3 ${pythonScript}`, (error, stdout, stderr) => {
                 if (error) {
                   console.log("Error in python script: "+error)
-                  // fs.rmdirSync(uploadDir, { recursive: true }); // remove uploaded zip file
-                  // fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
                   reject(error);
                 } else {
-                  console.log(stdout);
-
-                  // fs.rmdirSync(uploadDir, { recursive: true }); // remove uploaded zip file
-                  // fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
-
-                  resolve(`File ${zipName} uploaded and ${stdout}, please refresh the site to see the new file or see the downloadable zip file that didnt succeed..`);
+                  if (stdout.split(";").includes("ERROR")){
+                  }else{
+                    fs.rmdirSync(path.join(uploadDir,file.originalname), { recursive: true }); // remove uploaded zip file
+                    fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
+                  }
+                  resolve(stdout);
                 }
               });
 
           })
           .on('error', (err) => {
             console.log("Error in unzipping zip: "+err)
-            // fs.rmdirSync(uploadDir, { recursive: true }); // remove uploaded zip file
-            // fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
             reject(err);
           });
       }
