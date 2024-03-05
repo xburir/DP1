@@ -6,8 +6,6 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 
-let inputBox = document.getElementById("input")
-
 // Function to check if the cursor position intersects with a polyline's path
 function isCursorOnPolyline(cursorPos, polyline) {
     var path = polyline.getLatLngs();
@@ -21,24 +19,43 @@ function isCursorOnPolyline(cursorPos, polyline) {
     return false;
 }
 
-
-function showFileDetails(fileName,username,route) {
+function removeLayers(fileName, routeType){
+    var layersToRemove = []
     map.eachLayer(function (layer) {
         // Check if the layer is a polyline
         if (layer instanceof L.Polyline) {
             // Remove the polyline from the map
-            map.removeLayer(layer);
+            if (layer.options.fileName === fileName && layer.options.routeType === routeType) {
+                layersToRemove.push(layer); // Add the layer to the removal array
+            }
         }
     });
+    // Remove layers outside the loop to avoid modifying the iteration array
+    layersToRemove.forEach(function (layer) {
+        map.removeLayer(layer);
+    });
+}
+
+function toggleRoute(fileName, username, routeType, event){
+    if (event.target.checked){
+        showFileDetails(fileName,username,routeType)
+    }else{
+        removeLayers(fileName,routeType)
+    }
+}
+
+
+function showFileDetails(fileName,username,routeType) {
+    
 
     let div = document.getElementById("trackModal")
     var hoveredLayers = []
 
     let path = '/routes/'+username+'/'+fileName+'/'
-    if (route === 'original'){
+    if (routeType === 'original'){
         path = path+'database_original.csv'
     }
-    if (route === 'map-match'){
+    if (routeType === 'map-match'){
         path = path+'database.csv'
     }
 
@@ -53,8 +70,11 @@ function showFileDetails(fileName,username,route) {
             const tracks = parseCSV(csvData);
             for (const track in tracks){
                 const route = L.polyline(tracks[track], {
-                    color: 'red',
-                    customData: track}).addTo(map);
+                    color: routeType === "original" ? 'red': 'blue',
+                    trackId: track,
+                    fileName: fileName,
+                    routeType: routeType
+                }).addTo(map);
                 
                 route.on('mouseover', function(event) {
                     // Display a popup on hover
@@ -75,8 +95,9 @@ function showFileDetails(fileName,username,route) {
                     let str = ""
                     for (var event of hoveredLayers){
                         console.log();
-                        let key = event.options.customData
-                        str += '<br>'+key;
+                        let key = event.options.trackId
+                        let file = event.options.fileName
+                        str += '<br>'+key+'['+file+']';
                     }
                     document.getElementById("trackModalText").innerHTML = "Tracks ("+hoveredLayers.length+") "+str
                     

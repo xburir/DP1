@@ -11,7 +11,10 @@
      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
      crossorigin=""></script>
      <script src="https://unpkg.com/leaflet-geometryutil"></script>
+     <!-- <script src="/leaflet.geometryutil.js"></script> -->
      <script src="/map.js" defer></script>
+     
+<!-- <script src="bundle.js"></script> -->
 </head>
 <body>
 
@@ -51,7 +54,7 @@
             <thead>
                 <tr>
                     <th>File Name</th>
-                    <th>Creation Date</th>
+                    <th>Creation Date</th>                    
                     <th>Original route</th>
                     <th>Map-matched route</th>
                 </tr>
@@ -62,8 +65,12 @@
                     <tr>
                         <td><%= file.name %></td>
                         <td><%= file.createdAt %></td>
-                        <td><button onclick="showFileDetails('<%= file.name %>','<%= username %>','original')">Show</button></td>
-                        <td><button onclick="showFileDetails('<%= file.name %>','<%= username %>','map-match')">Show</button></td>
+                        <td>
+                            <input type="checkbox" onchange="toggleRoute('<%= file.name %>','<%= username %>','original',event)">
+                        </td>
+                        <td>
+                            <input type="checkbox" onchange="toggleRoute('<%= file.name %>','<%= username %>','map-match',event)">
+                        </td>
                     </tr>
                 <% }); %>
             </tbody>

@@ -170,12 +170,12 @@ after depenencies are instlled, you can just `node index.js`
 - ~~nastavit pri uploade nech sa to automaticky posle bez stlacenia tlacidla a potom ked vyjde alert napisat ze musis dat refresh aby sa pridala ta vec do zoznamu~~
 - ~~neuspesne rozzipovanie/mapmatchnutie ->nevymazat zip ale zobrazit upozornenie na neskorsie stiahnutie a upravenie zip + tlacidlo znova spustit map match  + downlaod original zip + delete~~
 - dizajn
-- show -> prepinac
+- ~~show -> prepinac~~
 - pridat .csv aj .CSV
 - ~~ked pridam zip s jednou fotkou vnutri tak sa tvari ze presiel map match v poriadku~~
 - python script nech neberie stlpce podla [] ale podla toho ci obsahuju LAT / LON
 - parse zip tak aby nemusli byt oba priecinky, ale sa bral prefix
-- ked mam nastakovane nejake files zip ktore sa nepodarili a potom sa mi jedno podari tak ostatne sa vymazu
+- ~~ked mam nastakovane nejake files zip ktore sa nepodarili a potom sa mi jedno podari tak ostatne sa vymazu~~
 - aby sa nemuselo refreshovat po uploade.
-- prejdem vsetky priecinky (rozzipovane zip), vylistujem na ne dam rerun, potom prejdem vsetky zip a ked sa nenachadzaju v priecinkoch tak pridam, ked ano tak nepridam
+- ~~prejdem vsetky priecinky (rozzipovane zip), vylistujem na ne dam rerun, potom prejdem vsetky zip a ked sa nenachadzaju v priecinkoch tak pridam, ked ano tak nepridam~~
 - automaticky vymazat rerun dir a zip
