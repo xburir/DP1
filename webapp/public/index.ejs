@@ -109,19 +109,21 @@
     if (arr.includes("ERROR")){
         console.log('Processing complete: '+ arr[1]+" check the output files to rerun the process.");
         alert('Processing complete: '+ arr[1]+" check the output files to rerun the process.")
+        checkErrors()
     }
     else{
         console.log('Processing complete');
+        checkErrors()
         alert('Processing complete: '+arr[1])
         let div = document.getElementById("table-of-files")
         if (div.style.display === 'flex'){
             openFiles()
         }
     }
+    // You can update the UI or perform any other action here
+    });
 
     
-    // You can update the UI or perform any other action here
-  });
 
   socket.on('message', (message) => {
     alert(message)
@@ -146,6 +148,43 @@
       })
     });
   });
+
+  function checkErrors(){
+    let show = false
+    fetch("/list-uploads")  // get directory
+    .then(response => {
+        if (response.ok) {
+            return response.text()
+        }
+    }).then(response =>{
+        ress = JSON.parse(response)
+        if (ress.files.length > 0 ){
+            show = true
+        }
+    }).then( _ =>{
+        fetch("/list-unzipped")  // get directory
+        .then(response => {
+            if (response.ok) {
+                return response.text()
+            }
+        }).then( response => {
+            ress = JSON.parse(response)
+                if (ress.files.length > 0 ){
+                    show = true
+                }
+        }).then(_ =>{
+            if (show){
+                document.getElementById("open-errors").src = "/public/icons/error-with-dot.svg"
+            }else{
+                document.getElementById("open-errors").src = "/public/icons/error.svg"
+            }
+        })
+    })
+    
+  }
+
+  checkErrors()
+
 </script>
 <script>
     document.getElementsByClassName("close-user-info")[0].addEventListener("click",() =>{
@@ -218,6 +257,7 @@
     })
 
     function openErrors(){
+        checkErrors()
         document.getElementById("table-of-errors").style.display = "flex"
         let table = document.getElementById("table-of-errors-tbody")
         table.innerHTML = ""
