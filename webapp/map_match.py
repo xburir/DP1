@@ -81,7 +81,6 @@ def map_match(points,container_name,costing):
     url = f"http://{container_name}:{port}/trace_route"
     headers = {'Content-type': 'application/json'}
     data = str(meili_request_body)
-
     try:
         r = requests.post(url, data=data, headers=headers)
         if r.status_code == 200:
@@ -121,7 +120,7 @@ def load_points(filename):
         for row in spamreader:
             lat_value = clean_value(row[lat_index])
             lon_value = clean_value(row[lon_index])
-            coords.append([float(lat_value), float(lon_value)])
+            coords.append([float(lon_value), float(lat_value)])
             
         return coords
 

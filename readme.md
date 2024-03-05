@@ -169,13 +169,15 @@ after depenencies are instlled, you can just `node index.js`
 - ~~aby sa nemuselo refreshovat po uploade.~~
 - ~~prejdem vsetky priecinky (rozzipovane zip), vylistujem na ne dam rerun, potom prejdem vsetky zip a ked sa nenachadzaju v priecinkoch tak pridam, ked ano tak nepridam~~
 - automaticky vymazat rerun dir a zip
-- pridat .csv aj .CSV
+- ~~pridat .csv aj .CSV~~
 - dizajn
 - troska upratat ten index.js ten auth
-- python script nech neberie stlpce podla [] ale podla toho ci obsahuju LAT / LON
+- ~~python script nech neberie stlpce podla [] ale podla toho ci obsahuju LAT / LON~~
 - zmenit db aby brala aj email a taketo srandy z registracie
 - ked bude csv obsahovat aj cas tak potom array v dict co sa vykresluje na mapu zoradit podla casu.
 - po zvoleni zip suboru nascrollovat mapu nejako rozumne
 - urobit ci matchinguju passwords
 - mozno este urobit nech sa uklada tema do session
 - ked si to moc oddialim tak mi ukazuje tracks0
+- ~~s CSV v zipiande je nejaky problem ktory si myslim ze pred tym nebol.~~
+- ked dam rerun a zlyha tak musim refresh stranky?
