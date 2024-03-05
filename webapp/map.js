@@ -37,7 +37,7 @@ function removeLayers(fileName, routeType){
 }
 
 function toggleRoute(fileName, username, routeType, event){
-    if (event.target.checked){
+    if (event.checked){
         showFileDetails(fileName,username,routeType)
     }else{
         removeLayers(fileName,routeType)

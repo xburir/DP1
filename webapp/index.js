@@ -128,34 +128,6 @@ app.get('/about', (req, res) => {
 });
 
 
-// Function to retrieve file list
-function getFileList(dir,callback) {
-  // If users folder is not created, create it
-  if (!fs.existsSync(path.join("routes",dir))) {
-    fs.mkdirSync(path.join("routes",dir), { recursive: true });
-  }
-  fs.readdir(path.join("routes",dir), (err, files) => {
-    if (err) {
-        return callback(err, null);
-    }
-    // Map each file to an object with name and creation date
-    Promise.all(files.map(file => {
-        return new Promise((resolve, reject) => {
-            fs.stat(path.join("routes",dir, file), (err, stats) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve({ name: file, createdAt: stats.mtime.toLocaleString() });
-                }
-            });
-        });
-    })).then(fileObjects => {
-        callback(null, fileObjects);
-    }).catch(err => {
-        callback(err, null);
-    });
-  });
-}
 
 app.get('/', (req, res) => {
   if (req.session.username == null){
@@ -163,16 +135,33 @@ app.get('/', (req, res) => {
     return
   }
 
-  getFileList(req.session.username,(err, files) => {
-    if (err) {
-        console.log(err)
-        res.status(500).send('Error getting files');
-    } else {
-        // Render the index.ejs template and pass files as data
-        res.render('index.ejs',{username: req.session.username, files: files});
-    }
-  });
+  res.render('index.ejs',{username: req.session.username});
+});
 
+app.get('/list-routes',(req,res)=> {
+  if (req.session.username == null){
+    res.redirect("/login")
+    return
+  }
+
+  fs.readdir(path.join(__dirname,"/routes/",req.session.username), { withFileTypes: true }, (err, files) => {
+    if (err) {
+        console.error('Error reading directory:', err);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+    }
+    const fileDetails = files.map(file => {
+      const filePath = path.join(__dirname, "/routes/", req.session.username, file.name);
+      const stats = fs.statSync(filePath); // Get file stats synchronously
+      return {
+        name: file.name,
+        path: path.join(__dirname,"/routes/",req.session.username, file.name),
+        lastModified: stats.mtime 
+      }
+    }
+    );
+    res.json({ files: fileDetails });
+  });
 });
 
 

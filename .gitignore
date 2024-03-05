@@ -2,3 +2,4 @@ node_modules/
 custom_files/
 package-lock.json
 routes/
+uploads/

@@ -59,20 +59,7 @@
                     <th>Map-matched route</th>
                 </tr>
             </thead>
-            <tbody>
-
-                <% files.forEach(function(file) { %>
-                    <tr>
-                        <td><%= file.name %></td>
-                        <td><%= file.createdAt %></td>
-                        <td>
-                            <input type="checkbox" onchange="toggleRoute('<%= file.name %>','<%= username %>','original',event)">
-                        </td>
-                        <td>
-                            <input type="checkbox" onchange="toggleRoute('<%= file.name %>','<%= username %>','map-match',event)">
-                        </td>
-                    </tr>
-                <% }); %>
+            <tbody id="table-of-files-tbody">
             </tbody>
         </table>
     </div>
@@ -124,8 +111,12 @@
         alert('Processing complete: '+ arr[1]+" check the output files to rerun the process.")
     }
     else{
-        console.log('Processing complete: '+"please refresh the site to see the routes");
-        alert('Processing complete: '+"please refresh the site to see the routes"+arr[1])
+        console.log('Processing complete');
+        alert('Processing complete: '+arr[1])
+        let div = document.getElementById("table-of-files")
+        if (div.style.display === 'flex'){
+            openFiles()
+        }
     }
 
     
@@ -168,8 +159,58 @@
     document.getElementById("close-files").addEventListener("click",() =>{
         document.getElementById("table-of-files").style.display = "none"
     })
+
+    function openFiles(){
+        document.getElementById("table-of-files").style.display = "flex"
+        let table = document.getElementById("table-of-files-tbody")
+        table.innerHTML = ""
+
+        let username = '<%= username %>'
+        fetch("/list-routes")  // get directory
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        }).then(response=>{
+            ress = JSON.parse(response)
+            ress.files.forEach((file) =>{
+                let row = document.createElement("tr")
+
+                let name = document.createElement("td")
+                name.innerHTML = file.name
+
+                let date = document.createElement("td")
+                date.innerHTML = file.lastModified
+
+                let originalSwitchTD = document.createElement("td")
+                let originalSwitch = document.createElement("input")
+                originalSwitch.onchange = function(){
+                    toggleRoute(file.name, username, "original", originalSwitch)
+                }
+                originalSwitch.type = "checkbox"
+                originalSwitchTD.appendChild(originalSwitch)
+
+                let matchedSwitchTD = document.createElement("td")
+                let matchedSwitch = document.createElement("input")
+                matchedSwitch.onchange = function(){
+                    toggleRoute(file.name, username, "map-match", matchedSwitch)
+                }
+                matchedSwitch.type = "checkbox"
+                matchedSwitchTD.appendChild(matchedSwitch)
+
+                row.appendChild(name)
+                row.appendChild(date)
+                row.appendChild(originalSwitchTD)
+                row.appendChild(matchedSwitchTD)
+                table.appendChild(row)
+            })
+        })
+    }
+
     document.getElementById("open-table-of-files").addEventListener("click",() =>{
         document.getElementById("table-of-files").style.display = "flex"
+        openFiles()
     })
 
     document.getElementById("aboutButton").addEventListener("click",()=>{
@@ -183,7 +224,6 @@
 
         let added = []
 
-        //fetch priecinok 
         let username = '<%= username %>'
         
         fetch("/list-unzipped")  // get directory

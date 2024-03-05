@@ -149,33 +149,33 @@ after depenencies are instlled, you can just `node index.js`
 
 ## TODO
 
-- zmenit db aby brala aj email a taketo srandy z registracie
-- ked bude csv obsahovat aj cas tak potom array v dict co sa vykresluje na mapu zoradit podla casu.
 - ~~na konci csv suboru nemoze byt prazdny riadok~~
-- urobil som to ze prekryvajuce sa trasy zobrazi vsetky v zozname
-- urobit ci matchinguju passwords
-- mozno este urobit nech sa uklada tema do session
+- ~~urobil som to ze prekryvajuce sa trasy zobrazi vsetky v zozname~~
 - ~~urobit upload suboru na server v ZIP~~
 - ~~zobrazit moje nahrane zip subory~~
-- po zvoleni zip suboru nascrollovat mapu nejako rozumne
 - ~~premenovat unzipped priecinok (alebo vymazat) po tom ako sa urobi map match~~
 - ~~teraz na stranku sa moze nahrat len ZIP s CSV, je tam moznost aj na geojson, treba otestovat~~
 - ~~z nejakeho dovodu sa mi zacyklil asi python script~~
-- ked si to moc oddialim tak mi ukazuje tracks0
 - ~~unzipping empty folder does not create folder~~
 - ~~asynchronne urobit upload~~
-- troska upratat ten index.js ten auth
 - ~~cas pri list of files je zly~~
 - ~~skusit urobit aby sa pri uploade nerefreshla stranka~~
 - ~~nastavit pri uploade nech sa to automaticky posle bez stlacenia tlacidla a potom ked vyjde alert napisat ze musis dat refresh aby sa pridala ta vec do zoznamu~~
 - ~~neuspesne rozzipovanie/mapmatchnutie ->nevymazat zip ale zobrazit upozornenie na neskorsie stiahnutie a upravenie zip + tlacidlo znova spustit map match  + downlaod original zip + delete~~
-- dizajn
 - ~~show -> prepinac~~
-- pridat .csv aj .CSV
 - ~~ked pridam zip s jednou fotkou vnutri tak sa tvari ze presiel map match v poriadku~~
-- python script nech neberie stlpce podla [] ale podla toho ci obsahuju LAT / LON
-- parse zip tak aby nemusli byt oba priecinky, ale sa bral prefix
+- ~~parse zip tak aby nemusli byt oba priecinky, ale sa bral prefix~~
 - ~~ked mam nastakovane nejake files zip ktore sa nepodarili a potom sa mi jedno podari tak ostatne sa vymazu~~
-- aby sa nemuselo refreshovat po uploade.
+- ~~aby sa nemuselo refreshovat po uploade.~~
 - ~~prejdem vsetky priecinky (rozzipovane zip), vylistujem na ne dam rerun, potom prejdem vsetky zip a ked sa nenachadzaju v priecinkoch tak pridam, ked ano tak nepridam~~
 - automaticky vymazat rerun dir a zip
+- pridat .csv aj .CSV
+- dizajn
+- troska upratat ten index.js ten auth
+- python script nech neberie stlpce podla [] ale podla toho ci obsahuju LAT / LON
+- zmenit db aby brala aj email a taketo srandy z registracie
+- ked bude csv obsahovat aj cas tak potom array v dict co sa vykresluje na mapu zoradit podla casu.
+- po zvoleni zip suboru nascrollovat mapu nejako rozumne
+- urobit ci matchinguju passwords
+- mozno este urobit nech sa uklada tema do session
+- ked si to moc oddialim tak mi ukazuje tracks0
