@@ -1,4 +1,4 @@
-import sys, os, csv, requests, json
+import sys, os, csv, requests, json, re
 from os import path
 from os.path import exists
 
@@ -94,14 +94,35 @@ def map_match(points,container_name,costing):
         print(f"ERROR;Request did not succeed.")
         return None
 
+## Remove any letters from lat/lon
+def clean_value(value):
+    return re.sub(r'[^0-9.-]', '', value)
+
 ## Get points from csv file, which must be in "lon,lat" structure
 def load_points(filename): 
-    with open(filename,'r', newline='') as csvfile:
+    with open(filename, 'r', newline='') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=',')
+        header = next(spamreader)  # Read the header row
+        lat_index = None
+        lon_index = None
+        
+        # Find the indices of columns containing "lat" and "lon"
+        for i, col in enumerate(header):
+            if 'lat' in col.lower():
+                lat_index = i
+            elif 'lon' in col.lower():
+                lon_index = i
+                
+        # Check if both "lat" and "lon" columns are found
+        if lat_index is None or lon_index is None:
+            return None
+        
         coords = []
-        for i,row in enumerate(spamreader):
-            if  i != 0: 
-                coords.append([float(row[0]),float(row[1])])
+        for row in spamreader:
+            lat_value = clean_value(row[lat_index])
+            lon_value = clean_value(row[lon_index])
+            coords.append([float(lat_value), float(lon_value)])
+            
         return coords
 
 ## Get points from geojson file
@@ -132,11 +153,15 @@ def folder_process(dir, container_name, user, zip_name):
         for file in os.listdir(path.join(dir,subdir)):
             ## Get points from file
             format = os.path.splitext(file)[1]
-            if format == ".csv":
+            if format.lower() == ".csv":
                 points = load_points(path.join(dir,subdir,file))
-            elif format == ".geojson":
+            elif format.lower() == ".geojson":
                 points = load_points_from_geojson(path.join(dir,subdir,file))
             else:
+                print(f"ERROR;{file}'s points couldn't been extracted.")
+                return
+            
+            if points == None:
                 print(f"ERROR;{file}'s points couldn't been extracted.")
                 return
             
