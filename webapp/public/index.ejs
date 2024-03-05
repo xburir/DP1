@@ -92,6 +92,14 @@
         <p id="trackModalText"></p>
     </div>
 
+    <!-- Alert dialog box -->
+    <div id="alertBox">
+        <h2>Alert Header</h2>
+        <p id="alertText">This is the alert message.</p>
+        <div id="progressBar" >
+        </div>
+    </div>
+
     <div id="map"></div>
     <!-- <script type="module" src="map.js"></script> -->
 </body>
@@ -108,13 +116,13 @@
     let arr = message.split(";")
     if (arr.includes("ERROR")){
         console.log('Processing complete: '+ arr[1]+" check the output files to rerun the process.");
-        alert('Processing complete: '+ arr[1]+" check the output files to rerun the process.")
+        showAlert('Processing complete: '+ arr[1]+" check the output files to rerun the process.")
         checkErrors()
     }
     else{
         console.log('Processing complete');
         checkErrors()
-        alert('Processing complete: '+arr[1])
+        showAlert('Processing complete: '+arr[1])
         let div = document.getElementById("table-of-files")
         if (div.style.display === 'flex'){
             openFiles()
@@ -126,7 +134,7 @@
     
 
   socket.on('message', (message) => {
-    alert(message)
+    showAlert(message)
     if(message === "Delete successful."){
         openErrors()
     }
@@ -398,6 +406,23 @@
     document.getElementById("close-errors").addEventListener("click",() =>{
         document.getElementById("table-of-errors").style.display = "none"
     })
+
+    function showAlert(message) {
+        var alertBox = document.getElementById("alertBox");
+        var alertText = document.getElementById("alertText");
+        var progress = document.getElementById("progress");
+
+        // Set the alert message
+        alertText.textContent = message;
+
+        // Show the alert box
+        alertBox.style.display = "flex";
+
+        // Hide the alert box after countdown
+        setTimeout(function() {
+            alertBox.style.display = "none";
+        }, 3000);
+    }
 
 </script>
 </html>
