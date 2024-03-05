@@ -243,8 +243,10 @@ app.get('/mapmatch/:user/:directory',(req,res)=> {
     if (error) {
       console.log("Error in python script: "+error)
       io.to(req.session.username).emit('processing_complete', error);
+      res.status(500).send('Error in processing '+error);
     } else {
       io.to(req.session.username).emit('processing_complete', stdout+"Please delete the rerun directory manually.");
+      res.status(200).send('Processing complete '+stdout);
     }
   });
 });
@@ -260,6 +262,7 @@ app.get('/delete/*',(req,res)=>{
 
   if(reqUser != req.session.username){
     io.to(req.session.username).emit('message', "You are not allowed to delete others files");
+    res.status(400).send('Not allowed');
     return
   }
 
@@ -267,6 +270,7 @@ app.get('/delete/*',(req,res)=>{
     if (err) {
       io.to(req.session.username).emit('message','Error accessing file stats:'+ err);
       console.error('Error accessing file stats:', err);
+      res.status(500).send('Error accessing file stats:', err);
       return;
     }
     
@@ -275,8 +279,10 @@ app.get('/delete/*',(req,res)=>{
         fs.unlink(filePath, (unlinkErr) => {
             if (unlinkErr) {
               io.to(req.session.username).emit('message', "Delete error.");
+              res.status(500).send("Delete error. "+unlinkErr);
             } else {
               io.to(req.session.username).emit('message', "Delete successful.");
+              res.status(200).send("Delete successful.");
             }
         });
     } else if (stats.isDirectory()) {
@@ -284,12 +290,15 @@ app.get('/delete/*',(req,res)=>{
         fs.rmdir(filePath, { recursive: true }, (rmdirErr) => {
             if (rmdirErr) {
               io.to(req.session.username).emit('message', "Delete error.");
+              res.status(500).send("Delete error. "+rmdirErr);
             } else {
-                io.to(req.session.username).emit('message', "Delete successful.");
+              io.to(req.session.username).emit('message', "Delete successful.");
+              res.status(200).send("Delete successful.");
             }
         });
     } else {
         console.error('Invalid path:', filePath);
+        res.status(500).send("Invalid path.");
     }
 });
 
