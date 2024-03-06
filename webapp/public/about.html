@@ -4,63 +4,123 @@
     <head>
     <meta charset="UTF-8" />
     <title>About</title>
+    <style>
+      /* Hide the content div by default */
+      .content {
+        display: none;
+      }
+      /* Style for the toggle button */
+      .toggle-header {
+        cursor: pointer;
+      }
+    </style>
     </head>
 
 
     <body>
-    <h1>Logout</h1>
-    <img src="./images/tutorial/logout.png" alt="">
-    <br><br><br>
-    <h1>Upload files</h1>
-    <img src="./images/tutorial/upload.png" alt="">
-    <p>Upload only a zip file, which contains 2 directories "Walk" and "Drive"</p>
-    <p>ZIP Structure:</p>
-    <pre>
-        |-- Drive
-        |   |-- 33718.csv
-        |   |-- 31783.geojson
-        |-- Walk
-        |   |-- 93293.csv
-        |   |-- 44352.csv
-        |   |-- 764555.geojson
-        |   |-- 354852.csv
-    </pre>
-    <p>CSV structure</p>
-    <pre>
-        lon,lat
-        17.07299,48.151611
-        17.073095,48.151878
-        17.073084,48.15184
-        17.073084,48.151733
-        17.073048,48.151672
-        17.073011,48.151714
-    </pre>
-    <p>GEOJSON structure</p>
-    <pre>
-        {
-            "type": "FeatureCollection",
-            "features": [
-              {
-                "geometry": {
-                  "coordinates": [
-                    [
-                      17.073124,
-                      48.152729
-                    ],
-                    [
-                      17.073124,
-                      48.152729
-                    ]
-                  ],
-                  "type": "LineString"
-                },
-                "properties": {},
-                "type": "Feature"
+      <h1 class="toggle-header">Logout</h1>
+      <div class="content">
+        <p>To logout, click on the user button and then click on the logout button.</p>
+        <img src="./images/tutorial/logout.png" alt="">
+      </div>
+      
+      <h1 class="toggle-header">Upload files</h1>
+      <div class="content">
+        <p>Click on the upload button</p>
+        <img src="./images/tutorial/upload.png" alt="">
+        <p>Upload only a zip file, which contains directories "Walk" and "Drive". The zip can contain both, or just one of the mentioned directories.</p>
+        <p>ZIP Structure:</p>
+        <pre>
+            |-- Drive
+            |   |-- 33718.csv
+            |   |-- 31783.geojson
+            |-- Walk
+            |   |-- 93293.csv
+            |   |-- 44352.csv
+            |   |-- 764555.geojson
+            |   |-- 354852.csv
+        </pre>
+        <p>CSV structure</p>
+        <p>The csv structure must contain 2 columns, which names contain "lat" and "lon", for example:</p>
+        <pre>
+lon,lat                   lattitude,longitude           INDEX,TAG,DATE,TIME,LATITUDE N/S,LONGITUDE E/W,HEIGHT,SPEED,HEADING,PRES,TEMP
+17.07299,48.151611        17.07299,48.151611            1,T,240215,144813,48.166046N,17.178055E,132,0.4,356,1007.7,23 
+17.073095,48.151878       17.073095,48.151878           2,T,240215,144815,48.165985N,17.178095E,127,5.8,54,1007.5,23 
+17.073084,48.15184        17.073084,48.15184            3,T,240215,144816,48.165962N,17.178116E,130,4.0,97,1007.5,23 
+17.073084,48.151733       17.073084,48.151733           4,C,240215,144816,48.165962N,17.178116E,130,4.0,97,1007.5,23 
+17.073048,48.151672       17.073048,48.151672           5,T,240215,144817,48.165993N,17.178131E,124,3.5,58,1007.6,23 
+17.073011,48.151714       17.073011,48.151714           6,T,240215,144818,48.165989N,17.178129E,132,3.6,50,1007.5,23 
+        </pre>
+        <p>GEOJSON structure</p>
+        <pre>
+            {
+                "type": "FeatureCollection",
+                "features": [
+                  {
+                    "geometry": {
+                      "coordinates": [
+                        [
+                          17.073124,
+                          48.152729
+                        ],
+                        [
+                          17.073124,
+                          48.152729
+                        ]
+                      ],
+                      "type": "LineString"
+                    },
+                    "properties": {},
+                    "type": "Feature"
+                  }
+                ]
               }
-            ]
-          }
-    </pre>
-    <h1>Display routes</h1>
-    <img src="./images/tutorial/show.png" alt="">
+        </pre>
+      </div>
+
+      <h1 class="toggle-header">Show unsuccessful uploads</h1>
+      <div class="content">
+        <p>If the server can't unzip your zip, the zip will be stored on the server for later download.</p>
+        <p>If your routes can't be map-matched, the zip and the unzipped files will stay on the server for later try to map-match.</p>
+        <p>If there are any problems with the uploaded files, there will be a notification on the show list of errors button.</p>
+        <img src="./icons/error-with-dot.svg" alt="" width="50px">
+        <p>Click on the show errors button</p>
+        <img src="./images/tutorial/show_errors.png" alt="">
+        <p>After clicking the button, you will see a dialog:</p>
+        <img src="./images/tutorial/list_of_errors.png" alt="">
+        <p>You can download your zip file by clicking on the download zip icon:</p>
+        <img src="./icons/download.svg" alt="" width="50px">
+        <p>If the zip file was unzipped successfuly, you will have the rerun map-matching icon displayed: </p>
+        <img src="./icons/refresh.svg" alt="" width="50px">
+        <p>After clicking the icon, map-matching will be run again.</p>
+        <p>To delete the zip file, click the following icon: </p>
+        <img src="./icons/zip.svg" alt="" width="50px">
+        <p>To delete the unzipped files, click the following icon: </p>
+        <img src="./icons/folder.svg" alt="" width="50px">
+      </div>
+
+      
+      <h1 class="toggle-header">Display routes</h1>
+      <div class="content">
+        <p>Click on the show routes icon.</p>
+        <img src="./images/tutorial/show_routes.png" alt="">
+        <p>After that a dialog box will be displayed.</p>
+        <img src="./images/tutorial/list_of_files.png" alt="">
+        <p>You will see some information about your uploaded file. You can choose to display the original route(red) or the map-matched one(blue).</p>
+      </div>
     </body>
+
+    <script>
+      // Get all the h1 elements with class 'toggle-header'
+      const headers = document.querySelectorAll('.toggle-header');
+    
+      // Loop through each header
+      headers.forEach(header => {
+        // Add click event listener
+        header.addEventListener('click', () => {
+          // Toggle the visibility of the next sibling element (the content div)
+          header.nextElementSibling.classList.toggle('content');
+        });
+      });
+    </script>
 </html>

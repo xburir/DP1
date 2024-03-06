@@ -173,6 +173,7 @@ after depenencies are instlled, you can just `node index.js`
 - ~~ked dam rerun a zlyha tak musim refresh stranky?~~
 - ~~python script nech neberie stlpce podla [] ale podla toho ci obsahuju LAT / LON~~
 - ~~dizajn~~
+- ~~ked sa otvori jedno okno nech sa zatvori druhe.~~
 - troska upratat ten index.js ten auth
 - zmenit db aby brala aj email a taketo srandy z registracie
 - ked bude csv obsahovat aj cas tak potom array v dict co sa vykresluje na mapu zoradit podla casu.
@@ -182,4 +183,3 @@ after depenencies are instlled, you can just `node index.js`
 - ked si to moc oddialim tak mi ukazuje tracks0
 - automaticky vymazat rerun dir a zip
 - port nastavit
-- ked sa otvori jedno okno nech sa zatvori druhe.
