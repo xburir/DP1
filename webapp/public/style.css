@@ -45,6 +45,9 @@
 .custom-button:active {
     background-color: #e0e0e0;
 }
+.custom-button > label{
+    cursor: pointer;
+}
 
 
 
@@ -100,7 +103,7 @@
     cursor: pointer;
 }
 
-.custom-table{
+.custom-dialog{
     top: 1%;
     background-color: white;
     position: absolute;
@@ -118,7 +121,7 @@
 
 }
 
-.custom-table > table{
+.custom-dialog > table{
     width: 90%;
 }
 
@@ -126,7 +129,7 @@ table td{
     text-align: center;
 }
 
-.custom-table > .close-table-icon{
+.custom-dialog > .close-table-icon{
     position: relative;
     right: -47%;
     top: 15px;
@@ -179,3 +182,73 @@ body{
     0% { width: 100%; }
     100% { width: 0%; }
 }
+
+.custom-table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom-table th, .custom-table td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.custom-table tr:nth-child(even){
+    background-color: #f2f2f2; /* even rows */
+}
+
+.custom-table th{
+    font-size: 20px;
+}
+
+* {
+    font-family: "Your Font", sans-serif; /* Change "Your Font" to the desired font family */
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+  }
+  
+  .switch input {
+    display: none;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 34px;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }

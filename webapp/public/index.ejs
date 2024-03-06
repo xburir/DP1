@@ -42,15 +42,15 @@
             <p>Welcome!</p>
           <% } %>
         <form action="/logout" method="POST">
-            <input type=submit value=Logout>
+            <input type=submit value=Logout class="custom-button">
         </form>
     </div>
     
 
-    <div class="custom-table" id="table-of-files">
+    <div class="custom-dialog" id="table-of-files">
         <img src="./icons/close.svg" alt="close" class="close-table-icon" id="close-files">
         <h1>List of Files</h1>
-        <table>
+        <table class="custom-table">
             <thead>
                 <tr>
                     <th>File Name</th>
@@ -64,10 +64,10 @@
         </table>
     </div>
 
-    <div class="custom-table" id="table-of-errors">
+    <div class="custom-dialog" id="table-of-errors">
         <img src="./icons/close.svg" alt="close" class="close-table-icon" id="close-errors">
         <h1>List of Errors</h1>
-        <table>
+        <table class="custom-table">
             <thead>
                 <tr>
                     <th>File Name</th>
@@ -200,6 +200,8 @@
     })
     document.getElementsByClassName("user-image")[0].addEventListener("click",() =>{
         document.getElementsByClassName("user-info")[0].style.display = "flex"
+        document.getElementById("table-of-errors").style.display = "none"
+        document.getElementById("table-of-files").style.display = "none"
     })
 
 
@@ -230,21 +232,36 @@
                 let date = document.createElement("td")
                 date.innerHTML = file.lastModified
 
+
+
+
                 let originalSwitchTD = document.createElement("td")
+                let originalSwitchLabel = document.createElement("label")
+                originalSwitchTD.appendChild(originalSwitchLabel)
+                originalSwitchLabel.classList.add("switch")
                 let originalSwitch = document.createElement("input")
                 originalSwitch.onchange = function(){
                     toggleRoute(file.name, username, "original", originalSwitch)
                 }
                 originalSwitch.type = "checkbox"
-                originalSwitchTD.appendChild(originalSwitch)
+                let originalSwitchSpan = document.createElement("span")
+                originalSwitchSpan.classList.add("slider")
+                originalSwitchLabel.appendChild(originalSwitch)
+                originalSwitchLabel.appendChild(originalSwitchSpan)
 
                 let matchedSwitchTD = document.createElement("td")
+                let matchedSwitchLabel = document.createElement("label")
+                matchedSwitchTD.appendChild(matchedSwitchLabel)
+                matchedSwitchLabel.classList.add("switch")
                 let matchedSwitch = document.createElement("input")
                 matchedSwitch.onchange = function(){
                     toggleRoute(file.name, username, "map-match", matchedSwitch)
                 }
                 matchedSwitch.type = "checkbox"
-                matchedSwitchTD.appendChild(matchedSwitch)
+                let matchedSwitchSpan = document.createElement("span")
+                matchedSwitchSpan.classList.add("slider")
+                matchedSwitchLabel.appendChild(matchedSwitch)
+                matchedSwitchLabel.appendChild(matchedSwitchSpan)
 
                 row.appendChild(name)
                 row.appendChild(date)
@@ -256,6 +273,8 @@
     }
 
     document.getElementById("open-table-of-files").addEventListener("click",() =>{
+        document.getElementsByClassName("user-info")[0].style.display = "none"
+        document.getElementById("table-of-errors").style.display = "none"
         document.getElementById("table-of-files").style.display = "flex"
         openFiles()
     })
@@ -266,7 +285,6 @@
 
     function openErrors(){
         checkErrors()
-        document.getElementById("table-of-errors").style.display = "flex"
         let table = document.getElementById("table-of-errors-tbody")
         table.innerHTML = ""
 
@@ -400,6 +418,9 @@
     }
 
     document.getElementById("open-errors").addEventListener("click",()=>{
+        document.getElementsByClassName("user-info")[0].style.display = "none"
+        document.getElementById("table-of-errors").style.display = "flex"
+        document.getElementById("table-of-files").style.display = "none"
         openErrors()
     })
 
