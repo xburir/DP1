@@ -57,6 +57,7 @@
                     <th>Creation Date</th>                    
                     <th>Original route</th>
                     <th>Map-matched route</th>
+                    <th>Bad map-match</th>
                 </tr>
             </thead>
             <tbody id="table-of-files-tbody">
@@ -77,12 +78,6 @@
                 </tr>
             </thead>
             <tbody id="table-of-errors-tbody">
-                    <tr>
-                        <td>nieco</td>
-                        <td>dsad</td>
-                        <td>dsad</td>
-                        <td>dsad</td>
-                    </tr>
             </tbody>
         </table>
     </div>
@@ -263,10 +258,20 @@
                 matchedSwitchLabel.appendChild(matchedSwitch)
                 matchedSwitchLabel.appendChild(matchedSwitchSpan)
 
+                let warnTD = document.createElement("td")
+                let warnImage = document.createElement("img")
+                warnTD.appendChild(warnImage)
+                warnImage.src = "/public/icons/error.svg"
+                warnImage.style.cursor = "pointer"
+                warnImage.addEventListener("click",()=>{
+                    fetch("/warn/"+username+"/"+file.name)
+                }) 
+
                 row.appendChild(name)
                 row.appendChild(date)
                 row.appendChild(originalSwitchTD)
                 row.appendChild(matchedSwitchTD)
+                row.appendChild(warnTD)
                 table.appendChild(row)
             })
         })

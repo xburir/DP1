@@ -12,3 +12,11 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     PRIMARY KEY (username)
 );
+
+DROP TABLE IF EXISTS bad_mapmatchs;
+
+CREATE TABLE bad_mapmatches(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255),
+    zipname VARCHAR(255)
+)

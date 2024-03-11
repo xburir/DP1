@@ -174,16 +174,14 @@ after depenencies are instlled, you can just `node index.js`
 - ~~python script nech neberie stlpce podla [] ale podla toho ci obsahuju LAT / LON~~
 - ~~dizajn~~
 - ~~ked sa otvori jedno okno nech sa zatvori druhe.~~
+- ~~tlacidlo na bad map match~~
+- ~~global try catch~~
+- ~~nech sa nevypne pri vypnuti DB~~
 - troska upratat ten index.js ten auth
 - zmenit db aby brala aj email a taketo srandy z registracie
 - ked bude csv obsahovat aj cas tak potom array v dict co sa vykresluje na mapu zoradit podla casu.
 - po zvoleni zip suboru nascrollovat mapu nejako rozumne
 - urobit ci matchinguju passwords
-- mozno este urobit nech sa uklada tema do session
 - ked si to moc oddialim tak mi ukazuje tracks0
 - automaticky vymazat rerun dir a zip
-- port nastavit
-- tlacidlo na bad map match
-- ~~global try catch~~
-- ~~nech sa nevypne pri vypnuti DB~~
 - po vypnuti okna ktore zobrazuje routes a zapnuti ukazuje, že nie je zobrazena trasa ale je

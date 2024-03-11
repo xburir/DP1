@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
-const path=require("path")
+const path = require("path")
 const session = require('express-session');
 const app = express();
 const multer = require('multer');
@@ -50,20 +50,20 @@ connectionOptions = {
 // Create a MySQL connection
 let connection;
 
-function connectToDatabase(){
+function connectToDatabase() {
   connection = mysql.createConnection(connectionOptions);
 
-    // Connect to MySQL
+  // Connect to MySQL
   connection.connect((err) => {
     if (err) {
-      if (err.code == 'ECONNREFUSED'){
+      if (err.code == 'ECONNREFUSED') {
         console.error('Error connecting to MySQL database: Connection refused.');
-      }else{
-      console.error('Error connecting to MySQL database: ', err.code);
+      } else {
+        console.error('Error connecting to MySQL database: ', err.code);
       }
-      setTimeout(connectToDatabase,5000);
-    }else{
-        console.log('Connected to MySQL database');
+      setTimeout(connectToDatabase, 5000);
+    } else {
+      console.log('Connected to MySQL database');
     }
   });
 
@@ -81,7 +81,7 @@ function connectToDatabase(){
 connectToDatabase();
 
 // Route to handle user registration
-app.post('/register',async (req, res) => {
+app.post('/register', async (req, res) => {
   const { username, password } = req.body;
   try {
     const hashedPassword = bcrypt.hashSync(password, 10);
@@ -130,15 +130,15 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  if (req.session.username != null){
+  if (req.session.username != null) {
     res.redirect("/")
     return
   }
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
-  });
+});
 
 app.get('/register', (req, res) => {
-  if (req.session.username != null){
+  if (req.session.username != null) {
     res.redirect("/")
     return
   }
@@ -153,33 +153,33 @@ app.get('/about', (req, res) => {
 
 
 app.get('/', (req, res) => {
-  if (req.session.username == null){
+  if (req.session.username == null) {
     res.redirect("/login")
     return
   }
 
-  res.render('index.ejs',{username: req.session.username});
+  res.render('index.ejs', { username: req.session.username });
 });
 
-app.get('/list-routes',(req,res)=> {
-  if (req.session.username == null){
+app.get('/list-routes', (req, res) => {
+  if (req.session.username == null) {
     res.redirect("/login")
     return
   }
 
-  fs.readdir(path.join(__dirname,"/routes/",req.session.username), { withFileTypes: true }, (err, files) => {
+  fs.readdir(path.join(__dirname, "/routes/", req.session.username), { withFileTypes: true }, (err, files) => {
     if (err) {
-        console.error('Error reading directory:', err);
-        res.status(500).json({ error: 'Internal server error' });
-        return;
+      console.error('Error reading directory:', err);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
     }
     const fileDetails = files.map(file => {
       const filePath = path.join(__dirname, "/routes/", req.session.username, file.name);
       const stats = fs.statSync(filePath); // Get file stats synchronously
       return {
         name: file.name,
-        path: path.join(__dirname,"/routes/",req.session.username, file.name),
-        lastModified: stats.mtime 
+        path: path.join(__dirname, "/routes/", req.session.username, file.name),
+        lastModified: stats.mtime
       }
     }
     );
@@ -192,7 +192,7 @@ const upload = multer({ dest: 'uploads/' });
 
 // Route for handling file upload
 app.post('/upload', upload.single('file'), async (req, res) => {
-  if (req.session.username == null){
+  if (req.session.username == null) {
     res.redirect("/login")
     return
   }
@@ -201,7 +201,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       return res.status(400).send('No files were uploaded.');
     }
     res.redirect('/');
-    
+
     const message = await fileHandler.handleUploadAndUnzip(req.file, __dirname, req.session.username);
     console.log(message)
 
@@ -209,81 +209,81 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 
   } catch (error) {
     console.error('Error handling upload and unzip:', error);
-    io.to(req.session.username).emit('processing_complete', "ERROR; Error in upload or in zip: "+error);
+    io.to(req.session.username).emit('processing_complete', "ERROR; Error in upload or in zip: " + error);
   }
 });
 
-app.get('/list-uploads',(req,res)=> {
-  if (req.session.username == null){
+app.get('/list-uploads', (req, res) => {
+  if (req.session.username == null) {
     res.redirect("/login")
     return
   }
 
-  fs.readdir(path.join(__dirname,"/uploads/",req.session.username), { withFileTypes: true }, (err, files) => {
+  fs.readdir(path.join(__dirname, "/uploads/", req.session.username), { withFileTypes: true }, (err, files) => {
     if (err) {
-        console.error('Error reading directory:', err);
-        res.status(500).json({ error: 'Internal server error' });
-        return;
+      console.error('Error reading directory:', err);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
     }
-    const fileDetails = files.filter(file=>file.isFile()).map(file => ({
+    const fileDetails = files.filter(file => file.isFile()).map(file => ({
       name: file.name,
-      path: path.join(__dirname,"/uploads/",req.session.username, file.name)
+      path: path.join(__dirname, "/uploads/", req.session.username, file.name)
     }));
     res.json({ files: fileDetails });
   });
 });
 
-app.get('/list-unzipped',(req,res)=> {
-  if (req.session.username == null){
+app.get('/list-unzipped', (req, res) => {
+  if (req.session.username == null) {
     res.redirect("/login")
     return
   }
 
-  fs.readdir(path.join(__dirname,"/uploads/",req.session.username,"unzipped"), { withFileTypes: true }, (err, files) => {
+  fs.readdir(path.join(__dirname, "/uploads/", req.session.username, "unzipped"), { withFileTypes: true }, (err, files) => {
     if (err) {
-        console.error('Error reading directory:', err);
-        res.status(500).json({ error: 'Internal server error' });
-        return;
+      console.error('Error reading directory:', err);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
     }
     const fileDetails = files.map(file => ({
       name: file.name,
-      path: path.join(__dirname,"/uploads/",req.session.username, "unzipped", file.name)
+      path: path.join(__dirname, "/uploads/", req.session.username, "unzipped", file.name)
     }));
     res.json({ files: fileDetails });
   });
 });
 
-app.get('/mapmatch/:user/:directory',(req,res)=> {
-  
+app.get('/mapmatch/:user/:directory', (req, res) => {
+
   const directory = req.params.directory;
   const name = req.params.user
   const valhalla_container_name = 'valhalla'
   const zipName = path.parse(directory).name
-  const dirPath = __dirname+"/uploads/"+name+"/unzipped/"+directory
+  const dirPath = __dirname + "/uploads/" + name + "/unzipped/" + directory
 
-  const pythonScript = 'map_match.py '+dirPath+' '+valhalla_container_name+' '+name+' '+zipName;
+  const pythonScript = 'map_match.py ' + dirPath + ' ' + valhalla_container_name + ' ' + name + ' ' + zipName;
   exec(`python3 ${pythonScript}`, (error, stdout, stderr) => {
     if (error) {
-      console.log("Error in python script: "+error)
+      console.log("Error in python script: " + error)
       io.to(req.session.username).emit('processing_complete', error);
-      res.status(500).send('Error in processing '+error);
+      res.status(500).send('Error in processing ' + error);
     } else {
-      io.to(req.session.username).emit('processing_complete', stdout+"Please delete the rerun directory manually.");
-      res.status(200).send('Processing complete '+stdout);
+      io.to(req.session.username).emit('processing_complete', stdout + "Please delete the rerun directory manually.");
+      res.status(200).send('Processing complete ' + stdout);
     }
   });
 });
 
-app.get('/delete/*',(req,res)=>{
-  if (req.session.username == null){
+app.get('/delete/*', (req, res) => {
+  if (req.session.username == null) {
     res.redirect("/login")
     return
   }
-  
+
   const filePath = req.params[0];
   reqUser = filePath.split("/")[1]
 
-  if(reqUser != req.session.username){
+  if (reqUser != req.session.username) {
     io.to(req.session.username).emit('message', "You are not allowed to delete others files");
     res.status(400).send('Not allowed');
     return
@@ -291,39 +291,65 @@ app.get('/delete/*',(req,res)=>{
 
   fs.stat(filePath, (err, stats) => {
     if (err) {
-      io.to(req.session.username).emit('message','Error accessing file stats:'+ err);
+      io.to(req.session.username).emit('message', 'Error accessing file stats:' + err);
       console.error('Error accessing file stats:', err);
       res.status(500).send('Error accessing file stats:', err);
       return;
     }
-    
+
     if (stats.isFile()) {
-        // If it's a file, remove it
-        fs.unlink(filePath, (unlinkErr) => {
-            if (unlinkErr) {
-              io.to(req.session.username).emit('message', "Delete error.");
-              res.status(500).send("Delete error. "+unlinkErr);
-            } else {
-              io.to(req.session.username).emit('message', "Delete successful.");
-              res.status(200).send("Delete successful.");
-            }
-        });
+      // If it's a file, remove it
+      fs.unlink(filePath, (unlinkErr) => {
+        if (unlinkErr) {
+          io.to(req.session.username).emit('message', "Delete error.");
+          res.status(500).send("Delete error. " + unlinkErr);
+        } else {
+          io.to(req.session.username).emit('message', "Delete successful.");
+          res.status(200).send("Delete successful.");
+        }
+      });
     } else if (stats.isDirectory()) {
-        // If it's a directory, remove it recursively
-        fs.rmdir(filePath, { recursive: true }, (rmdirErr) => {
-            if (rmdirErr) {
-              io.to(req.session.username).emit('message', "Delete error.");
-              res.status(500).send("Delete error. "+rmdirErr);
-            } else {
-              io.to(req.session.username).emit('message', "Delete successful.");
-              res.status(200).send("Delete successful.");
-            }
-        });
+      // If it's a directory, remove it recursively
+      fs.rmdir(filePath, { recursive: true }, (rmdirErr) => {
+        if (rmdirErr) {
+          io.to(req.session.username).emit('message', "Delete error.");
+          res.status(500).send("Delete error. " + rmdirErr);
+        } else {
+          io.to(req.session.username).emit('message', "Delete successful.");
+          res.status(200).send("Delete successful.");
+        }
+      });
     } else {
-        console.error('Invalid path:', filePath);
-        res.status(500).send("Invalid path.");
+      console.error('Invalid path:', filePath);
+      res.status(500).send("Invalid path.");
     }
-});
+  });
+
+
+
+})
+
+
+app.get('/warn/*', (req, res) => {
+  if (req.session.username == null) {
+    res.redirect("/login")
+    return
+  }
+  const filePath = req.params[0];
+  const user = filePath.split("/")[0]
+  const file = filePath.split("/")[1]
+
+  const sql = 'INSERT INTO bad_mapmatches (username, zipname) VALUES (?, ?)';
+  connection.query(sql, [user, file], (err, result) => {
+    if (err) {
+      console.error('Error while logging warning for bad map-match:', err.code);
+      io.to(req.session.username).emit('message', "Error while logging warning for bad map-match");
+      res.status(500).send('Error while logging warning for bad map-match');
+      return;
+    }
+    io.to(req.session.username).emit('message', "Warning logged successfully.");
+    res.status(200).send('Warning logged successfully.');
+  });
 
 })
 
@@ -332,7 +358,6 @@ const userSockets = {};
 
 // Socket.io connection
 io.on('connection', (socket) => {
-  console.log('A user connected');
 
   // Associate each socket connection with a user
   socket.on('set_username', (username) => {
@@ -351,7 +376,7 @@ io.on('connection', (socket) => {
     });
   });
 });
-  
+
 // Serve static files from the public directory
 app.use(express.static('public'));
 
@@ -360,10 +385,10 @@ server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-process.on('uncaughtException',(err) => {
-  if (err.code == 'PROTOCOL_CONNECTION_LOST'){
+process.on('uncaughtException', (err) => {
+  if (err.code == 'PROTOCOL_CONNECTION_LOST') {
     console.error("Connection to database lost")
-  }else{
+  } else {
     console.log("Uncaught exception: ", err);
   }
 })
