@@ -40,22 +40,45 @@ app.use(session({
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
 
-// Create a MySQL connection
-const connection = mysql.createConnection({
+connectionOptions = {
   host: 'localhost',
   user: 'root',
   password: 'root',
   database: 'dp_webserver'
-});
+};
 
-// Connect to MySQL
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL database:', err);
-    return;
-  }
-  console.log('Connected to MySQL database');
-});
+// Create a MySQL connection
+let connection;
+
+function connectToDatabase(){
+  connection = mysql.createConnection(connectionOptions);
+
+    // Connect to MySQL
+  connection.connect((err) => {
+    if (err) {
+      if (err.code == 'ECONNREFUSED'){
+        console.error('Error connecting to MySQL database: Connection refused.');
+      }else{
+      console.error('Error connecting to MySQL database: ', err.code);
+      }
+      setTimeout(connectToDatabase,5000);
+    }else{
+        console.log('Connected to MySQL database');
+    }
+  });
+
+  connection.on('error', (err) => {
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+      console.error('Database connection lost');
+      connectToDatabase(); // Reconnect if connection is lost
+    } else {
+      console.error('Database error: ', err);
+      throw err;
+    }
+  })
+}
+
+connectToDatabase();
 
 // Route to handle user registration
 app.post('/register',async (req, res) => {
@@ -336,3 +359,11 @@ app.use(express.static('public'));
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+process.on('uncaughtException',(err) => {
+  if (err.code == 'PROTOCOL_CONNECTION_LOST'){
+    console.error("Connection to database lost")
+  }else{
+    console.log("Uncaught exception: ", err);
+  }
+})

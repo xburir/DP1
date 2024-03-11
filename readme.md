@@ -183,3 +183,7 @@ after depenencies are instlled, you can just `node index.js`
 - ked si to moc oddialim tak mi ukazuje tracks0
 - automaticky vymazat rerun dir a zip
 - port nastavit
+- tlacidlo na bad map match
+- ~~global try catch~~
+- ~~nech sa nevypne pri vypnuti DB~~
+- po vypnuti okna ktore zobrazuje routes a zapnuti ukazuje, že nie je zobrazena trasa ale je
