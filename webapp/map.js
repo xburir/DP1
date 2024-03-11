@@ -19,7 +19,7 @@ function isCursorOnPolyline(cursorPos, polyline) {
     return false;
 }
 
-function removeLayers(fileName, routeType){
+function removeLayers(fileName, routeType) {
     var layersToRemove = []
     map.eachLayer(function (layer) {
         // Check if the layer is a polyline
@@ -34,29 +34,30 @@ function removeLayers(fileName, routeType){
     layersToRemove.forEach(function (layer) {
         map.removeLayer(layer);
     });
+    fitBounds()
 }
 
-function toggleRoute(fileName, username, routeType, event){
-    if (event.checked){
-        showFileDetails(fileName,username,routeType)
-    }else{
-        removeLayers(fileName,routeType)
+function toggleRoute(fileName, username, routeType, event) {
+    if (event.checked) {
+        showFileDetails(fileName, username, routeType)
+    } else {
+        removeLayers(fileName, routeType)
     }
 }
 
 
-function showFileDetails(fileName,username,routeType) {
-    
+function showFileDetails(fileName, username, routeType) {
+
 
     let div = document.getElementById("trackModal")
     var hoveredLayers = []
 
-    let path = '/routes/'+username+'/'+fileName+'/'
-    if (routeType === 'original'){
-        path = path+'database_original.csv'
+    let path = '/routes/' + username + '/' + fileName + '/'
+    if (routeType === 'original') {
+        path = path + 'database_original.csv'
     }
-    if (routeType === 'map-match'){
-        path = path+'database.csv'
+    if (routeType === 'map-match') {
+        path = path + 'database.csv'
     }
 
     fetch(path)
@@ -68,19 +69,19 @@ function showFileDetails(fileName,username,routeType) {
         })
         .then(csvData => {
             const tracks = parseCSV(csvData);
-            for (const track in tracks){
+            for (const track in tracks) {
                 const route = L.polyline(tracks[track], {
-                    color: routeType === "original" ? 'red': 'blue',
+                    color: routeType === "original" ? 'red' : 'blue',
                     trackId: track,
                     fileName: fileName,
                     routeType: routeType
                 }).addTo(map);
-                
-                route.on('mouseover', function(event) {
+
+                route.on('mouseover', function (event) {
                     // Display a popup on hover
                     div.style.opacity = "1"
                     div.style.pointerEvents = "auto"
-                    
+
                     var cursorPos = event.latlng; // Get the cursor position
                     map.eachLayer(function (polyline) {
                         // Check if the layer is a polyline
@@ -93,28 +94,42 @@ function showFileDetails(fileName,username,routeType) {
                         }
                     });
                     let str = ""
-                    for (var event of hoveredLayers){
+                    for (var event of hoveredLayers) {
                         console.log();
                         let key = event.options.trackId
                         let file = event.options.fileName
-                        str += '<br>'+key+'['+file+']';
+                        str += '<br>' + key + '[' + file + ']';
                     }
-                    document.getElementById("trackModalText").innerHTML = "Tracks ("+hoveredLayers.length+") "+str
-                    
+                    document.getElementById("trackModalText").innerHTML = "Tracks (" + hoveredLayers.length + ") " + str
+
                 })
-                .on('mouseout', function(event) {
-                    // Close the popup when mouse leaves the marker
-                    div.style.opacity = "0"
-                    div.style.pointerEvents = "none"
+                    .on('mouseout', function (event) {
+                        // Close the popup when mouse leaves the marker
+                        div.style.opacity = "0"
+                        div.style.pointerEvents = "none"
 
-                    hoveredLayers = []
+                        hoveredLayers = []
 
-                });
+                    });
             }
+        })
+        .then(_ => {
+            fitBounds()
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
+}
+
+function fitBounds() {
+    let bounds = new L.LatLngBounds();
+    map.eachLayer(function (polyline) {
+        // Check if the layer is a polyline
+        if (polyline instanceof L.Polyline) {
+            bounds.extend(polyline.getBounds())
+        }
+    });
+    map.fitBounds(bounds)
 }
 
 
@@ -128,8 +143,8 @@ function parseCSV(csvData) {
             tracks[track] = [];
         }
         tracks[track].push([parseFloat(lat), parseFloat(lon)]);
-        
-        
+
+
     }
     return tracks;
 }
