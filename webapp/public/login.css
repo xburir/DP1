@@ -46,6 +46,7 @@ h1 {
     position: relative;
     width: 22.2rem;
 }
+
 .form-container {
     border: 1px solid hsla(0, 0%, 65%, 0.158);
     box-shadow: 0 0 36px 1px rgba(0, 0, 0, 0.2);
@@ -165,6 +166,7 @@ h1 {
     display: flex;
     justify-content: space-between;
 }
+
 .opacity {
     opacity: 0.6;
 }
@@ -192,6 +194,7 @@ h1 {
         -ms-transform: scale(1.025);
         -o-transform: scale(1.025);
     }
+
     25% {
         transform: scale(1);
         -webkit-transform: scale(1);
@@ -199,6 +202,7 @@ h1 {
         -ms-transform: scale(1);
         -o-transform: scale(1);
     }
+
     75% {
         transform: scale(1.025);
         -webkit-transform: scale(1.025);
@@ -206,11 +210,57 @@ h1 {
         -ms-transform: scale(1.025);
         -o-transform: scale(1.025);
     }
+
     100% {
         transform: scale(1);
         -webkit-transform: scale(1);
         -moz-transform: scale(1);
         -ms-transform: scale(1);
         -o-transform: scale(1);
+    }
+}
+
+
+#alertBox {
+    flex-direction: column;
+    position: fixed;
+    display: none;
+    position: fixed;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    align-items: center;
+
+    background: var(--background);
+    color: var(--color);
+}
+
+/* Styling for the header */
+#alertBox h2 {
+    margin-top: 0;
+}
+
+/* Styling for the countdown bar */
+#progressBar {
+    background-color: #007bff;
+    height: 5px;
+    width: 100%;
+    border-radius: 5px;
+    animation: progressBarAnimation 3s linear forwards;
+}
+
+@keyframes progressBarAnimation {
+    0% {
+        width: 100%;
+    }
+
+    100% {
+        width: 0%;
     }
 }

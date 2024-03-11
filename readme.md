@@ -177,11 +177,12 @@ after depenencies are instlled, you can just `node index.js`
 - ~~tlacidlo na bad map match~~
 - ~~global try catch~~
 - ~~nech sa nevypne pri vypnuti DB~~
-- troska upratat ten index.js ten auth
-- zmenit db aby brala aj email a taketo srandy z registracie
-- ked bude csv obsahovat aj cas tak potom array v dict co sa vykresluje na mapu zoradit podla casu.
-- po zvoleni zip suboru nascrollovat mapu nejako rozumne
-- urobit ci matchinguju passwords
+- ~~chyby z login a register dat na popup ako je pri map match~~
+- ~~zmenit db aby brala aj email a taketo srandy z registracie -> nechat len username a heslo, ostatne netreba~~
+- ~~po zvoleni zip suboru nascrollovat mapu nejako rozumne~~
+- ~~urobit ci matchinguju passwords~~
 - ked si to moc oddialim tak mi ukazuje tracks0
 - automaticky vymazat rerun dir a zip
+- troska upratat ten index.js ten auth
+- ked bude csv obsahovat aj cas tak potom array v dict co sa vykresluje na mapu zoradit podla casu.
 - po vypnuti okna ktore zobrazuje routes a zapnuti ukazuje, že nie je zobrazena trasa ale je

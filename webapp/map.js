@@ -123,13 +123,18 @@ function showFileDetails(fileName, username, routeType) {
 
 function fitBounds() {
     let bounds = new L.LatLngBounds();
+    let any = false
     map.eachLayer(function (polyline) {
         // Check if the layer is a polyline
         if (polyline instanceof L.Polyline) {
             bounds.extend(polyline.getBounds())
+            any = true
         }
     });
-    map.fitBounds(bounds)
+    if (any) {
+        map.fitBounds(bounds)
+    }
+
 }
 
 

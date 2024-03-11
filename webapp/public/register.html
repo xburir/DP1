@@ -1,92 +1,173 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <title>Register</title>
-  <link rel="stylesheet" href="login.css">
+    <meta charset="UTF-8" />
+    <title>Register</title>
+    <link rel="stylesheet" href="login.css">
 </head>
 
 
 <body>
-  <section class="container">
-      <div class="login-container">
-          <div class="circle circle-one"></div>
-          <div class="form-container">
-              
-              <h1 class="opacity">REGISTER</h1>
-              <form action="/register" method="POST">
-                  <input type="text" placeholder="FULL NAME" id="fullName" maxlength="20" name="fulltName" required>
-                  <input type="text" placeholder="USERNAME" id="userName" maxlength="20" name="username" required />
-                  <input type="email" placeholder="EMAIL" id="email" name="email" required>
-                  <input type="password" placeholder="PASSWORD" id="password" maxlength="30" name="password" required />
-                  <input type="password" placeholder="PASSWORD AGAIN" id="passwordAgain" maxlength="30" name="passwordAgain" required>
-                  <button class="opacity">SUBMIT</button>
-              </form>
-              <div class="register-forget opacity">
-                  <a href="./login">LOGIN</a>
-              </div>
-          </div>
-          <div class="circle circle-two"></div>
-      </div>
-      <div class="theme-btn-container"></div>
-  </section>
+    <div id="alertBox">
+        <h2>Alert</h2>
+        <p id="alertText">This is the alert message.</p>
+        <div id="progressBar">
+        </div>
+    </div>
+    <section class="container">
+        <div class="login-container">
+            <div class="circle circle-one"></div>
+            <div class="form-container">
+
+                <h1 class="opacity">REGISTER</h1>
+                <form action="/register" method="POST" id="register-form">
+                    <input type="text" placeholder="USERNAME" id="userName" maxlength="20" name="username" required />
+                    <input type="password" placeholder="PASSWORD" id="password" maxlength="30" name="password"
+                        required />
+                    <input type="password" placeholder="PASSWORD AGAIN" id="passwordAgain" maxlength="30"
+                        name="passwordAgain" required>
+                    <button class="opacity">SUBMIT</button>
+                </form>
+                <div class="register-forget opacity">
+                    <a href="./login">LOGIN</a>
+                </div>
+            </div>
+            <div class="circle circle-two"></div>
+        </div>
+        <div class="theme-btn-container"></div>
+    </section>
 </body>
 
-<script> 
-  const themes = [
-      {
-          background: "#1A1A2E",
-          color: "#FFFFFF",
-          primaryColor: "#0F3460"
-      },
-      {
-          background: "#461220",
-          color: "#FFFFFF",
-          primaryColor: "#E94560"
-      },
-      {
-          background: "#192A51",
-          color: "#FFFFFF",
-          primaryColor: "#967AA1"
-      },
-      {
-          background: "#F7B267",
-          color: "#000000",
-          primaryColor: "#F4845F"
-      },
-      {
-          background: "#F25F5C",
-          color: "#000000",
-          primaryColor: "#642B36"
-      },
-      {
-          background: "#231F20",
-          color: "#FFF",
-          primaryColor: "#BB4430"
-      }
-  ];
-  
-  const setTheme = (theme) => {
-      const root = document.querySelector(":root");
-      root.style.setProperty("--background", theme.background);
-      root.style.setProperty("--color", theme.color);
-      root.style.setProperty("--primary-color", theme.primaryColor);
-      root.style.setProperty("--glass-color", theme.glassColor);
-  };
-  
-  const displayThemeButtons = () => {
-      const btnContainer = document.querySelector(".theme-btn-container");
-      themes.forEach((theme) => {
-          const div = document.createElement("div");
-          div.className = "theme-btn";
-          div.style.cssText = `background: ${theme.background}; width: 25px; height: 25px`;
-          btnContainer.appendChild(div);
-          div.addEventListener("click", () => setTheme(theme));
-      });
-  };
-  
-  displayThemeButtons();
-  
-  </script>
+<script>
+    const themes = [
+        {
+            background: "#1A1A2E",
+            color: "#FFFFFF",
+            primaryColor: "#0F3460"
+        },
+        {
+            background: "#461220",
+            color: "#FFFFFF",
+            primaryColor: "#E94560"
+        },
+        {
+            background: "#192A51",
+            color: "#FFFFFF",
+            primaryColor: "#967AA1"
+        },
+        {
+            background: "#F7B267",
+            color: "#000000",
+            primaryColor: "#F4845F"
+        },
+        {
+            background: "#F25F5C",
+            color: "#000000",
+            primaryColor: "#642B36"
+        },
+        {
+            background: "#231F20",
+            color: "#FFF",
+            primaryColor: "#BB4430"
+        }
+    ];
+
+    const setTheme = (theme) => {
+        const root = document.querySelector(":root");
+        root.style.setProperty("--background", theme.background);
+        root.style.setProperty("--color", theme.color);
+        root.style.setProperty("--primary-color", theme.primaryColor);
+        root.style.setProperty("--glass-color", theme.glassColor);
+    };
+
+    const displayThemeButtons = () => {
+        const btnContainer = document.querySelector(".theme-btn-container");
+        themes.forEach((theme) => {
+            const div = document.createElement("div");
+            div.className = "theme-btn";
+            div.style.cssText = `background: ${theme.background}; width: 25px; height: 25px`;
+            btnContainer.appendChild(div);
+            div.addEventListener("click", () => setTheme(theme));
+        });
+    };
+
+    displayThemeButtons();
+
+    function showAlert(message) {
+        var alertBox = document.getElementById("alertBox");
+        var alertText = document.getElementById("alertText");
+        var progress = document.getElementById("progress");
+
+        // Set the alert message
+        alertText.textContent = message;
+
+        // Show the alert box
+        alertBox.style.display = "flex";
+
+        // Hide the alert box after countdown
+        setTimeout(function () {
+            alertBox.style.display = "none";
+        }, 3000);
+    }
+
+    document.getElementById("register-form").addEventListener("submit", function (event) {
+        // Prevent the form from being submitted
+        event.preventDefault();
+
+        // Get the values of the password and repeat password fields
+        var username = document.getElementById("userName").value
+        var password = document.getElementById("password").value;
+        var repeatPassword = document.getElementById("passwordAgain").value;
+
+        // Check if the passwords match
+        if (password !== repeatPassword) {
+            // If passwords don't match, show an error message
+            showAlert("Passwords do not match. Please try again.");
+
+            return;
+        }
+
+
+        var data = {
+            username: username,
+            password: password
+        };
+        // Convert the data object to JSON format
+        var jsonData = JSON.stringify(data);
+
+        // Set up the fetch request
+        fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: jsonData
+        })
+            .then(response => {
+                return response.text();
+            })
+            .then(text => {
+                console.log(text)
+                if (text === "ER_DUP_ENTRY") {
+                    showAlert("User with this username already exists.")
+                }
+                else if (text === "SUCCESS") {
+                    window.location.href = "/login";
+                }
+                else if (text === "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR") {
+                    showAlert("The database is probably down.")
+                }
+                else {
+                    showAlert(text)
+                }
+            })
+            .catch(error => {
+                // Handle errors that occur during the fetch request
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    });
+
+
+</script>
 
 </html>

@@ -88,15 +88,15 @@ app.post('/register', async (req, res) => {
     const sql = 'INSERT INTO users (username, password) VALUES (?, ?)';
     connection.query(sql, [username, hashedPassword], (err, result) => {
       if (err) {
-        console.error('Error registering user:', err);
-        res.status(400).send('Registration failed');
+        console.error('Error registering user:', err.code);
+        res.status(200).send(err.code);
         return;
       }
-      res.redirect('/login');
+      res.status(200).send("SUCCESS")
     });
   } catch (err) {
-    console.error('Error registering user:', err);
-    res.status(400).send('Registration failed');
+    console.error('Error registering user:', err.code);
+    res.status(400).send(err.code);
   }
 });
 
@@ -111,8 +111,8 @@ app.post('/login', async (req, res) => {
   const sql = 'SELECT * FROM users WHERE username = ?';
   connection.query(sql, [username], async (err, results) => {
     if (err) {
-      console.error('Error fetching user:', err);
-      res.status(500).send('Login failed');
+      console.error('Error fetching user:', err.code);
+      res.status(500).send(err.code);
       return;
     }
     if (results.length === 0) {
@@ -122,9 +122,10 @@ app.post('/login', async (req, res) => {
     const user = results[0];
     if (await bcrypt.compareSync(password, user.password)) {
       req.session.username = username
-      res.redirect("/")
+      res.status(200).send('SUCCESS');
     } else {
       res.status(401).send('Invalid username or password');
+
     }
   });
 });
@@ -165,6 +166,10 @@ app.get('/list-routes', (req, res) => {
   if (req.session.username == null) {
     res.redirect("/login")
     return
+  }
+
+  if (!fs.existsSync(path.join(__dirname, "/routes/", req.session.username))) {
+    fs.mkdirSync(path.join(__dirname, "/routes/", req.session.username), { recursive: true });
   }
 
   fs.readdir(path.join(__dirname, "/routes/", req.session.username), { withFileTypes: true }, (err, files) => {
@@ -219,6 +224,10 @@ app.get('/list-uploads', (req, res) => {
     return
   }
 
+  if (!fs.existsSync(path.join(__dirname, "/uploads/", req.session.username))) {
+    fs.mkdirSync(path.join(__dirname, "/uploads/", req.session.username), { recursive: true });
+  }
+
   fs.readdir(path.join(__dirname, "/uploads/", req.session.username), { withFileTypes: true }, (err, files) => {
     if (err) {
       console.error('Error reading directory:', err);
@@ -237,6 +246,10 @@ app.get('/list-unzipped', (req, res) => {
   if (req.session.username == null) {
     res.redirect("/login")
     return
+  }
+
+  if (!fs.existsSync(path.join(__dirname, "/uploads/", req.session.username, "unzipped"))) {
+    fs.mkdirSync(path.join(__dirname, "/uploads/", req.session.username, "unzipped"), { recursive: true });
   }
 
   fs.readdir(path.join(__dirname, "/uploads/", req.session.username, "unzipped"), { withFileTypes: true }, (err, files) => {
