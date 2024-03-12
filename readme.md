@@ -185,4 +185,4 @@ after depenencies are instlled, you can just `node index.js`
 - automaticky vymazat rerun dir a zip
 - troska upratat ten index.js ten auth
 - ked bude csv obsahovat aj cas tak potom array v dict co sa vykresluje na mapu zoradit podla casu.
-- po vypnuti okna ktore zobrazuje routes a zapnuti ukazuje, že nie je zobrazena trasa ale je
+- ~~po vypnuti okna ktore zobrazuje routes a zapnuti ukazuje, že nie je zobrazena trasa ale je~~

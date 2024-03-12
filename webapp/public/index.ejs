@@ -227,9 +227,6 @@
                 let date = document.createElement("td")
                 date.innerHTML = file.lastModified
 
-
-
-
                 let originalSwitchTD = document.createElement("td")
                 let originalSwitchLabel = document.createElement("label")
                 originalSwitchTD.appendChild(originalSwitchLabel)
@@ -244,6 +241,12 @@
                 originalSwitchLabel.appendChild(originalSwitch)
                 originalSwitchLabel.appendChild(originalSwitchSpan)
 
+                if (shownFiles.some(innerArray => JSON.stringify(innerArray) === JSON.stringify([file.name,"original"]))){
+                    originalSwitch.checked = true
+                }else{
+                    originalSwitch.checked = false
+                }
+
                 let matchedSwitchTD = document.createElement("td")
                 let matchedSwitchLabel = document.createElement("label")
                 matchedSwitchTD.appendChild(matchedSwitchLabel)
@@ -257,6 +260,12 @@
                 matchedSwitchSpan.classList.add("slider")
                 matchedSwitchLabel.appendChild(matchedSwitch)
                 matchedSwitchLabel.appendChild(matchedSwitchSpan)
+
+                if (shownFiles.some(innerArray => JSON.stringify(innerArray) === JSON.stringify([file.name,"map-match"]))){
+                    matchedSwitch.checked = true
+                }else{
+                    matchedSwitch.checked = false
+                }
 
                 let warnTD = document.createElement("td")
                 let warnImage = document.createElement("img")

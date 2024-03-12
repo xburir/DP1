@@ -6,6 +6,8 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 
+let shownFiles = []
+
 // Function to check if the cursor position intersects with a polyline's path
 function isCursorOnPolyline(cursorPos, polyline) {
     var path = polyline.getLatLngs();
@@ -34,6 +36,11 @@ function removeLayers(fileName, routeType) {
     layersToRemove.forEach(function (layer) {
         map.removeLayer(layer);
     });
+
+    shownFiles = shownFiles.filter(innerArray => !(
+        JSON.stringify(innerArray) === JSON.stringify([fileName,routeType])
+      ));
+
     fitBounds()
 }
 
@@ -77,6 +84,7 @@ function showFileDetails(fileName, username, routeType) {
                     routeType: routeType
                 }).addTo(map);
 
+
                 route.on('mouseover', function (event) {
                     // Display a popup on hover
                     div.style.opacity = "1"
@@ -114,6 +122,7 @@ function showFileDetails(fileName, username, routeType) {
             }
         })
         .then(_ => {
+            shownFiles.push([fileName,routeType])
             fitBounds()
         })
         .catch(error => {
