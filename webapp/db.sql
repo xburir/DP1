@@ -13,7 +13,7 @@ CREATE TABLE users (
     PRIMARY KEY (username)
 );
 
-DROP TABLE IF EXISTS bad_mapmatchs;
+DROP TABLE IF EXISTS bad_mapmatches;
 
 CREATE TABLE bad_mapmatches(
     id INT AUTO_INCREMENT PRIMARY KEY,
