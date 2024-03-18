@@ -281,7 +281,7 @@ app.get('/mapmatch/:user/:directory', (req, res) => {
       io.to(req.session.username).emit('processing_complete', error);
       res.status(500).send('Error in processing ' + error);
     } else {
-      io.to(req.session.username).emit('processing_complete', stdout + "Please delete the rerun directory manually.");
+      io.to(req.session.username).emit('processing_complete', stdout);
       res.status(200).send('Processing complete ' + stdout);
     }
   });
