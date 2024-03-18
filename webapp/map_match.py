@@ -85,13 +85,11 @@ def map_match(points,container_name,costing):
         r = requests.post(url, data=data, headers=headers)
         if r.status_code == 200:
             response_text = json.loads(r.text)
-            return response_text['matchings'][0]['geometry']
+            return "SUCESS;",response_text['matchings'][0]['geometry']
         else:
-            print(f"ERROR;{r.content}")
-            return None
+            return f"ERROR;{r.content}",None
     except:
-        print(f"ERROR;Request did not succeed.")
-        return None
+        return "Error;Request did not succeed.",None
 
 ## Remove any letters from lat/lon
 def clean_value(value):
@@ -138,47 +136,61 @@ def load_points_from_geojson(file):
 
 
 def folder_process(dir, container_name, user, zip_name):
+    successful = []
+    failed = {}
+    retDict = {}
+
     ## Check if path contains files as it should
     for subdir in os.listdir(dir):
         if not path.isdir(path.join(dir,subdir)):
-            print(f"ERROR;{dir}/{subdir} is not a directory, check the zip structure.")
+            failed['General'] = f"{subdir} is not a directory, check the zip structure."
+            retDict["failed"] = 1
+            retDict["failed_info"] = failed
+            print(json.dumps(retDict))
             return
         if subdir not in ['Walk','Drive']:
-            print(f"ERROR;{subdir} does not match the specified directory name \"Walk\" or \"Drive\", check the zip structure.")
+            failed['General'] = f"{subdir} does not match the specified directory name \"Walk\" or \"Drive\", check the zip structure."
+            retDict["failed"] = 1
+            retDict["failed_info"] = failed
+            print(json.dumps(retDict))
             return
-        
 
     for subdir in os.listdir(dir):
         for file in os.listdir(path.join(dir,subdir)):
             ## Get points from file
             format = os.path.splitext(file)[1]
+            name = file[:str(file).find(".")]
+
             if format.lower() == ".csv":
                 points = load_points(path.join(dir,subdir,file))
             elif format.lower() == ".geojson":
                 points = load_points_from_geojson(path.join(dir,subdir,file))
             else:
-                print(f"ERROR;{file}'s points couldn't been extracted.")
-                return
+                failed[name] = f"Points couldn't be extracted."
             
             if points == None:
-                print(f"ERROR;{file}'s points couldn't been extracted.")
-                return
+                failed[name] = f"Points couldn't be extracted."
             
             ## MAPMATCH
             geometry = None
+            status = None
             if subdir == "Walk":
-                geometry = map_match(points,container_name,costing = "pedestrian")
+                status, geometry = map_match(points,container_name,costing = "pedestrian")
             if subdir == "Drive":
-                geometry = map_match(points,container_name, costing = "auto")
+                status, geometry = map_match(points,container_name, costing = "auto")
             if geometry != None:
-                name = file[:str(file).find(".")]
                 pts = decode_polyline(geometry)
                 create_file_for_db("database.csv",pts,name,user,zip_name)
                 create_file_for_db("database_original.csv",points,name,user,zip_name)
+                successful.append(name)
             else:
-                print(f"ERROR;{file} could not been map matched.")
-                return
-    print("SUCCESS;")
+                failed[name] = status.split(";")[1]
+    
+    retDict["failed"] = len(failed)
+    retDict["successful"] = len(successful)
+    retDict["failed_info"] = failed
+
+    print(json.dumps(retDict))
 
 if __name__ == "__main__":
     if len(sys.argv)<4:

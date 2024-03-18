@@ -40,8 +40,8 @@ function handleUploadAndUnzip(file, baseFolder, username) {
                   console.log("Error in python script: "+error)
                   reject(error);
                 } else {
-                  if (stdout.split(";").includes("ERROR")){
-                  }else{
+                  let json  = JSON.parse(stdout)
+                  if (json.failed == 0){
                     fs.rmdirSync(path.join(uploadDir,file.originalname), { recursive: true }); // remove uploaded zip file
                     fs.rmdirSync(unzipDir, {recursive: true}); // remove unzipped files
                   }

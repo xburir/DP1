@@ -108,16 +108,24 @@
     // Listen for 'processing_complete' event
     socket.on('processing_complete', (message) => {
     // Handle the processing completion message
-    let arr = message.split(";")
-    if (arr.includes("ERROR")){
-        console.log('Processing complete: '+ arr[1]+" check the output files to rerun the process.");
-        showAlert('Processing complete: '+ arr[1]+" check the output files to rerun the process.")
+    
+    let json = JSON.parse(message)
+
+    if (json.failed > 0){
+        errorString = ""
+        for (const key in json.failed_info) {
+            if (json.failed_info.hasOwnProperty(key)) {
+                errorString += "\n"+key+" -> "+json.failed_info[key]
+            }
+          }
+        console.log('Processing complete: There was '+json.failed+' errors: '+errorString);
+        showAlert('Processing complete: There was '+json.failed+' errors, to check the errors, see the console [F12]')
         checkErrors()
     }
     else{
         console.log('Processing complete');
         checkErrors()
-        showAlert('Processing complete: '+arr[1])
+        showAlert('Processing completed successfully.')
         let div = document.getElementById("table-of-files")
         if (div.style.display === 'flex'){
             openFiles()
