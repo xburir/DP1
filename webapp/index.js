@@ -41,6 +41,7 @@ app.use(session({
 app.use(bodyParser.json());
 
 connectionOptions = {
+  connectionLimit: 10,
   host: 'localhost',
   user: 'root',
   password: 'root',
@@ -51,27 +52,28 @@ connectionOptions = {
 let connection;
 
 function connectToDatabase() {
-  connection = mysql.createConnection(connectionOptions);
+  connection = mysql.createPool(connectionOptions);
 
   // Connect to MySQL
-  connection.connect((err) => {
-    if (err) {
-      if (err.code == 'ECONNREFUSED') {
-        console.error('Error connecting to MySQL database: Connection refused.');
-      } else {
-        console.error('Error connecting to MySQL database: ', err.code);
-      }
-      setTimeout(connectToDatabase, 5000);
-    } else {
-      console.log('Connected to MySQL database');
-    }
-  });
+  // connection.connect((err) => {
+  //   if (err) {
+  //     if (err.code == 'ECONNREFUSED') {
+  //       console.error('Error connecting to MySQL database: Connection refused.');
+  //     } else {
+  //       console.error('Error connecting to MySQL database: ', err.code);
+  //     }
+  //     setTimeout(connectToDatabase, 5000);
+  //   } else {
+  //     console.log('Connected to MySQL database');
+  //   }
+  // });
 
   connection.on('error', (err) => {
     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
       console.error('Database connection lost');
       connectToDatabase(); // Reconnect if connection is lost
     } else {
+      connectToDatabase(); 
       console.error('Database error: ', err);
       throw err;
     }
