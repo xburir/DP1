@@ -1,28 +1,28 @@
 <!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
-     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
-     <script src="https://unpkg.com/leaflet-geometryutil"></script>
-     <!-- <script src="/leaflet.geometryutil.js"></script> -->
-     <script src="/map.js" defer></script>
-     
-<!-- <script src="bundle.js"></script> -->
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-geometryutil"></script>
+    <!-- <script src="/leaflet.geometryutil.js"></script> -->
+    <script src="/map.js" defer></script>
+
+    <!-- <script src="bundle.js"></script> -->
 </head>
+
 <body>
 
     <div class="side-tools">
         <img src="./icons/account.svg" alt="Account" class="user-image open-user-info">
         <img src="./icons/info.svg" alt="About" id="aboutButton" class="custom-button">
         <img src="./icons/files.svg" alt="Files" class="custom-button" id="open-table-of-files">
-        <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm"  class="custom-button">
+        <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm" class="custom-button">
             <label for="fileInput">
                 <img src="./icons/upload.svg" alt="Upload Icon" />
             </label>
@@ -30,7 +30,7 @@
         </form>
         <img src="./icons/error.svg" alt="Errors" class="custom-button" id="open-errors">
     </div>
-    
+
 
 
     <div class="user-info">
@@ -38,23 +38,23 @@
         <img src="./icons/account.svg" alt="Account" class="user-image">
         <% if (username) { %>
             <p>Welcome, <%= username %>!</p>
-          <% } else { %>
-            <p>Welcome!</p>
-          <% } %>
-        <form action="/logout" method="POST">
-            <input type=submit value=Logout class="custom-button">
-        </form>
+            <% } else { %>
+                <p>Welcome!</p>
+                <% } %>
+                    <form action="/logout" method="POST">
+                        <input type=submit value=Logout class="custom-button">
+                    </form>
     </div>
-    
+
 
     <div class="custom-dialog" id="table-of-files">
         <img src="./icons/close.svg" alt="close" class="close-table-icon" id="close-files">
-        <h1>List of Files</h1>
+        <h1 id="list-of-files-header">List of Files</h1>
         <table class="custom-table">
             <thead>
                 <tr>
                     <th>File Name</th>
-                    <th>Creation Date</th>                    
+                    <th class="creation-date-collumn">Creation Date</th>
                     <th>Original route</th>
                     <th>Map-matched route</th>
                     <th>Bad map-match</th>
@@ -81,9 +81,9 @@
             </tbody>
         </table>
     </div>
-    
 
-    <div id="trackModal" >
+
+    <div id="trackModal">
         <p id="trackModalText"></p>
     </div>
 
@@ -91,7 +91,7 @@
     <div id="alertBox">
         <h2>Alert</h2>
         <p id="alertText">This is the alert message.</p>
-        <div id="progressBar" >
+        <div id="progressBar">
         </div>
     </div>
 
@@ -100,212 +100,236 @@
 </body>
 
 <script src="/socket.io/socket.io.js"></script>
-<script> 
+<script>
     const socket = io();
     var username = '<%= username %>'
     socket.emit('set_username', username);
 
     // Listen for 'processing_complete' event
     socket.on('processing_complete', (message) => {
-    // Handle the processing completion message
-    
-    let json = JSON.parse(message)
+        // Handle the processing completion message
 
-    if (json.failed > 0){
-        errorString = ""
-        for (const key in json.failed_info) {
-            if (json.failed_info.hasOwnProperty(key)) {
-                errorString += "\n"+key+" -> "+json.failed_info[key]
+        let json = JSON.parse(message)
+
+        if (json.failed > 0) {
+            errorString = ""
+            for (const key in json.failed_info) {
+                if (json.failed_info.hasOwnProperty(key)) {
+                    errorString += "\n" + key + " -> " + json.failed_info[key]
+                }
             }
-          }
-        console.log('Processing complete: There was '+json.failed+' errors: '+errorString);
-        showAlert('Processing complete: There was '+json.failed+' errors, to check the errors, see the console [F12]')
-        checkErrors()
-    }
-    else{
-        console.log('Processing complete');
-        checkErrors()
-        showAlert('Processing completed successfully.')
-        let div = document.getElementById("table-of-files")
-        if (div.style.display === 'flex'){
-            openFiles()
+            console.log('Processing complete: There was ' + json.failed + ' errors: ' + errorString);
+            showAlert('Processing complete: There was ' + json.failed + ' errors, to check the errors, see the console [F12]')
+            checkErrors()
         }
-    }
-    // You can update the UI or perform any other action here
+        else {
+            console.log('Processing complete');
+            checkErrors()
+            showAlert('Processing completed successfully.')
+            let div = document.getElementById("table-of-files")
+            if (div.style.display === 'flex') {
+                openFiles()
+            }
+        }
+        // You can update the UI or perform any other action here
     });
 
-    
-
-  socket.on('message', (message) => {
-    showAlert(message)
-    if(message === "Delete successful."){
-        openErrors()
-    }
-  });
 
 
-
-  document.addEventListener("DOMContentLoaded", function() {
-    const form = document.getElementById("uploadForm");
-    const fileInput = document.getElementById("fileInput");
-  
-    fileInput.addEventListener("change", function() {
-      // form.submit();
-      const formData = new FormData();
-      formData.append("file", fileInput.files[0]);
-      fetch("/upload", {
-        method: "POST",
-        body: formData
-      })
+    socket.on('message', (message) => {
+        showAlert(message)
+        if (message === "Delete successful.") {
+            openErrors()
+        }
     });
-  });
 
-  function checkErrors(){
-    let show = false
-    fetch("/list-uploads")  // get directory
-    .then(response => {
-        if (response.ok) {
-            return response.text()
-        }
-    }).then(response =>{
-        ress = JSON.parse(response)
-        if (ress.files.length > 0 ){
-            show = true
-        }
-    }).then( _ =>{
-        fetch("/list-unzipped")  // get directory
-        .then(response => {
-            if (response.ok) {
-                return response.text()
-            }
-        }).then( response => {
-            ress = JSON.parse(response)
-                if (ress.files.length > 0 ){
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("uploadForm");
+        const fileInput = document.getElementById("fileInput");
+
+        fileInput.addEventListener("change", function () {
+            // form.submit();
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            fetch("/upload", {
+                method: "POST",
+                body: formData
+            })
+        });
+    });
+
+    function checkErrors() {
+        let show = false
+        fetch("/list-uploads")  // get directory
+            .then(response => {
+                if (response.ok) {
+                    return response.text()
+                }
+            }).then(response => {
+                ress = JSON.parse(response)
+                if (ress.files.length > 0) {
                     show = true
                 }
-        }).then(_ =>{
-            if (show){
-                document.getElementById("open-errors").src = "/public/icons/error-with-dot.svg"
-            }else{
-                document.getElementById("open-errors").src = "/public/icons/error.svg"
-            }
-        })
-    })
-    
-  }
+            }).then(_ => {
+                fetch("/list-unzipped")  // get directory
+                    .then(response => {
+                        if (response.ok) {
+                            return response.text()
+                        }
+                    }).then(response => {
+                        ress = JSON.parse(response)
+                        if (ress.files.length > 0) {
+                            show = true
+                        }
+                    }).then(_ => {
+                        if (show) {
+                            document.getElementById("open-errors").src = "/public/icons/error-with-dot.svg"
+                        } else {
+                            document.getElementById("open-errors").src = "/public/icons/error.svg"
+                        }
+                    })
+            })
 
-  checkErrors()
+    }
+
+    checkErrors()
 
 </script>
 <script>
-    document.getElementsByClassName("close-user-info")[0].addEventListener("click",() =>{
+    document.getElementsByClassName("close-user-info")[0].addEventListener("click", () => {
         document.getElementsByClassName("user-info")[0].style.display = "none"
     })
-    document.getElementsByClassName("user-image")[0].addEventListener("click",() =>{
+    document.getElementsByClassName("user-image")[0].addEventListener("click", () => {
         document.getElementsByClassName("user-info")[0].style.display = "flex"
         document.getElementById("table-of-errors").style.display = "none"
         document.getElementById("table-of-files").style.display = "none"
     })
 
 
-    document.getElementById("close-files").addEventListener("click",() =>{
+    document.getElementById("close-files").addEventListener("click", () => {
         document.getElementById("table-of-files").style.display = "none"
     })
 
-    function openFiles(){
+    function openFiles() {
         document.getElementById("table-of-files").style.display = "flex"
         let table = document.getElementById("table-of-files-tbody")
+        let header = document.getElementById("list-of-files-header").innerHTML = "List of files"
+        document.querySelector(".creation-date-collumn").style.display = "block"
         table.innerHTML = ""
 
         let username = '<%= username %>'
-        fetch("/list-routes")  // get directory
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        }).then(response=>{
-            ress = JSON.parse(response)
-            ress.files.forEach((file) =>{
-                let row = document.createElement("tr")
-
-                let name = document.createElement("td")
-                name.innerHTML = file.name
-
-                let date = document.createElement("td")
-                date.innerHTML = file.lastModified
-
-                let originalSwitchTD = document.createElement("td")
-                let originalSwitchLabel = document.createElement("label")
-                originalSwitchTD.appendChild(originalSwitchLabel)
-                originalSwitchLabel.classList.add("switch")
-                let originalSwitch = document.createElement("input")
-                originalSwitch.onchange = function(){
-                    toggleRoute(file.name, username, "original", originalSwitch)
+        fetch("/list-files")  // get directory
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-                originalSwitch.type = "checkbox"
-                let originalSwitchSpan = document.createElement("span")
-                originalSwitchSpan.classList.add("slider")
-                originalSwitchLabel.appendChild(originalSwitch)
-                originalSwitchLabel.appendChild(originalSwitchSpan)
+                return response.text();
+            }).then(response => {
+                ress = JSON.parse(response)
+                ress.files.forEach((file) => {
+                    let row = document.createElement("tr")
 
-                if (shownFiles.some(innerArray => JSON.stringify(innerArray) === JSON.stringify([file.name,"original"]))){
-                    originalSwitch.checked = true
-                }else{
-                    originalSwitch.checked = false
-                }
+                    let name = document.createElement("td")
+                    name.innerHTML = file.name
+                    name.addEventListener("click", function () {
+                        openRoutes(file.name, username)
+                    })
+                    name.style.cursor = "pointer"
 
-                let matchedSwitchTD = document.createElement("td")
-                let matchedSwitchLabel = document.createElement("label")
-                matchedSwitchTD.appendChild(matchedSwitchLabel)
-                matchedSwitchLabel.classList.add("switch")
-                let matchedSwitch = document.createElement("input")
-                matchedSwitch.onchange = function(){
-                    toggleRoute(file.name, username, "map-match", matchedSwitch)
-                }
-                matchedSwitch.type = "checkbox"
-                let matchedSwitchSpan = document.createElement("span")
-                matchedSwitchSpan.classList.add("slider")
-                matchedSwitchLabel.appendChild(matchedSwitch)
-                matchedSwitchLabel.appendChild(matchedSwitchSpan)
+                    let date = document.createElement("td")
+                    date.classList.add("creation-date-collumn")
+                    date.innerHTML = file.lastModified
 
-                if (shownFiles.some(innerArray => JSON.stringify(innerArray) === JSON.stringify([file.name,"map-match"]))){
-                    matchedSwitch.checked = true
-                }else{
-                    matchedSwitch.checked = false
-                }
+                    let originalSwitchTD = document.createElement("td")
+                    let originalSwitchLabel = document.createElement("label")
+                    originalSwitchTD.appendChild(originalSwitchLabel)
+                    originalSwitchLabel.classList.add("switch")
+                    let originalSwitch = document.createElement("input")
+                    originalSwitch.onchange = function () {
+                        toggleFile(file.name, username, "original", originalSwitch)
+                    }
+                    originalSwitch.type = "checkbox"
+                    let originalSwitchSpan = document.createElement("span")
+                    originalSwitchSpan.classList.add("slider")
+                    originalSwitchLabel.appendChild(originalSwitch)
+                    originalSwitchLabel.appendChild(originalSwitchSpan)
 
-                let warnTD = document.createElement("td")
-                let warnImage = document.createElement("img")
-                warnTD.appendChild(warnImage)
-                warnImage.src = "/public/icons/error.svg"
-                warnImage.style.cursor = "pointer"
-                warnImage.addEventListener("click",()=>{
-                    fetch("/warn/"+username+"/"+file.name)
-                }) 
+                    let matchedSwitchTD = document.createElement("td")
+                    let matchedSwitchLabel = document.createElement("label")
+                    matchedSwitchTD.appendChild(matchedSwitchLabel)
+                    matchedSwitchLabel.classList.add("switch")
+                    let matchedSwitch = document.createElement("input")
+                    matchedSwitch.onchange = function () {
+                        toggleFile(file.name, username, "map-match", matchedSwitch)
+                    }
+                    matchedSwitch.type = "checkbox"
+                    let matchedSwitchSpan = document.createElement("span")
+                    matchedSwitchSpan.classList.add("slider")
+                    matchedSwitchLabel.appendChild(matchedSwitch)
+                    matchedSwitchLabel.appendChild(matchedSwitchSpan)
 
-                row.appendChild(name)
-                row.appendChild(date)
-                row.appendChild(originalSwitchTD)
-                row.appendChild(matchedSwitchTD)
-                row.appendChild(warnTD)
-                table.appendChild(row)
+
+
+                    let warnTD = document.createElement("td")
+                    let warnImage = document.createElement("img")
+                    warnTD.appendChild(warnImage)
+                    warnImage.src = "/public/icons/error.svg"
+                    warnImage.style.cursor = "pointer"
+                    warnImage.addEventListener("click", () => {
+                        fetch("/warn/" + username + "/" + file.name)
+                    })
+
+
+                    let routesForFile = []
+                    fetch("/list-routes/" + file.name).then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    }).then(text => {
+                        let ress = JSON.parse(text)
+                        ress.files.forEach((route) => {
+                            routesForFile.push(route.name)
+                        })
+                    }).then(_ => {
+
+                        if (checkIfAllRoutesFromFileAreShown(file.name, routesForFile, "original")) {
+                            originalSwitch.checked = true
+                        } else {
+                            originalSwitch.checked = false
+                        }
+
+                        if (checkIfAllRoutesFromFileAreShown(file.name, routesForFile, "map-match")) {
+                            matchedSwitch.checked = true
+                        } else {
+                            matchedSwitch.checked = false
+                        }
+                    })
+
+                    row.appendChild(name)
+                    row.appendChild(date)
+                    row.appendChild(originalSwitchTD)
+                    row.appendChild(matchedSwitchTD)
+                    row.appendChild(warnTD)
+                    table.appendChild(row)
+                })
             })
-        })
     }
 
-    document.getElementById("open-table-of-files").addEventListener("click",() =>{
+    document.getElementById("open-table-of-files").addEventListener("click", () => {
         document.getElementsByClassName("user-info")[0].style.display = "none"
         document.getElementById("table-of-errors").style.display = "none"
         document.getElementById("table-of-files").style.display = "flex"
         openFiles()
     })
 
-    document.getElementById("aboutButton").addEventListener("click",()=>{
+    document.getElementById("aboutButton").addEventListener("click", () => {
         window.location.href = "./about";
     })
 
-    function openErrors(){
+    function openErrors() {
         checkErrors()
         let table = document.getElementById("table-of-errors-tbody")
         table.innerHTML = ""
@@ -313,140 +337,140 @@
         let added = []
 
         let username = '<%= username %>'
-        
+
         fetch("/list-unzipped")  // get directory
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        }).then(response =>{
-            ress = JSON.parse(response)
-            ress.files.forEach((file) =>{
-                let row = document.createElement("tr")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            }).then(response => {
+                ress = JSON.parse(response)
+                ress.files.forEach((file) => {
+                    let row = document.createElement("tr")
 
-                let name = document.createElement("td")
-                name.innerHTML = file.name
-                added.push(file.name)
+                    let name = document.createElement("td")
+                    name.innerHTML = file.name
+                    added.push(file.name)
 
-                let downloadZip = document.createElement("td")
-                fetch("/uploads/"+username+"/"+file.name+".zip").then(response =>{
-                    if (!response.ok) {
-                        downloadZip.innerHTML = "ZIP not found"
-                    }else{
-                        let downloadA = document.createElement("a")
-                        let downloadImage = document.createElement("img")
-                        downloadA.appendChild(downloadImage)
-                        downloadImage.src = "/public/icons/download.svg"
-                        downloadZip.appendChild(downloadA)
-                        downloadZip.style.cursor = "pointer"
-                        downloadA.href = "/uploads/"+username+"/"+file.name+".zip"
-                    }
-                })
-
-                let rerun = document.createElement("td")
-                let rerunImage = document.createElement("img")
-                rerunImage.src = "/public/icons/refresh.svg"
-                rerunImage.style.cursor = "pointer"
-                rerun.appendChild(rerunImage)
-                rerunImage.addEventListener("click",()=>{
-                    fetch("/mapmatch/"+username+"/"+file.name)
-                })
-
-                let deletetd = document.createElement("td")
-                let deleteFolderImage = document.createElement("img")
-                deleteFolderImage.src = "/public/icons/folder.svg"
-                deleteFolderImage.style.cursor = "pointer"
-                deleteFolderImage.addEventListener("click",()=>{
-                    fetch("/delete"+"/uploads/"+username+"/unzipped/"+file.name)
-                })
-                deletetd.appendChild(deleteFolderImage)
-                fetch("list-uploads").then(response=>{   // get zips
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text()
-                }).then(response=>{
-                    subress = JSON.parse(response)
-                    subress.files.forEach((subfile)=>{
-                        if (subfile.name.replace(/\.[^/.]+$/, "") === file.name){
-                            let deleteZipImage = document.createElement("img")
-                            deleteZipImage.src = "/public/icons/zip.svg"
-                            deleteZipImage.style.cursor = "pointer"
-                            deleteZipImage.addEventListener("click",()=>{
-                                fetch("/delete"+"/uploads/"+username+"/"+subfile.name)
-                            })
-                            deletetd.appendChild(deleteZipImage)
-                        }
-                    })
-                })
-
-                row.appendChild(name)
-                row.appendChild(downloadZip)
-                row.appendChild(rerun)
-                row.appendChild(deletetd)
-                table.appendChild(row)
-            })
-
-            fetch("list-uploads")
-                .then(response=>{
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text()
-                }).then(response =>{
-                    ress = JSON.parse(response)
-                    ress.files.forEach((file) =>{
-                        let filewithoutextension = file.name.replace(/\.[^/.]+$/, "")
-                        if (!added.includes(filewithoutextension)){
-
-                            let row = document.createElement("tr")
-            
-                            let name = document.createElement("td")
-                            name.innerHTML = file.name
-            
-                            let downloadZip = document.createElement("td")
+                    let downloadZip = document.createElement("td")
+                    fetch("/uploads/" + username + "/" + file.name + ".zip").then(response => {
+                        if (!response.ok) {
+                            downloadZip.innerHTML = "ZIP not found"
+                        } else {
                             let downloadA = document.createElement("a")
                             let downloadImage = document.createElement("img")
                             downloadA.appendChild(downloadImage)
                             downloadImage.src = "/public/icons/download.svg"
                             downloadZip.appendChild(downloadA)
                             downloadZip.style.cursor = "pointer"
-                            downloadA.href = "/uploads/"+username+"/"+file.name+".zip"
-            
-                            let rerun = document.createElement("td")
-                            
-                            let deletetd = document.createElement("td")
-                            let deleteZipImage = document.createElement("img")
-                            deleteZipImage.src = "/public/icons/zip.svg"
-                            deleteZipImage.style.cursor = "pointer"
-                            deleteZipImage.addEventListener("click",()=>{
-                                fetch("/delete"+"/uploads/"+username+"/"+file.name)
-                            })
-                            deletetd.appendChild(deleteZipImage)
-            
-                            row.appendChild(name)
-                            row.appendChild(downloadZip)
-                            row.appendChild(rerun)
-                            row.appendChild(deletetd)
-                            table.appendChild(row)
+                            downloadA.href = "/uploads/" + username + "/" + file.name + ".zip"
                         }
-                    }
+                    })
 
-                    
-                    );
-                });
-        })
+                    let rerun = document.createElement("td")
+                    let rerunImage = document.createElement("img")
+                    rerunImage.src = "/public/icons/refresh.svg"
+                    rerunImage.style.cursor = "pointer"
+                    rerun.appendChild(rerunImage)
+                    rerunImage.addEventListener("click", () => {
+                        fetch("/mapmatch/" + username + "/" + file.name)
+                    })
+
+                    let deletetd = document.createElement("td")
+                    let deleteFolderImage = document.createElement("img")
+                    deleteFolderImage.src = "/public/icons/folder.svg"
+                    deleteFolderImage.style.cursor = "pointer"
+                    deleteFolderImage.addEventListener("click", () => {
+                        fetch("/delete" + "/uploads/" + username + "/unzipped/" + file.name)
+                    })
+                    deletetd.appendChild(deleteFolderImage)
+                    fetch("list-uploads").then(response => {   // get zips
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text()
+                    }).then(response => {
+                        subress = JSON.parse(response)
+                        subress.files.forEach((subfile) => {
+                            if (subfile.name.replace(/\.[^/.]+$/, "") === file.name) {
+                                let deleteZipImage = document.createElement("img")
+                                deleteZipImage.src = "/public/icons/zip.svg"
+                                deleteZipImage.style.cursor = "pointer"
+                                deleteZipImage.addEventListener("click", () => {
+                                    fetch("/delete" + "/uploads/" + username + "/" + subfile.name)
+                                })
+                                deletetd.appendChild(deleteZipImage)
+                            }
+                        })
+                    })
+
+                    row.appendChild(name)
+                    row.appendChild(downloadZip)
+                    row.appendChild(rerun)
+                    row.appendChild(deletetd)
+                    table.appendChild(row)
+                })
+
+                fetch("list-uploads")
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text()
+                    }).then(response => {
+                        ress = JSON.parse(response)
+                        ress.files.forEach((file) => {
+                            let filewithoutextension = file.name.replace(/\.[^/.]+$/, "")
+                            if (!added.includes(filewithoutextension)) {
+
+                                let row = document.createElement("tr")
+
+                                let name = document.createElement("td")
+                                name.innerHTML = file.name
+
+                                let downloadZip = document.createElement("td")
+                                let downloadA = document.createElement("a")
+                                let downloadImage = document.createElement("img")
+                                downloadA.appendChild(downloadImage)
+                                downloadImage.src = "/public/icons/download.svg"
+                                downloadZip.appendChild(downloadA)
+                                downloadZip.style.cursor = "pointer"
+                                downloadA.href = "/uploads/" + username + "/" + file.name + ".zip"
+
+                                let rerun = document.createElement("td")
+
+                                let deletetd = document.createElement("td")
+                                let deleteZipImage = document.createElement("img")
+                                deleteZipImage.src = "/public/icons/zip.svg"
+                                deleteZipImage.style.cursor = "pointer"
+                                deleteZipImage.addEventListener("click", () => {
+                                    fetch("/delete" + "/uploads/" + username + "/" + file.name)
+                                })
+                                deletetd.appendChild(deleteZipImage)
+
+                                row.appendChild(name)
+                                row.appendChild(downloadZip)
+                                row.appendChild(rerun)
+                                row.appendChild(deletetd)
+                                table.appendChild(row)
+                            }
+                        }
+
+
+                        );
+                    });
+            })
     }
 
-    document.getElementById("open-errors").addEventListener("click",()=>{
+    document.getElementById("open-errors").addEventListener("click", () => {
         document.getElementsByClassName("user-info")[0].style.display = "none"
         document.getElementById("table-of-errors").style.display = "flex"
         document.getElementById("table-of-files").style.display = "none"
         openErrors()
     })
 
-    document.getElementById("close-errors").addEventListener("click",() =>{
+    document.getElementById("close-errors").addEventListener("click", () => {
         document.getElementById("table-of-errors").style.display = "none"
     })
 
@@ -462,10 +486,11 @@
         alertBox.style.display = "flex";
 
         // Hide the alert box after countdown
-        setTimeout(function() {
+        setTimeout(function () {
             alertBox.style.display = "none";
         }, 3000);
     }
 
 </script>
+
 </html>

@@ -5,7 +5,7 @@ from os.path import exists
 ## Path = "C:/Users/richard.buri/search_web/python/test/"
 
 ## Save map matched data to a csv file
-def create_file_for_db(filename,data,track,user,zip_name): 
+def create_file_for_db(data,track,user,zip_name,type): 
     base_folder = "routes" # folder in which users routes will be stored
 
     if not os.path.exists(base_folder):
@@ -17,12 +17,13 @@ def create_file_for_db(filename,data,track,user,zip_name):
     if not path.exists(path.join(base_folder,user,zip_name)):
         os.makedirs(path.join(base_folder,user,zip_name))
 
-    write_header = not exists(path.join(base_folder,user,zip_name,filename))    
-    file = open(path.join(base_folder,user,zip_name,filename),'a')
-    if write_header:
-        file.write("track,lat,lon")
+    if not path.exists(path.join(base_folder,user,zip_name,track)):
+        os.makedirs(path.join(base_folder,user,zip_name,track))
+   
+    file = open(path.join(base_folder, user, zip_name, track, type),'w')
+    file.write("track,lat,lon")
     for i in range(len(data)):
-        file.write("\n"+track+"_0,"+str(data[i][1])+","+str(data[i][0]))
+        file.write("\n"+track+","+str(data[i][1])+","+str(data[i][0]))
     file.close()
  
 ## Save points for easy displaying
@@ -180,8 +181,8 @@ def folder_process(dir, container_name, user, zip_name):
                 status, geometry = map_match(points,container_name, costing = "auto")
             if geometry != None:
                 pts = decode_polyline(geometry)
-                create_file_for_db("database.csv",pts,name,user,zip_name)
-                create_file_for_db("database_original.csv",points,name,user,zip_name)
+                create_file_for_db(pts,name,user,zip_name,"map-match.csv")
+                create_file_for_db(points,name,user,zip_name,"original.csv")
                 successful.append(name)
             else:
                 failed[name] = status.split(";")[1]

@@ -186,3 +186,5 @@ after depenencies are instlled, you can just `node index.js`
 - troska upratat ten index.js ten auth
 - ked bude csv obsahovat aj cas tak potom array v dict co sa vykresluje na mapu zoradit podla casu.
 - ~~po vypnuti okna ktore zobrazuje routes a zapnuti ukazuje, že nie je zobrazena trasa ale je~~
+- ~~zobrazovanie tras jednotlivo vo file~~
+- urobit dokumentaciu k jednotlivemu zobrazovaniu routes

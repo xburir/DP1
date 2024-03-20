@@ -6,7 +6,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 
-let shownFiles = []
+let shownRoutes = []
 
 // Function to check if the cursor position intersects with a polyline's path
 function isCursorOnPolyline(cursorPos, polyline) {
@@ -37,98 +37,214 @@ function removeLayers(fileName, routeType) {
         map.removeLayer(layer);
     });
 
-    shownFiles = shownFiles.filter(innerArray => !(
-        JSON.stringify(innerArray) === JSON.stringify([fileName,routeType])
-      ));
+    shownRoutes = shownRoutes.filter(innerArray => !(
+        JSON.stringify(innerArray) === JSON.stringify([fileName, routeType])
+    ));
 
     fitBounds()
 }
 
-function toggleRoute(fileName, username, routeType, event) {
-    if (event.checked) {
-        showFileDetails(fileName, username, routeType)
-    } else {
-        removeLayers(fileName, routeType)
-    }
+function toggleFile(fileName, username, routeType, event) {
+
+    fetch("/list-routes/" + fileName).then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    }).then(text => {
+        let ress = JSON.parse(text)
+
+        for (const track in ress.files) {
+            toggleRoute(fileName, ress.files[track].name, event.checked, routeType, username)
+        }
+    })
 }
 
-
-function showFileDetails(fileName, username, routeType) {
-
-
-    let div = document.getElementById("trackModal")
-    var hoveredLayers = []
-
-    let path = '/routes/' + username + '/' + fileName + '/'
-    if (routeType === 'original') {
-        path = path + 'database_original.csv'
-    }
-    if (routeType === 'map-match') {
-        path = path + 'database.csv'
-    }
-
-    fetch(path)
-        .then(response => {
+function toggleRoute(filename, routename, checked, routeType, username) {
+    if (checked) {
+        fetch('/routes/' + username + '/' + filename + '/' + routename + '/' + routeType + '.csv').then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             return response.text();
-        })
-        .then(csvData => {
-            const tracks = parseCSV(csvData);
-            for (const track in tracks) {
-                const route = L.polyline(tracks[track], {
-                    color: routeType === "original" ? 'red' : 'blue',
-                    trackId: track,
-                    fileName: fileName,
-                    routeType: routeType
-                }).addTo(map);
+        }).then(text => {
 
+            points = parseCSV(text)[routename]
 
-                route.on('mouseover', function (event) {
-                    // Display a popup on hover
-                    div.style.opacity = "1"
-                    div.style.pointerEvents = "auto"
+            let div = document.getElementById("trackModal")
+            var hoveredLayers = []
 
-                    var cursorPos = event.latlng; // Get the cursor position
-                    map.eachLayer(function (polyline) {
-                        // Check if the layer is a polyline
-                        if (polyline instanceof L.Polyline) {
-                            if (isCursorOnPolyline(cursorPos, polyline)) {
-                                // Handle the hovered polyline accordingly
-                                // You can add it to a list of hovered layers or perform other actions
-                                hoveredLayers.push(polyline)
-                            }
+            const route = L.polyline(points, {
+                color: routeType === "original" ? 'red' : 'blue',
+                trackId: routename,
+                fileName: filename,
+                routeType: routeType
+            }).addTo(map);
+
+            route.on('mouseover', function (event) {
+                // Display a popup on hover
+                div.style.opacity = "1"
+                div.style.pointerEvents = "auto"
+
+                var cursorPos = event.latlng; // Get the cursor position
+                map.eachLayer(function (polyline) {
+                    // Check if the layer is a polyline
+                    if (polyline instanceof L.Polyline) {
+                        if (isCursorOnPolyline(cursorPos, polyline)) {
+                            // Handle the hovered polyline accordingly
+                            // You can add it to a list of hovered layers or perform other actions
+                            hoveredLayers.push(polyline)
                         }
-                    });
-                    let str = ""
-                    for (var event of hoveredLayers) {
-                        console.log();
-                        let key = event.options.trackId
-                        let file = event.options.fileName
-                        str += '<br>' + key + '[' + file + ']';
                     }
-                    document.getElementById("trackModalText").innerHTML = "Tracks (" + hoveredLayers.length + ") " + str
+                });
+                let str = ""
+                for (var event of hoveredLayers) {
+                    console.log();
+                    let key = event.options.trackId
+                    let file = event.options.fileName
+                    str += '<br>' + key + '[' + file + ']';
+                }
+                document.getElementById("trackModalText").innerHTML = "Tracks (" + hoveredLayers.length + ") " + str
 
-                })
-                    .on('mouseout', function (event) {
-                        // Close the popup when mouse leaves the marker
-                        div.style.opacity = "0"
-                        div.style.pointerEvents = "none"
+            })
+                .on('mouseout', function (event) {
+                    // Close the popup when mouse leaves the marker
+                    div.style.opacity = "0"
+                    div.style.pointerEvents = "none"
 
-                        hoveredLayers = []
+                    hoveredLayers = []
 
-                    });
+                });
+        })
+            .then(_ => {
+                shownRoutes.push([filename, routename, routeType])
+                fitBounds()
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+
+    } else {
+        map.eachLayer(function (layer) {
+            // Check if the layer is a polyline
+            if (layer instanceof L.Polyline) {
+                // Remove the polyline from the map
+                if (layer.options.fileName === filename && layer.options.routeType === routeType && layer.options.trackId === routename) {
+                    map.removeLayer(layer);
+                }
+            }
+        });
+
+        shownRoutes = shownRoutes.filter(innerArray => !(
+            JSON.stringify(innerArray) === JSON.stringify([filename, routename, routeType])
+        ));
+
+        fitBounds()
+    }
+}
+
+function openRoutes(filename, username) {
+    document.getElementById("list-of-files-header").innerHTML = `Routes of ${filename}`
+    document.getElementById("table-of-files").style.display = "flex"
+    let table = document.getElementById("table-of-files-tbody")
+    table.innerHTML = ""
+
+    document.querySelector(".creation-date-collumn").style.display = "none"
+
+    fetch("/list-routes/" + filename).then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    }).then(text => {
+        let ress = JSON.parse(text)
+
+        for (const track in ress.files) {
+            let row = document.createElement("tr")
+            let name = document.createElement("td")
+            name.innerHTML = ress.files[track].name
+
+            let originalSwitchTD = document.createElement("td")
+            let originalSwitchLabel = document.createElement("label")
+            originalSwitchTD.appendChild(originalSwitchLabel)
+            originalSwitchLabel.classList.add("switch")
+            let originalSwitch = document.createElement("input")
+            originalSwitch.onchange = function () {
+                toggleRoute(filename, ress.files[track].name, originalSwitch.checked, "original", username)
+            }
+            originalSwitch.type = "checkbox"
+            let originalSwitchSpan = document.createElement("span")
+            originalSwitchSpan.classList.add("slider")
+            originalSwitchLabel.appendChild(originalSwitch)
+            originalSwitchLabel.appendChild(originalSwitchSpan)
+
+            if (shownRoutes.some(innerArray => JSON.stringify(innerArray) === JSON.stringify([filename, ress.files[track].name, "original"]))) {
+                originalSwitch.checked = true
+            }
+            else {
+                originalSwitch.checked = false
+            }
+
+            let matchedSwitchTD = document.createElement("td")
+            let matchedSwitchLabel = document.createElement("label")
+            matchedSwitchTD.appendChild(matchedSwitchLabel)
+            matchedSwitchLabel.classList.add("switch")
+            let matchedSwitch = document.createElement("input")
+            matchedSwitch.onchange = function () {
+                toggleRoute(filename, ress.files[track].name, matchedSwitch.checked, "map-match", username)
+            }
+            matchedSwitch.type = "checkbox"
+            let matchedSwitchSpan = document.createElement("span")
+            matchedSwitchSpan.classList.add("slider")
+            matchedSwitchLabel.appendChild(matchedSwitch)
+            matchedSwitchLabel.appendChild(matchedSwitchSpan)
+
+            if (shownRoutes.some(innerArray => JSON.stringify(innerArray) === JSON.stringify([filename, ress.files[track].name, "map-match"]))) {
+                matchedSwitch.checked = true
+            }
+            else {
+                matchedSwitch.checked = false
+            }
+
+            let warnTD = document.createElement("td")
+            let warnImage = document.createElement("img")
+            warnTD.appendChild(warnImage)
+            warnImage.src = "/public/icons/error.svg"
+            warnImage.style.cursor = "pointer"
+            warnImage.addEventListener("click", () => {
+                fetch("/warn/" + username + "/" + filename + " " + ress.files[track].name)
+            })
+
+            row.appendChild(name)
+            row.appendChild(originalSwitchTD)
+            row.appendChild(matchedSwitchTD)
+            row.appendChild(warnTD)
+            table.appendChild(row)
+        }
+    })
+
+
+}
+
+function checkIfAllRoutesFromFileAreShown(filename, routesInFile, routeType) {
+    found = []
+    if (shownRoutes.length == 0) {
+        return false
+    }
+    routesInFile.forEach(route => {
+        shownRoutes.forEach(shownRoute => {
+            if (shownRoute[0] === filename && shownRoute[1] === route && shownRoute[2] === routeType) {
+                found.push(route)
             }
         })
-        .then(_ => {
-            shownFiles.push([fileName,routeType])
-            fitBounds()
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
+    });
+    if (found.length == routesInFile.length) {
+        return true
+    } else {
+        return false
+    }
 }
+
 
 function fitBounds() {
     let bounds = new L.LatLngBounds();

@@ -73,7 +73,7 @@ function connectToDatabase() {
       console.error('Database connection lost');
       connectToDatabase(); // Reconnect if connection is lost
     } else {
-      connectToDatabase(); 
+      connectToDatabase();
       console.error('Database error: ', err);
       throw err;
     }
@@ -164,7 +164,7 @@ app.get('/', (req, res) => {
   res.render('index.ejs', { username: req.session.username });
 });
 
-app.get('/list-routes', (req, res) => {
+app.get('/list-files', (req, res) => {
   if (req.session.username == null) {
     res.redirect("/login")
     return
@@ -193,6 +193,29 @@ app.get('/list-routes', (req, res) => {
     res.json({ files: fileDetails });
   });
 });
+
+app.get('/list-routes/:file', (req, res) => {
+  if (req.session.username == null) {
+    res.redirect("/login")
+    return
+  }
+  const file = req.params.file
+
+  if (!fs.existsSync(path.join(__dirname, "/routes/", req.session.username, file))) {
+    console.error('File does not exist');
+    res.status(500).send('File does not exist');
+    return;
+  }
+
+  fs.readdir(path.join(__dirname, "/routes/", req.session.username, file), { withFileTypes: true }, (err, files) => {
+    if (err) {
+      console.error('Error reading directory:', err);
+      res.status(500).send('Internal server error');
+      return;
+    }
+    res.json({ files: files })
+  })
+})
 
 
 const upload = multer({ dest: 'uploads/' });
