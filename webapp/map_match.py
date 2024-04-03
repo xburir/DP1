@@ -1,6 +1,7 @@
 import sys, os, csv, requests, json, re
 from os import path
 from os.path import exists
+import gpxpy
 
 ## Path = "C:/Users/richard.buri/search_web/python/test/"
 
@@ -135,6 +136,15 @@ def load_points_from_geojson(file):
     f.close()
     return  coordinates
 
+def load_gpx_points(file):
+    points = []
+    with open(file, 'r') as gpx_file:
+        gpx = gpxpy.parse(gpx_file)
+        for track in gpx.tracks:
+            for segment in track.segments:
+                for point in segment.points:
+                    points.append([point.longitude, point.latitude])
+    return points
 
 def folder_process(dir, container_name, user, zip_name):
     successful = []
@@ -166,6 +176,8 @@ def folder_process(dir, container_name, user, zip_name):
                 points = load_points(path.join(dir,subdir,file))
             elif format.lower() == ".geojson":
                 points = load_points_from_geojson(path.join(dir,subdir,file))
+            elif format.lower() == ".gpx":
+                points = load_gpx_points(path.join(dir,subdir,file))
             else:
                 failed[name] = f"Points couldn't be extracted."
             

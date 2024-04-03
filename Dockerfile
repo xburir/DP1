@@ -6,6 +6,7 @@ RUN apt -y install python3
 RUN apt -y install python3-pip
 # RUN pip3 install python-csv
 RUN pip3 install requests
+RUN pip3 install gpxpy
 
 ENV TZ=Europe/Bratislava
 ARG DEBIAN_FRONTEND=noninteractive
