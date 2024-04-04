@@ -41,6 +41,12 @@
             <% } else { %>
                 <p>Welcome!</p>
                 <% } %>
+                    <br>
+                    <label>Fit map when toggling route</label>
+                    <label class="switch">
+                        <input type="checkbox" id="fitMapCheckBox" checked="true"><span class="slider"></span>
+                    </label>
+                    <br>
                     <form action="/logout" method="POST">
                         <input type=submit value=Logout class="custom-button">
                     </form>
@@ -198,6 +204,13 @@
 
 </script>
 <script>
+
+
+    let fitMap = document.getElementById("fitMapCheckBox").checked
+    document.getElementById("fitMapCheckBox").addEventListener("change", (event) => {
+        fitMap = event.target.checked
+    })
+
     document.getElementsByClassName("close-user-info")[0].addEventListener("click", () => {
         document.getElementsByClassName("user-info")[0].style.display = "none"
     })

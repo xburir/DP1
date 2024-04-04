@@ -256,7 +256,7 @@ function fitBounds() {
             any = true
         }
     });
-    if (any) {
+    if (any && fitMap) {
         map.fitBounds(bounds)
     }
 
