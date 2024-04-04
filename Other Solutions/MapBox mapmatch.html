@@ -1,0 +1,191 @@
+<html lang="en">
+<!-- login html css js from https://codepen.io/hicoders/pen/eYdwVmb -->
+
+<head>
+    <meta charset="UTF-8" />
+    <title>MapBox Mapmatch</title>
+</head>
+
+<body>
+    <input type="file" name="file" id="fileInput" class="inputfile">
+    <textarea id="output"></textarea>
+</body>
+
+<script>
+    // https://jsfiddle.net/welesley/tw7qLvh4/2/
+
+    let allGeoms = []
+    let allPromises = []
+
+    function decode(str, precision) {
+        var index = 0,
+            lat = 0,
+            lng = 0,
+            coordinates = [],
+            shift = 0,
+            result = 0,
+            byte = null,
+            latitude_change,
+            longitude_change,
+            factor = Math.pow(10, precision || 5);
+
+        // Coordinates have variable length when encoded, so just keep
+        // track of whether we've hit the end of the string. In each
+        // loop iteration, a single coordinate is decoded.
+        while (index < str.length) {
+
+            // Reset shift, result, and byte
+            byte = null;
+            shift = 0;
+            result = 0;
+
+            do {
+                byte = str.charCodeAt(index++) - 63;
+                result |= (byte & 0x1f) << shift;
+                shift += 5;
+            } while (byte >= 0x20);
+
+            latitude_change = ((result & 1) ? ~(result >> 1) : (result >> 1));
+
+            shift = result = 0;
+
+            do {
+                byte = str.charCodeAt(index++) - 63;
+                result |= (byte & 0x1f) << shift;
+                shift += 5;
+            } while (byte >= 0x20);
+
+            longitude_change = ((result & 1) ? ~(result >> 1) : (result >> 1));
+
+            lat += latitude_change;
+            lng += longitude_change;
+
+            coordinates.push([lat / factor, lng / factor]);
+        }
+
+        return coordinates;
+    }
+
+    function flipped(coords) {
+        var flipped = [];
+        for (var i = 0; i < coords.length; i++) {
+            flipped.push(coords[i].slice().reverse());
+        }
+        return flipped;
+    }
+
+    async function parseCSV(csvData) {
+        // Split the CSV data into lines
+        const lines = csvData.split('\n');
+
+        // Initialize an empty array to store coordinates
+        let coordinates = [];
+
+        // Iterate over each line of the CSV data
+        for (let i = 1; i < lines.length; i++) { // Start from index 1 to skip the header line
+
+            const line = lines[i].trim(); // Remove leading/trailing whitespace
+
+            // Split the line into fields using comma as delimiter
+            const fields = line.split(',');
+
+            // Extract latitude and longitude values from the fields
+            const lat = parseFloat(fields[1]);
+            const lon = parseFloat(fields[2]);
+
+            // If both latitude and longitude values are valid, add them to the coordinates array
+            if (!isNaN(lat) && !isNaN(lon)) {
+                coordinates.push(`${lon},${lat}`);
+            }
+
+            if (i % 99 == 0) {
+                allPromises.push(mapMatchGPX(coordinates.join(";")))
+                coordinates = []
+            }
+
+        }
+        // Join the coordinates array elements into a single string separated by semicolons
+        allPromises.push( mapMatchGPX(coordinates.join(";")))
+        coordinates = []
+
+       Promise.all(allPromises).then(geoms =>{
+        console.log("promises done")
+        document.getElementById('output').innerHTML = JSON.stringify(decodeAllGeoms(geoms))
+       })
+    }
+
+    // Assuming you have an input element with id="fileInput"
+    const fileInput = document.getElementById('fileInput');
+
+    // Event listener for file input change
+    fileInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+            // Process the loaded GPX data
+            const gpxData = event.target.result;
+
+
+            // Call map-matching function with the loaded GPX data
+            parseCSV(gpxData).then(data => {
+                console.log("allgeoms length "+allGeoms.length)
+            });
+        };
+
+        // Read the file as text (assuming GPX is XML)
+        reader.readAsText(file);
+    });
+
+
+    function decodeAllGeoms(allGeoms){
+        let allCoords = []
+        allGeoms.forEach(geom =>{
+            let coords = decode(geom)
+            coords.forEach(coord =>{
+                allCoords.push(coord)
+            })
+            
+        })
+        return {
+            type: 'LineString',
+            coordinates: flipped(allCoords)
+        };
+    }
+
+    function printt(){
+        document.getElementById('output').innerHTML = JSON.stringify(decodeAllGeoms(allGeoms))
+    }
+
+
+
+    async function mapMatchGPX(gpxData) {
+        // Make a POST request to the Map Matching API with walking profile
+        let accessToken = "pk.eyJ1IjoieGJ1cmlyIiwiYSI6ImNsbmxtdXcxNzAwcXkycm4xOWE4ZGNzbWwifQ.rjNj0QnPYkn5Q67eH-s8vA"
+
+
+        // Construct the request body
+        const requestBody = new URLSearchParams();
+        requestBody.append('coordinates', gpxData);
+
+        return fetch(`https://api.mapbox.com/matching/v5/mapbox/walking?access_token=${accessToken}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: requestBody.toString()
+        })
+            .then(response => response.json())
+            .then(data => {
+                // allGeoms.push(data.matchings[0].geometry)
+                return data.matchings[0].geometry
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+
+</script>
+
+</html>
