@@ -1,0 +1,94 @@
+\section{Použité technológie}
+\subsection{Docker}
+Docker je softvérová platforma, ktorá umožňuje rýchlo vytvárať, testovať a nasadzovať aplikácie. Docker balí softvér do štandardizovaných jednotiek nazývaných kontajnery, ktoré majú všetko, čo softvér potrebuje na spustenie vrátane knižníc, systémových nástrojov, kódu a runtime. Pomocou Dockeru môžete rýchlo nasadiť a škálovať aplikácie do akéhokoľvek prostredia a vedieť, že váš kód sa spustí.\cite{docker}. Docker sa využíva z rôznych dôvodov\cite{whyDocker}: 
+\begin{itemize}
+    \item \textbf{Spravovanie závislostí}: Docker umožňuje špecifikovať a spravovať všetky závislosti aplikácie v súvisiacom kontajneri, čo uľahčuje riadenie verzií a aktualizácií.
+    \item \textbf{Rýchlosť nasadzovania}: Kontajnery sa rýchlo spúšťajú a zastavujú, čo zjednodušuje vývoj a nasadzovanie aplikácií.
+    \item \textbf{Izolácia}: Kontajnery izolujú aplikáciu a jej závislosti od zvyšku systému, čo zabezpečuje konzistentné a predvídateľné spustenie aplikácie bez ohľadu na prostredie.
+    \item \textbf{Portabilita}: Kontajnery sú prenosné medzi rôznymi prostrediami, čo znamená, že sú spustiteľné na rôznych serveroch, vývojových počítačoch a v cloude bez problémov.
+    \item \textbf{Škálovateľnosť}: Docker kontajnery môžu byť ľahko škálovateľné pridávaním viacerých inštancií alebo zvyšovaním výkonu existujúcich inštancií.
+\end{itemize}
+\subsection{Valhalla api}
+Valhalla je open source trasovací engine so sprievodnými knižnicami na použitie s dátami OpenStreetMap. Valhalla tiež obsahuje nástroje ako výpočet matice času a vzdialenosti, izochróny, vzorkovanie nadmorskej výšky, porovnávanie máp a optimalizácia trás (Travelling Salesman)\cite{valhalla}.
+\subsubsection{Odin (generovanie trasy, rozpoznávanie manévrov)}
+Odin slúži ako nástroj inštrukcii na anotáciu cesty ako vstup zo smerovacieho enginu na použitie v navigácii. V súlade so severskou mytologickou témou bolo zvolené meno Odin, pretože sa o ňom často hovorilo, že je veľmi múdry. Keďže knižnica sa zaoberá väčšinou poskytovaním rozumného navádzania po ceste, ktoré sa má použiť na navigáciu, zdalo sa to ako vhodné meno. Odin obsahuje súbor rôznych dátových štruktúr a algoritmov, ktoré sa zaoberajú vecami ako: generovanie manévrov, porovnávanie názvov ulíc a generovanie rozprávania. \cite{odin}
+\subsubsection{Thor (trasovacie algoritmy)}
+Thor slúži ako trasovací mechanizmus podporovaný trasovacími dátami s otvoreným zdrojom. Thor je spoločníkom Sif, na ktorý sa veľmi spolieha pri určovaní vhodného prechodu grafom. Výsledná cesta môže byť použitá ako vstup pre vytvorenie manévru. Meno Thor bolo zvolené ako skratka pre: \textit{Tiled Hierarchical Open Routing} a bola základnou myšlienkou, okolo ktorej sa sformovala organizácia Valhalla a jej téma severskej mytológie.\\
+Knižnica Thor je v podstate súbor rôznych dátových štruktúr a algoritmov, ktoré sa zaoberajú vecami ako: prechod grafom A*, kalkulácia hrán, kalkulácia vrcholov a konštrukcia cesty. Zahŕňa tiež metódy na výpočet matíc časových vzdialeností, optimalizované trasovanie a izochróny.
+\subsubsection{Sif (cena pre hrany a prechody)}
+Sif poskytuje dynamickú, rozšíriteľnú kalkuláciu pre hrany a prechody medzi hranami (náklady na odbočenie). Jeho primárne využitie je v trasovacom engine pri vytváraní najlepšej cesty medzi miestami. V súlade so severskou mytologickou témou bolo zvolené meno Sif, pretože Sif je spoločníkom Thora.\\
+Sif je v podstate súbor rôznych dátových štruktúr a algoritmov, ktoré sa zaoberajú vecami ako: korelácia vstupného miesta so základným grafom, čiastočná vzdialenosť pozdĺž hrany a filtrovanie hrán, ktoré by sa nemali brať do úvahy pri korelácii.
+\subsubsection{Loki (priradenie lokácii grafovým vrcholom)} % o tomto je este viac ako to funguje ked by bolo malo textu  %% tile je objekt? mozno prepisat
+Loki sa používa na priradenie informácií o polohe k základnému objektu grafu na použitie pri vytváraní vstupu do trasovacieho enginu. V súlade so severskou mytologickou témou bolo meno Loki vybrané ako slovná hračka nájsť. Keďže Loki sa zaoberá väčšinou koreláciou nejakého vstupu (minimálne zemepisnej šírky, dĺžky) k objektu v rámci grafu, zdalo sa to ako vhodný názov!\\
+Loki je v podstate súbor rôznych dátových štruktúr a algoritmov, ktoré sa zaoberajú vecami ako: korelácia vstupného miesta so základným grafom, čiastočná vzdialenosť pozdĺž okraja a filtrovanie hrán, ktoré by sa nemali brať do úvahy pri korelácii.
+\subsubsection{Mjolnir (trasovací graf a generovanie dlaždíc)}
+Mjolnir je v súbor aplikácií, dátových štruktúr a algoritmov, ktoré sa zaoberajú vecami ako: spracovanie dátových extraktov OSM, rezanie smerovateľných „grafových“ dlaždíc, generovanie hierarchií dlaždíc a testovanie na nedostatky údajov. Tieto dlaždicové smerovacie údaje sa používajú pri smerovaní a vyhľadávaní v rámci organizácie Valhalla. V súlade so severskou mytologickou témou bol zvolený názov Mjölnir, pretože predstavuje zbraň hromadného ničenia. Zdalo sa to vhodné, pretože hlavná aplikácia sa zaoberá väčšinou rozbíjaním údajov OSM veľkosti planéty do malých fragmentov smerovateľných dlaždíc. %% why tiles? https://valhalla.github.io/valhalla/mjolnir/why_tiles/
+\subsubsection{Meili (map matching)}  % toto https://valhalla.github.io/valhalla/meili/algorithms/ keby bolo malo textu
+Meili, poskytuje sadu algoritmov a dátových štruktúr na porovnávanie máp. Priraďuje sekvenciu miest (zvyčajne nepresných, napr. trajektória GPS) k základnej cestnej sieti. V súlade so severskou mytologickou tematikou bolo zvolené meno Meili, Thorov brat. Keďže porovnávanie máp úzko súvisí so smerovaním a keďže Thor je trasovacia knižnica Valhally, Meili sa zdalo najvhodnejšie.
+
+
+\subsection{COhaveSearch}
+COhaveSearch je webový nástroj, ktorý načíta GPS trasy. Tieto trasy neskôr zobrazuje na mape. Pre používateľa môže byť zložité nakresliť presnú hľadanú trajektóriu, hlavne keď hľadá komplexnú trajektóriu, ktorá zahŕňa mnoho zákrut a križovatiek. Namiesto kreslenia kreslenia hľadanej trajektórie používateľ určí brány, cez ktoré má hľadaná trajektória prechádzať. Po zadaní brán sa vyhľadá trasa, alebo trasy na základe geohashu a následne sa zobrazí. Tento spôsob možno nie je najoptimálnejší a najrýchlejší. Je však najviac user-friendly, v porovnaní s ostatnými riešeniami ako napríklad Geodabs. Trasy sa načítajú pomocou skriptu, ktorý vytvorí databázu pre načítané trasy. Trasy sa zakódujú do geohash postupností a vytvoria sa pre trasy geojsony. 
+\begin{figure}[H]
+\centering
+\begin{subfigure}{.99\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{img/brany.png}
+  \caption{Zvolenie brán}
+\end{subfigure}
+\begin{subfigure}{.99\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{img/match.png}
+  \caption{Nájdenie trasy, ktorá prechádza bránami}
+\end{subfigure}
+\caption{Prostredie COhaveSearch}
+\end{figure}
+\subsection{Geojson.io}
+GeoJSON.io je webový nástroj, ktorý umožňuje používateľom vytvárať, upravovať a vizualizovať údaje GeoJSON. GeoJSON je formát na kódovanie geografických dátových štruktúr, ako sú body, čiary a polygóny, pomocou JavaScript Object Notation (JSON). Bežne sa používa na reprezentáciu priestorových informácií a je podporovaný mnohými nástrojmi mapovania a GIS (Geografický informačný systém). Hlavnými výhodami sú:
+\begin{itemize}
+    \item \textbf{Interaktívne rozhranie}: Nástroj poskytuje interaktívnu mapu, na ktorej si používateľ dokáže nakresliť a upraviť GeoJSON.
+    \item \textbf{Import/Export dát}: Nástroj umožňuje jednoducho nahrať a zobraziť GeoJSON, alebo uložiť GeoJSON vytvorený v nástroji.
+    \item \textbf{Dizajn}: Jednoduchý a intuitívny dizajn pre rýchle použitie bez inštalácie.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \linewidth]{img/geojson.png}
+    \caption{Prostredie Geojson.io}
+\end{figure}
+\subsection{Kepler.gl}
+Kepler.gl je open source nástroj na geopriestorovú analýzu vyvinutý spoločnosťou Uber. Ide o webovú aplikáciu, ktorá používateľom umožňuje vizualizovať a skúmať rozsiahle súbory geolokačných údajov. Kepler.gl je údajovo agnostický a dokáže vykresliť milióny bodov reprezentujúcich tisíce ciest, čo z neho robí výkonný nástroj na priestorovú analýzu a vizualizáciu. Je postavený na platforme deck.gl WebGL na vizualizáciu údajov a možno ho okamžite použiť z webového prehliadača bez toho, aby ste museli čokoľvek inštalovať. Kepler.gl je v Uberi široko používaný na podporu pokročilých geopriestorových analýz inžiniermi, analytikmi a dátovými vedcami\cite{kepler1}\cite{kepler2}\cite{kepler3}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \linewidth]{img/kepler.png}
+    \caption{Prostredie Kepler.gl}
+\end{figure}
+\subsection{Express (Node.js)}
+Express je backend aplikačný framework na vytváranie serverovej časti webových aplikácii. Je vydaný ako bezplatný softvér s licenciou MIT. Dá sa nazvať štandardným serverovým frameworkom pre Node.js\cite{express}. Jeho prvá verzia, aspoň podľa histórie Githubu, bola dňa 22. Mája 2010. Prvá vydaná verzia bola 16. Novembra 2010\cite{express_history}. Express je napísaný v Javascripte a beží na Node.js platforme. 
+\\Výhody Express\cite{express_adv_dis}:
+\begin{itemize}
+    \item \textbf{Jednoduchý na použitie}: Express je účínný a užívateľsky prívetivá platforma. Má intuitívny API a jednoduchú štruktúru. Umožňuje zostaviť aplikáciu len pomocou pár riadkov kódu, ktoré majú priamu a minimalistickú syntax. 
+    \item \textbf{Veľká komunita}: Mnoho vývojárov používa tento framework, takže je veľmi populárny a existuje množstvo návodov, pomôcok a fór, kde sa dá obrátiť pri probléme pri vývoji. Taktiež má množstvo rozšírení, middleware a ďalších nástrojov, ktoré môžu byť integrované do aplikácii. 
+    \item \textbf{Spraovanie HTTP požiadaviek}: Vďaka jednoduchému a flexibilnému spôsobu definovanie ciest pre rôzne HTTP požiadavky môžeme ľahko určiť ako bude naša aplikácia reagovať a pracovať s dátami podľa našich potrieb.
+    \item \textbf{Škálovateľnosť}: Express je ľahko škálovateľný, takže pri vhodnom návrhu aplikácie môžeme efektívne spracovať aj veľké množstvo požiadaviek. 
+\end{itemize}
+Nevýhody Express\cite{express_adv_dis}:
+\begin{itemize}
+    \item \textbf{Bezpečnosť}: Bolo ohlásených mnoho bezpečnostných problémov, ako napríklad vzdialené spustenie kódu pomocou \textit{ejs} modulu alebo častný \textit{denial of service} pri čersstvom module.
+    \item \textbf{Aktualizácie}: Kedže sa tento framework stále vyvíja a zlepšuje, môže nastať, že niektoré moduly už nebudú podporované alebo sa budú používať inak ako sa očakáva. Preto je potrebné kontrolovať aktualizáie a zmeny a uistiť sa, že tieto aktualizácie neprinesú do našej aplikácie nové chyby.
+\end{itemize}
+Použitie Express v populárnych aplikáciách: Uber, Netflix, PayPal a LinkedIn \cite{express_adv_dis}.
+
+\subsection{Visual Studio Code}
+Visual Studio Code je jednoduchý, ale výkonný editor zdrojového kódu, ktorý je stiahnuteľný pre Windows, MacOS aj Linux. Dodáva sa so vstavanou podporou pre JavaScript, TypeScript a Node.js \cite{vscode}. Má bohatý ekosystém rozšírení pre ďalšie jazyky. Taktiež obsahuje množstvo pluginov a rozšírení. Ponúka množstvo vývojárskych nástrojov ako integrácia gitu, debugger alebo vstavaný príkazový terminál. Bol vydaný 29. Apríla 2015 \cite{vscode_history}. Jeho hlavnými výhodami sú \cite{vscode_adv}:
+\begin{itemize}
+    \item Je zadarmo.
+    \item Dostupný pre Windows, MacOS aj Linux.
+    \item Je rozšíriteľný a je možné nainštalovať rozšírenia pre takmer všetky populárne programovacie jazyky. Nie je potrebné sťahovať zvlášť \textit{\acrshort{ide}} pre každý programovací jazyk, s ktorým pracujete.
+    \item Pracuje rýchlejšie aj veľkým množstvom pluginov ako ostatné \textit{\acrshort{ide}}. 
+    \item Je bohatý na funkcie a s vhodnými nainštalovanými rozšíreniami je porovnateľný s plnohodnotnými \acrshort{ide} aj napriek tomu, že ide stále len o textový editor.
+\end{itemize}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{img/vscode.png}
+    \caption{Prostredie Visual Studio Code}
+\end{figure}
