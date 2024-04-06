@@ -62,7 +62,7 @@ Kepler.gl je open source nástroj na geopriestorovú analýzu vyvinutý spoločn
     \includegraphics[width = \linewidth]{img/kepler.png}
     \caption{Prostredie Kepler.gl}
 \end{figure}
-\subsection{Express (Node.js)}
+\subsection{Express (Node.js)\label{section:express}}
 Express je backend aplikačný framework na vytváranie serverovej časti webových aplikácii. Je vydaný ako bezplatný softvér s licenciou MIT. Dá sa nazvať štandardným serverovým frameworkom pre Node.js\cite{express}. Jeho prvá verzia, aspoň podľa histórie Githubu, bola dňa 22. Mája 2010. Prvá vydaná verzia bola 16. Novembra 2010\cite{express_history}. Express je napísaný v Javascripte a beží na Node.js platforme. 
 \\Výhody Express\cite{express_adv_dis}:
 \begin{itemize}
@@ -78,7 +78,7 @@ Nevýhody Express\cite{express_adv_dis}:
 \end{itemize}
 Použitie Express v populárnych aplikáciách: Uber, Netflix, PayPal a LinkedIn \cite{express_adv_dis}.
 
-\subsection{Visual Studio Code}
+\subsection{Visual Studio Code \label{section:vscode}}
 Visual Studio Code je jednoduchý, ale výkonný editor zdrojového kódu, ktorý je stiahnuteľný pre Windows, MacOS aj Linux. Dodáva sa so vstavanou podporou pre JavaScript, TypeScript a Node.js \cite{vscode}. Má bohatý ekosystém rozšírení pre ďalšie jazyky. Taktiež obsahuje množstvo pluginov a rozšírení. Ponúka množstvo vývojárskych nástrojov ako integrácia gitu, debugger alebo vstavaný príkazový terminál. Bol vydaný 29. Apríla 2015 \cite{vscode_history}. Jeho hlavnými výhodami sú \cite{vscode_adv}:
 \begin{itemize}
     \item Je zadarmo.
@@ -92,3 +92,11 @@ Visual Studio Code je jednoduchý, ale výkonný editor zdrojového kódu, ktor�
     \includegraphics[width=1\linewidth]{img/vscode.png}
     \caption{Prostredie Visual Studio Code}
 \end{figure}
+
+\subsection{MySQL \label{section:mysql}}
+Všetky softvérové aplikácie vyžadujú ako primárny zdroj údajov databázy. Databáza ukladá údaje, keď niekto vykoná online vyhľadávanie, prihlási sa do účtu alebo dokončí transakciu, aby bolo neskôr možné tieto údaje získať. Namiesto ukladania všetkých údajov do jedného veľkého súboru, uchováva relačná databáza údaje usporiadané do tabuliek. Skutočné súbory, ktoré tvoria štruktúru databázy, sú usporiadané tak, aby maximalizovali rýchlosť. Je možné nastaviť vzťahy medzi jednotlivými údajmi 1:1, 1:N. Dátové polia môžu byť jedinečné, povinné alebo voliteľné. Databáza presadzuje tieto pravidlá, čo zaisťuje, že v prípade dobre navrhnutej databázy vaša aplikácia nikdy nenarazí na nekonzistentné, duplicitné, ojedinelé, zastarané alebo chýbajúce údaje. Časť \acrshort{sql} v \textit{MySQL} znamená \acrlong{sql}. \acrshort{sql} je najbežnejší štandardizovaný jazyk používaný na prístup k databázam. Výhody \textit{MySQL}\cite{mysql}:
+\begin{itemize}
+    \item Databáza je jednoduchá na inštaláciu, to znamená, že je vývojár nainštaluje do pár minút.
+    \item Je ľahko škálovateľná. Zvládne operovať nad veľkým množstvom dát, rovnako ako obslúžiť veľké množstvo pripojení. Je preto vhodná aj pre veľké aplikácie ako \textit{Facebook}.
+    \item Poskytuje mnoho bezpečnostných prkov, napríklad autentifikáciu alebo nastavenie práv pre rôznych používateľov. Vďaka tomuto sú dáta v bezpečí pred neautorizovanými používateľmi.
+\end{itemize}
