@@ -188,3 +188,5 @@ after depenencies are instlled, you can just `node index.js`
 - ~~po vypnuti okna ktore zobrazuje routes a zapnuti ukazuje, že nie je zobrazena trasa ale je~~
 - ~~zobrazovanie tras jednotlivo vo file~~
 - urobit dokumentaciu k jednotlivemu zobrazovaniu routes
+- pridat do dp to co mam v druhej vetve poznamky
+- ~~pridat do dp parametre na map-match~~

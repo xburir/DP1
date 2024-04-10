@@ -22,12 +22,7 @@
         <img src="./icons/account.svg" alt="Account" class="user-image open-user-info">
         <img src="./icons/info.svg" alt="About" id="aboutButton" class="custom-button">
         <img src="./icons/files.svg" alt="Files" class="custom-button" id="open-table-of-files">
-        <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm" class="custom-button">
-            <label for="fileInput">
-                <img src="./icons/upload.svg" alt="Upload Icon" />
-            </label>
-            <input type="file" name="file" accept=".zip" id="fileInput" class="inputfile">
-        </form>
+        <img src="./icons/upload.svg" alt="Upload Icon" class="custom-button" id="open-upload-table" />
         <img src="./icons/error.svg" alt="Errors" class="custom-button" id="open-errors">
     </div>
 
@@ -69,6 +64,52 @@
             <tbody id="table-of-files-tbody">
             </tbody>
         </table>
+    </div>
+
+    <div class="custom-dialog" id="upload-table">
+        <img src="./icons/close.svg" alt="close" class="close-table-icon" id="close-upload-table">
+        <h1>Upload routes</h1>
+
+
+
+        <span class="label-span">
+            <div class="help-marker"><img src="./icons/info.svg" width="18px">
+                <div class="help-window">
+                    <p>Set the number to indicate the accuracy in meters.</p>
+                </div>
+            </div> GPS accuracy: <label for="gps_accuracy">5</label>m
+        </span>
+        <input type="range" id="gps_accuracy" name="gps_accuracy" min="1" max="20" value="5"
+            oninput="changeLabel(this)">
+
+        <span class="label-span">
+            <div class="help-marker"><img src="./icons/info.svg" width="18px">
+                <div class="help-window">
+                    <p>Specify the search radius (in meters) within which to search road
+                        candidates for each measurement. Note that performance
+                        may decrease with a higher search radius value.</p>
+                </div>
+            </div> Search radius: <label for="search_radius">50</label>m
+        </span>
+        <input type="range" id="search_radius" name="search_radius" min="1" max="100" value="50"
+            oninput="changeLabel(this)">
+
+        <span class="label-span">
+            <div class="help-marker"><img src="./icons/info.svg" width="18px">
+                <div class="help-window">
+                    <p>Penalize turns from one road segment to next. For a pedestrian
+                        map-match, you may see a back-and-forth motion along the streets of your path. Try increasing
+                        the turn penalty factor to 500 to smooth out jittering of points. Note that if GPS accuracy is
+                        already good, increasing this will have a negative affect on your results.</p>
+                </div>
+            </div>
+            Turn penalty: <label for="turn_penalty_factor">200</label>
+        </span>
+        <input type="range" id="turn_penalty_factor" name="turn_penalty_factor" min="0" max="500" value="200"
+            oninput="changeLabel(this)">
+        <br><br>
+        <input type="file" name="file" accept=".zip" id="fileInput"><br>
+        <input type=button value=Upload class="custom-button" id="upload-button">
     </div>
 
     <div class="custom-dialog" id="table-of-errors">
@@ -149,23 +190,6 @@
         }
     });
 
-
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("uploadForm");
-        const fileInput = document.getElementById("fileInput");
-
-        fileInput.addEventListener("change", function () {
-            // form.submit();
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
-            fetch("/upload", {
-                method: "POST",
-                body: formData
-            })
-        });
-    });
-
     function checkErrors() {
         let show = false
         fetch("/list-uploads")  // get directory
@@ -211,20 +235,21 @@
         fitMap = event.target.checked
     })
 
+    // user info button
     document.getElementsByClassName("close-user-info")[0].addEventListener("click", () => {
         document.getElementsByClassName("user-info")[0].style.display = "none"
     })
     document.getElementsByClassName("user-image")[0].addEventListener("click", () => {
         document.getElementsByClassName("user-info")[0].style.display = "flex"
+        document.getElementById("upload-table").style.display = "none"
         document.getElementById("table-of-errors").style.display = "none"
         document.getElementById("table-of-files").style.display = "none"
     })
 
-
+    // files uploaded button
     document.getElementById("close-files").addEventListener("click", () => {
         document.getElementById("table-of-files").style.display = "none"
     })
-
     function openFiles() {
         document.getElementById("table-of-files").style.display = "flex"
         let table = document.getElementById("table-of-files-tbody")
@@ -330,18 +355,55 @@
                 })
             })
     }
-
     document.getElementById("open-table-of-files").addEventListener("click", () => {
         document.getElementsByClassName("user-info")[0].style.display = "none"
         document.getElementById("table-of-errors").style.display = "none"
+        document.getElementById("upload-table").style.display = "none"
         document.getElementById("table-of-files").style.display = "flex"
         openFiles()
     })
 
+    // open upload table button
+    document.getElementById("close-upload-table").addEventListener("click", () => {
+        document.getElementById("upload-table").style.display = "none"
+    })
+    document.getElementById("open-upload-table").addEventListener("click", () => {
+        document.getElementById("upload-table").style.display = "flex"
+        document.getElementsByClassName("user-info")[0].style.display = "none"
+        document.getElementById("table-of-errors").style.display = "none"
+        document.getElementById("table-of-files").style.display = "none"
+    })
+    document.getElementById("upload-button").addEventListener("click", () => {
+        const fileInput = document.getElementById("fileInput");
+        const gpsAccuracy = document.getElementById("gps_accuracy");
+        const searchRadius = document.getElementById("search_radius");
+        const turnPenalty = document.getElementById("turn_penalty_factor");
+        if (fileInput.files.length > 0) {
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            const params = { gps_accuracy: gpsAccuracy.value, search_radius: searchRadius.value, turn_penalty_factor: turnPenalty.value }
+            formData.append("params", JSON.stringify(params))
+            fetch("/upload", {
+                method: "POST",
+                body: formData
+            })
+            fileInput.value = ""
+            document.getElementById("upload-table").style.display = "none"
+        } else {
+            showAlert("Upload a ZIP file.")
+        }
+    })
+    function changeLabel(event) {
+        var labelElement = document.querySelector('label[for="' + event.id + '"]');
+        labelElement.innerHTML = event.value
+    }
+
+    // about button
     document.getElementById("aboutButton").addEventListener("click", () => {
         window.location.href = "./about";
     })
 
+    // errors button
     function openErrors() {
         checkErrors()
         let table = document.getElementById("table-of-errors-tbody")
@@ -475,14 +537,13 @@
                     });
             })
     }
-
     document.getElementById("open-errors").addEventListener("click", () => {
         document.getElementsByClassName("user-info")[0].style.display = "none"
+        document.getElementById("upload-table").style.display = "none"
         document.getElementById("table-of-errors").style.display = "flex"
         document.getElementById("table-of-files").style.display = "none"
         openErrors()
     })
-
     document.getElementById("close-errors").addEventListener("click", () => {
         document.getElementById("table-of-errors").style.display = "none"
     })

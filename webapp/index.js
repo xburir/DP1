@@ -232,7 +232,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     }
     res.redirect('/');
 
-    const message = await fileHandler.handleUploadAndUnzip(req.file, __dirname, req.session.username);
+    const message = await fileHandler.handleUploadAndUnzip(req.file, __dirname, req.session.username, JSON.parse(req.body.params));
     console.log(message)
 
     io.to(req.session.username).emit('processing_complete', message);

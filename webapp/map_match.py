@@ -69,7 +69,7 @@ def decode_polyline(polyline):
     return points 
 
 ## Map match the points
-def map_match(points,container_name,costing):
+def map_match(points,container_name,parameters,costing):
     strr = ""
     for pt in points:
         strr += '{"lat":'+str(pt[1])+',"lon":'+str(pt[0])+'},'
@@ -77,7 +77,7 @@ def map_match(points,container_name,costing):
 
     meili_coordinates = strr
     meili_head = '{"shape":['
-    meili_tail = """],"search_radius": 300, "shape_match":"map_snap", "costing": \""""+costing+"""\",  "format":"osrm"}"""
+    meili_tail = '], "shape_match":"map_snap", "costing": "'+costing+'",  "format":"osrm", "trace_options":{"search_radius": '+parameters['search_radius']+', "turn_penalty_factor": '+parameters['turn_penalty_factor']+', "gps_accuracy": '+parameters['gps_accuracy']+'}}'
     meili_request_body = meili_head + meili_coordinates + meili_tail
     port = 8002
     url = f"http://{container_name}:{port}/trace_route"
@@ -146,7 +146,13 @@ def load_gpx_points(file):
                     points.append([point.longitude, point.latitude])
     return points
 
-def folder_process(dir, container_name, user, zip_name):
+def folder_process(params):
+    dir = params["unzipdir"]
+    container_name = params["container"]
+    user = params["username"]
+    zip_name = params["zipname"]
+    parameters = params["parameters"]
+
     successful = []
     failed = {}
     retDict = {}
@@ -188,9 +194,9 @@ def folder_process(dir, container_name, user, zip_name):
             geometry = None
             status = None
             if subdir == "Walk":
-                status, geometry = map_match(points,container_name,costing = "pedestrian")
+                status, geometry = map_match(points,container_name,parameters,costing = "pedestrian", )
             if subdir == "Drive":
-                status, geometry = map_match(points,container_name, costing = "auto")
+                status, geometry = map_match(points,container_name,parameters, costing = "auto")
             if geometry != None:
                 pts = decode_polyline(geometry)
                 create_file_for_db(pts,name,user,zip_name,"map-match.csv")
@@ -206,12 +212,6 @@ def folder_process(dir, container_name, user, zip_name):
     print(json.dumps(retDict))
 
 if __name__ == "__main__":
-    if len(sys.argv)<4:
-        print("ERROR;Specify path, valhalla container name, file format.")
-    else:
-        dir = sys.argv[1]
-        container_name = sys.argv[2]
-        user = sys.argv[3]
-        zip_name = sys.argv[4]
-        folder_process(dir,container_name,user,zip_name)
+    params = json.loads(sys.argv[1])
+    folder_process(params)
         
