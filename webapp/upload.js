@@ -30,7 +30,6 @@ function handleUploadAndUnzip(file, baseFolder, username, params) {
         fs.createReadStream(filePath)
           .pipe(unzipper.Extract({ path: unzipDir }))
           .on('close', () => {
-            const valhalla_container_name = 'valhalla'
             const mapmatch_params = {
               container: "valhalla",
               unzipdir: unzipDir,
