@@ -22,7 +22,7 @@ Nefunkcionálne požiadavky sa týkajú toho, ako má systém pracovať. Popisuj
 \begin{itemize}
     \item \textbf{jednoduchosť a prehľadnosť} - aplikácia má byť jednoduchá na použitie a po prečítaní návodu na použitie má byť jasné ako má byť použitá
     \item \textbf{prehľadný kód} - kód má byť písaný prehľadne, aby sa v budúcnosti dal jednoducho rozšíriť a aby bol udržateľný
-    \item \textbf{jasná informácia o chybnej trase} - ak nastane chyba pri nahraní alebo spracovaní trás, používateľ má byť jasne informovaný, kde nastala chyba 
+    \item \textbf{jasná informácia o chybnej trase} - ak nastane chyba pri nahraní alebo spracovaní trás, používateľ má byť jasne informovaný, kde nastala chyba
 \end{itemize}
 \subsubsection{Diagram prípadov použitia}
 \begin{figure}[H]
@@ -30,7 +30,8 @@ Nefunkcionálne požiadavky sa týkajú toho, ako má systém pracovať. Popisuj
     \includegraphics[width=0.7\textwidth]{img/use-case.png}
     \caption{Diagram prípadov použitia}
     \label{fig:use-case}
-  \end{figure}
+\end{figure}
+Používateľ sa bude musiet po otvorení webovej aplikácie prihlásiť alebo registrovať. Po prihlásení sa roľa pouźívateľa zmení na prihláseného. Ako prihlásený bude používateľ môcť nahrať trasy vo formáte ZIP. Pri nahrávaní súboru musí taktiež zvoliť parametre, ktoré budú použité systémom pri pripínaní trás k cestnej sieti. Prihlásený používateľ si bude môcť zobraziť trasy rozdelené podľa súborov, ktoré nahral. Trasy v týchto súboroch bude potom môcť zobraziť všetky naraz, alebo jednotlivo. Taktiež si bude môcť zobraziť chybové nahrané súbory v prípade, že nejaké chybové súbory nahral. Na týchto chybových súboroch bude potom môcť spustiť algoritmus pripínania trás k cestnej sieti znova.
 
 
 \subsection{Routing}
