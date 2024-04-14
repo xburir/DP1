@@ -1,3 +1,37 @@
 \section{Návrh riešenia}
+\subsection{Špecifikácia požiadaviek}
+V tejto sekcii sa oboznámime s požiadavkami, ktoré má naša aplikácia spĺňať. Rozdelíme ich na funkcionálne a nefunkcionálne požiadavky. Taktiež si predstavíme diagram prípadov použitia.
+\subsubsection{Funkcionálne požiadavky}
+Funkcionálne požiadavky určujú, čo presne je možné v aplikácii robiť, alebo akú má funkcionalitu.\\
+\textbf{Zoznam funkcionálnych požiadaviek}
+\begin{itemize}
+    \item \textbf{registrácia} - používateľ sa môže zaregistrovať pomocou používateľského mena a hesla
+    \item \textbf{prihlásenie} - používateľ sa môže prihlásiť pomocou používateľského mena a hesla
+    \item \textbf{odhlásenie} - používateľ sa môže z aplikácie odhlásiť
+    \item \textbf{nahranie trás} - používateľ môže do aplikácie nahrať ZIP súbor obsahujúci trasy
+    \item \textbf{zobrazenie nahraných trás} - používateľ môže zobraziť zoznam všetkých súborov, ktoré nahral a boli úspešne spracované aplikáciou
+    \item \textbf{zobrazenie všetkých trás v nahranom súbore} - používateľ môže na mape zobraziť trasy, ktoré nahral v ZIP súbore
+    \item \textbf{zobrazenie jednotlivých trás v nahranom súbore} - používateľ môže na mape zobraziť jednodlivo trasy, ktoré obsahuje ZIP súbor, ktorý nahral
+    \item \textbf{pripnutie trás k cestnej sieti} - používateľ môže zobraziť trasy spracované aplikáciou, ktoré sú pripnuté k cesnej sieti. Zobraziť môže všetky trasy, ktoré obsahuje ZIP súbor, ktorý nahral, alebo jednotlivo.
+    \item \textbf{zobrazenie chybových nahraných súborov} - v prípade, že nahraný súbor nemal správny formát alebo bola jeho štruktúra nevhodná, sa tento súbor uloží na neskoršie stiahnutie a používateľ je informovaný o chybe, ktorá nastala
+    \item \textbf{znovu-spustenie chybných súborov} - v prípade, že sa nejaké trasy nachádzajú v priečinku chybových súborov, je možné na týchto trasách znova spustiť algoritmus pripnutia trás k cestnej sieti. Ide o špeciálny prípad použitia, keď si používateľ nahrá na server súbory bez toho, aby ich dával do ZIP súboru. Týmto sa ušetrí čas pri komprimovaní trás do ZIP súboru a pri rozbaľovaní ZIP súboru.
+\end{itemize}
+\subsubsection{Nefunkcionálne požiadavky}
+Nefunkcionálne požiadavky sa týkajú toho, ako má systém pracovať. Popisujú parametre systému a nie to, čo má systém robiť.\\
+\textbf{Zoznam nefunkcionálnych požiadaviek}
+\begin{itemize}
+    \item \textbf{jednoduchosť a prehľadnosť} - aplikácia má byť jednoduchá na použitie a po prečítaní návodu na použitie má byť jasné ako má byť použitá
+    \item \textbf{prehľadný kód} - kód má byť písaný prehľadne, aby sa v budúcnosti dal jednoducho rozšíriť a aby bol udržateľný
+    \item \textbf{jasná informácia o chybnej trase} - ak nastane chyba pri nahraní alebo spracovaní trás, používateľ má byť jasne informovaný, kde nastala chyba 
+\end{itemize}
+\subsubsection{Diagram prípadov použitia}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/use-case.png}
+    \caption{Diagram prípadov použitia}
+    \label{fig:use-case}
+  \end{figure}
+
+
 \subsection{Routing}
 \subsection{Map matching}
