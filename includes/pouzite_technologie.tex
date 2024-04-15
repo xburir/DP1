@@ -8,7 +8,7 @@ Docker je softvérová platforma, ktorá umožňuje rýchlo vytvárať, testova�
     \item \textbf{Portabilita}: Kontajnery sú prenosné medzi rôznymi prostrediami, čo znamená, že sú spustiteľné na rôznych serveroch, vývojových počítačoch a v cloude bez problémov.
     \item \textbf{Škálovateľnosť}: Docker kontajnery môžu byť ľahko škálovateľné pridávaním viacerých inštancií alebo zvyšovaním výkonu existujúcich inštancií.
 \end{itemize}
-\subsection{Valhalla api}
+\subsection{Valhalla api \label{section:valhalla}}
 Valhalla je open source trasovací engine so sprievodnými knižnicami na použitie s dátami OpenStreetMap. Valhalla tiež obsahuje nástroje ako výpočet matice času a vzdialenosti, izochróny, vzorkovanie nadmorskej výšky, porovnávanie máp a optimalizácia trás (Travelling Salesman)\cite{valhalla}.
 \subsubsection{Odin (generovanie trasy, rozpoznávanie manévrov)}
 Odin slúži ako nástroj inštrukcii na anotáciu cesty ako vstup zo smerovacieho enginu na použitie v navigácii. V súlade so severskou mytologickou témou bolo zvolené meno Odin, pretože sa o ňom často hovorilo, že je veľmi múdry. Keďže knižnica sa zaoberá väčšinou poskytovaním rozumného navádzania po ceste, ktoré sa má použiť na navigáciu, zdalo sa to ako vhodné meno. Odin obsahuje súbor rôznych dátových štruktúr a algoritmov, ktoré sa zaoberajú vecami ako: generovanie manévrov, porovnávanie názvov ulíc a generovanie rozprávania. \cite{odin}
@@ -27,22 +27,6 @@ Mjolnir je v súbor aplikácií, dátových štruktúr a algoritmov, ktoré sa z
 Meili, poskytuje sadu algoritmov a dátových štruktúr na porovnávanie máp. Priraďuje sekvenciu miest (zvyčajne nepresných, napr. trajektória GPS) k základnej cestnej sieti. V súlade so severskou mytologickou tematikou bolo zvolené meno Meili, Thorov brat. Keďže porovnávanie máp úzko súvisí so smerovaním a keďže Thor je trasovacia knižnica Valhally, Meili sa zdalo najvhodnejšie.
 
 
-\subsection{COhaveSearch}
-COhaveSearch je webový nástroj, ktorý načíta GPS trasy. Tieto trasy neskôr zobrazuje na mape. Pre používateľa môže byť zložité nakresliť presnú hľadanú trajektóriu, hlavne keď hľadá komplexnú trajektóriu, ktorá zahŕňa mnoho zákrut a križovatiek. Namiesto kreslenia kreslenia hľadanej trajektórie používateľ určí brány, cez ktoré má hľadaná trajektória prechádzať. Po zadaní brán sa vyhľadá trasa, alebo trasy na základe geohashu a následne sa zobrazí. Tento spôsob možno nie je najoptimálnejší a najrýchlejší. Je však najviac user-friendly, v porovnaní s ostatnými riešeniami ako napríklad Geodabs. Trasy sa načítajú pomocou skriptu, ktorý vytvorí databázu pre načítané trasy. Trasy sa zakódujú do geohash postupností a vytvoria sa pre trasy geojsony. 
-\begin{figure}[H]
-\centering
-\begin{subfigure}{.99\textwidth}
-  \centering
-  \includegraphics[width=\textwidth]{img/brany.png}
-  \caption{Zvolenie brán}
-\end{subfigure}
-\begin{subfigure}{.99\textwidth}
-  \centering
-  \includegraphics[width=\textwidth]{img/match.png}
-  \caption{Nájdenie trasy, ktorá prechádza bránami}
-\end{subfigure}
-\caption{Prostredie COhaveSearch}
-\end{figure}
 \subsection{Geojson.io}
 GeoJSON.io je webový nástroj, ktorý umožňuje používateľom vytvárať, upravovať a vizualizovať údaje GeoJSON. GeoJSON je formát na kódovanie geografických dátových štruktúr, ako sú body, čiary a polygóny, pomocou JavaScript Object Notation (JSON). Bežne sa používa na reprezentáciu priestorových informácií a je podporovaný mnohými nástrojmi mapovania a GIS (Geografický informačný systém). Hlavnými výhodami sú:
 \begin{itemize}
@@ -100,3 +84,14 @@ Všetky softvérové aplikácie vyžadujú ako primárny zdroj údajov databázy
     \item Je ľahko škálovateľná. Zvládne operovať nad veľkým množstvom dát, rovnako ako obslúžiť veľké množstvo pripojení. Je preto vhodná aj pre veľké aplikácie ako \textit{Facebook}.
     \item Poskytuje mnoho bezpečnostných prkov, napríklad autentifikáciu alebo nastavenie práv pre rôznych používateľov. Vďaka tomuto sú dáta v bezpečí pred neautorizovanými používateľmi.
 \end{itemize}
+
+
+\subsection{Leaflet \label{section:leaflet}}
+\textit{Leaflet} je poprená open-source knižnica napísaná v \textit{Javascripte} pre interaktívne mapy či už pre mobilné telefóny alebo počítače. Spolu má menej ako 50\acrshort{kb} a poskytuje všetky funkcie mapy, ktoré väčšina vývojávor potrebuje\cite{leaflet}. Je jednoduchá, prehľadná a dajú sa pomocou nej jednoducho vykreslovať trasy na mapu.\\
+Výhody\cite{leaflet-pros}: 
+\begin{itemize}
+    \item Jednoduchosť - \textit{Leaflet} je dizajnovaný pre jednoduché použitie. Je možné vytvoriť mapu jednoduchým skopírovaním kódu z \textit{QuickStart} tutoriálu \cite{leaflet-quickstart}.
+    \item Dokumentácia - Dokumentácia pre \textit{Leaflet} je dobre štrukturovaná s mnohými príkladmi a návodmi.
+    \item Komunita - Kedže \textit{Leaflet} je najpopulárnejšou \textit{Javascript}ovou knižnicou pre prácu s mapami, má obrovskú komunitu používateľov. Chýbajúce príklady zložitejšieho využitia sú doplnené mnohými príkladmi používateľov z komunity. "leaflet stackoverflow" na \textit{Google} vyhľadávaní vráti takmer 400 tisíc výsledkov. 
+    \item Flexibilita - V ponuke sú všetky funkcie, ktoré väčšina vývojárov pri práci s mapami potrebuje. V prípade potreby je možné funkcionality doplniť pluginmi.
+\end{itemize} 
