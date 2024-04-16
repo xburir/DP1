@@ -1,6 +1,6 @@
 \section{Návrh riešenia}
 \subsection{Špecifikácia požiadaviek}
-V tejto sekcii sa oboznámime s požiadavkami, ktoré má naša aplikácia spĺňať. Rozdelíme ich na funkcionálne a nefunkcionálne požiadavky. Taktiež si predstavíme diagram prípadov použitia.
+V tejto sekcii sa oboznámime s požiadavkami, ktoré má naša aplikácia spĺňať. Rozdelíme ich na funkcionálne a nefunkcionálne požiadavky. Taktiež si predstavíme diagram prípadov použitia a sekvenčné diagramy niektorých procesov.
 \subsubsection{Funkcionálne požiadavky}
 Funkcionálne požiadavky určujú, čo presne je možné v aplikácii robiť, alebo akú má funkcionalitu.\\
 \textbf{Zoznam funkcionálnych požiadaviek}
@@ -24,14 +24,33 @@ Nefunkcionálne požiadavky sa týkajú toho, ako má systém pracovať. Popisuj
     \item \textbf{prehľadný kód} - kód má byť písaný prehľadne, aby sa v budúcnosti dal jednoducho rozšíriť a aby bol udržateľný
     \item \textbf{jasná informácia o chybnej trase} - ak nastane chyba pri nahraní alebo spracovaní trás, používateľ má byť jasne informovaný, kde nastala chyba
 \end{itemize}
-\subsubsection{Diagram prípadov použitia}
+\subsubsection{Diagramy}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{img/use-case.png}
+    \includegraphics[width=0.7\textwidth]{img/diagramy/use-case.png}
     \caption{Diagram prípadov použitia}
     \label{fig:use-case}
 \end{figure}
-Používateľ sa bude musiet po otvorení webovej aplikácie prihlásiť alebo registrovať. Po prihlásení sa roľa pouźívateľa zmení na prihláseného. Ako prihlásený bude používateľ môcť nahrať trasy vo formáte ZIP. Pri nahrávaní súboru musí taktiež zvoliť parametre, ktoré budú použité systémom pri pripínaní trás k cestnej sieti. Prihlásený používateľ si bude môcť zobraziť trasy rozdelené podľa súborov, ktoré nahral. Trasy v týchto súboroch bude potom môcť zobraziť všetky naraz, alebo jednotlivo. Taktiež si bude môcť zobraziť chybové nahrané súbory v prípade, že nejaké chybové súbory nahral. Na týchto chybových súboroch bude potom môcť spustiť algoritmus pripínania trás k cestnej sieti znova.
+Používateľ sa bude musiet po otvorení webovej aplikácie prihlásiť alebo registrovať. Po prihlásení sa roľa pouźívateľa zmení na prihláseného. Ako prihlásený bude používateľ môcť nahrať trasy vo formáte ZIP. Pri nahrávaní súboru musí taktiež zvoliť parametre, ktoré budú použité systémom pri pripínaní trás k cestnej sieti. Prihlásený používateľ si bude môcť zobraziť trasy rozdelené podľa súborov, ktoré nahral. Trasy v týchto súboroch bude potom môcť zobraziť všetky naraz, alebo jednotlivo. Taktiež si bude môcť zobraziť chybové nahrané súbory v prípade, že nejaké chybové súbory nahral. Na týchto chybových súboroch bude potom môcť spustiť algoritmus pripínania trás k cestnej sieti znova. Nižšie je možné vidieť priebeh procesov nahrania súborov (obr.\ref{fig:seq-upload-zip}), zobrazenia trás (obr.\ref{fig:seq-show-routes}) alebo zobrazenia chybových súborov (obr. \ref{fig:seq-show-errors}) pomocou sekvenčných diagramov.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/diagramy/sekvencny-nahranie.png}
+    \caption{Sekvenčný diagram procesu nahrania súborov na server.}
+    \label{fig:seq-upload-zip}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/diagramy/sekvencny-trasy.png}
+    \caption{Sekvenčný diagram procesu zobrazenia trás na mape.}
+    \label{fig:seq-show-routes}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{img/diagramy/sekvencny-chybove.png}
+    \caption{Sekvenčný diagram procesu zobrazenia chybových súborov}
+    \label{fig:seq-show-errors}
+\end{figure}
+
 
 
 \subsection{Routing}
