@@ -54,29 +54,78 @@ Používateľ sa bude musiet po otvorení webovej aplikácie prihlásiť alebo r
 \subsection{Ukladanie údajov}
 V aplikácii sú vytvorené priečinky \textit{uploads} a \textit{routes}. Do priečinka \textit{uploads} sa budú ukladať všetky nahrané súbory. Po nahratí ZIP súboru na server bude pre používateľa vytvorený priečinok, ktorého názov bude zodpovedať prihlasovaciemu menu používateľa. V priečinku používateľa sa vytvorí nový priečinok \textit{unzipped}, v ktorom sa vytvorí priečinok s názvom nahraného ZIP súboru. Do tohto priečinku sa rozbalí nahraný ZIP súbor. Cesta k tomuto priečinku sa uloží do premennej, s ktorou algoritmus neskôr bude pracovať. Po skončení algoritmu prebehne kontrola, ktorá určí či boli všetky trasy v ZIP súbore spracované správne. V prípade, že v ZIP súbore bude nejaká chybová trasa, ZIP súbor spolu s rozbalenými súbormi ostane na serveri pre neskoršie stiahnutie používateľom alebo prípadné znovu-spustenie algoritmu. V opačnom prípade sa priečinok aj s nahraným ZIP súborom vymaže, aby sa ušetrilo miesto na serveri.
 
-Štruktúra priečinka \textit{routes} bude podobná priečinku \textit{uploads}. Do priečinka \textit{routes} sa po dokončení algoritmu vytvorí priečinok (ak ešte neexistuje), ktorého názov bude zodpovedať prihlasovaciemu menu používateľa. V priečinku používateľa bude vytvorený priečinok s názvom zodpovedajúcim názvu nahraného ZIP súboru. Do priečinku s názvom súboru budú vytvorené priečinky, ktorých názov bude zodpovedať názvom trás, ktoré boli nahrané v ZIP súbore a ktoré boli úspešne spracované algoritmom pripínania trás k cestnej sieti. V každom takomto priečinku budú dva súbory s názvom \textit{original.csv} a \textit{map-match.csv}, ktoré budú obsahovať konkrétne body trasy. 
+Štruktúra priečinka \textit{routes} bude podobná priečinku \textit{uploads}. Do priečinka \textit{routes} sa po dokončení algoritmu vytvorí priečinok (ak ešte neexistuje), ktorého názov bude zodpovedať prihlasovaciemu menu používateľa. V priečinku používateľa bude vytvorený priečinok s názvom zodpovedajúcim názvu nahraného ZIP súboru. Do priečinku s názvom súboru budú vytvorené priečinky, ktorých názov bude zodpovedať názvom trás, ktoré boli nahrané v ZIP súbore a ktoré boli úspešne spracované algoritmom pripínania trás k cestnej sieti. V každom takomto priečinku budú dva súbory s názvom \textit{original.csv} a \textit{map-match.csv}, ktoré budú obsahovať konkrétne body trasy.
 
 Štuktúry priečinkov sú vizualizované na obrázkoch . Priečinky sú zobrazené zaobleným obdĺžnikom a súbory sú zobrazené obdĺžnikom. Tri bodky \textit{"..."} vertikálne medzi priečinkami a súbormi symbolizujú, že v priečinku môže byť 0 až N súborov. To znamená, že môže byť priečinok prázdny, alebo v ňom môže byť ľubovoľný počet súborov/priečinkov. Tri bodky \textit{"..."} horizontálne za priečinkom symbolizujú, že graf pokračuje ale pre zjednodušenie obrázka bol graf skrátený.
 
 \begin{figure}[H]
     \centering
     \begin{subfigure}{\textwidth}
-      \centering
-      \includegraphics[width=1\textwidth]{img/struktura priecinkov/routes.png}
-      \caption{Štruktúra priečinku \textit{routes}}
-      \label{fig:routes-structure}
+        \centering
+        \includegraphics[width=1\textwidth]{img/struktura priecinkov/routes.png}
+        \caption{Štruktúra priečinku \textit{routes}}
+        \label{fig:routes-structure}
     \end{subfigure}
     \begin{subfigure}{\textwidth}
-      \centering
-      \includegraphics[width=1\textwidth]{img/struktura priecinkov/uploads.png}
-      \caption{Štruktúra priečinku \textit{uploads}}
-      \label{fig:uploads-structure}
+        \centering
+        \includegraphics[width=1\textwidth]{img/struktura priecinkov/uploads.png}
+        \caption{Štruktúra priečinku \textit{uploads}}
+        \label{fig:uploads-structure}
     \end{subfigure}
     \caption{Štruktúry priečinkov \textit{uploads} a \textit{routes}.}
     \label{fig:uploads-routes-structure}
-  \end{figure}
+\end{figure}
 
 
-\subsection{Spôsoby pripínania trás k cestnej sieti}
-\subsubsection{Routing}
-\subsubsection{Map matching}
+\subsection{Pripínanie trás k cestnej sieti}
+\textbf{Základná myšlienka}
+
+Po oboznámení sa s knižnicami, ktoré poskytujú funkciu pripínania trás k cestnej sieti sme dospeli k záveru, že trasy môžeme pripnúť dvoma spôsobmi. Pomocou funkcie \textit{routing} alebo pomocou funkcie \textit{map-match}. Prostredníctvom funkcie \textit{routing} by sme medzi každým bodom v trase našli optimálnu trasu, podobne ako v navigácii. Spojením týchto trás by sme dostali výslednú trasu pripnutú k cestnej sieti.
+
+Druhou možnosťou je použit funkciu \textit{map-match}, ktorá body v trase posunie k cestnej sieti. V prípade, že body v trase nie sú dostatočne husté, môže byť výsledná trasa hranatá a jej tvar nemusí zodpovedať cestnej sieti. Toto je možné vidieť na obrázku \ref{fig:map-match-low-points-after}. Obrázok \ref{fig:map-match-low-points-before} znázorňuje trasu pred použitím \textit{map-match} funkcie. Na obrázku \ref{fig:map-match-low-points-after} vidieť, že body trasy boli pripnuté k ceste, avšak nebolo ich dosť a výsledná trasa nezodpovedá cestnej sieti.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=.5\textwidth]{img/map-match rozdiel/malo bodov pred.png}
+        \caption{Trasa pred použitím \textit{map-match} funkcie}
+        \label{fig:map-match-low-points-before}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=.5\textwidth]{img/map-match rozdiel/malo bodov po.png}
+        \caption{Trasa po použití \textit{map-match} funkcie}
+        \label{fig:map-match-low-points-after}
+    \end{subfigure}
+    \caption{Trasa s nedostatočne hustým počtom bodov}
+    \label{fig:map-match-low-points}
+\end{figure}
+
+\noindent\textbf{Vylepšenie výsledkov}
+
+Pre dosiahnutie lepšieho pripnutia trasy k cestnej sieti body interpolujeme. To znamená, že medzi každú dvojicu po sebe idúcich bodov v trase vložíme ďaľší bod do stredu medzi dva vybrané. Na obrázku \ref{fig:pts-interpolation} možno vidieť pôvodné body v modrom kruhu a pridané body označené červeným znakom. Týmto spôsobom dostaneme trasu obsahujúcu viac bodov, ktorá môže byť lepšie pripnutá k cestnej sieti.  
+
+Vyskúšali sme rôzne nastavenia interpolácie, napríklad opakované iterovanie pridávania bodov medzi pôvodné body, až pokiaľ vzdialenosť medzi bodmi nebola menšia ako \textit{x} metrov, pričom \textit{x} bola premenná, ktorú sme menili. Po vyskúšaní rôznych nastavení interpolácie je viditeľné, že tvar trasy viac zodpovedá cestnej sieti. Toto zlepšenie však nie je dostatočné, preto vyskúšame iné. Rozdiel je pozorovateľný na obrázkoch \ref{fig:before-interpolation} a \ref{fig:after-interpolation}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\textwidth]{img/interpolacia bodov/interpolacia bodov.png}
+    \caption{Znázornenie interpolácie bodov}
+    \label{fig:pts-interpolation}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.4\textwidth}
+        \centering
+        \includegraphics[width=.5\textwidth]{img/interpolacia bodov/before.png}
+        \caption{Pred použitím interpolácie}
+        \label{fig:before-interpolation}
+    \end{subfigure}
+    \begin{subfigure}{0.4\textwidth}
+        \centering
+        \includegraphics[width=.5\textwidth]{img/interpolacia bodov/after.png}
+        \caption{Po použití interpolácie}
+        \label{fig:after-interpolation}
+    \end{subfigure}
+    \caption{Optimalizácia pripnutia trasy k cestnej sieti pomocou interpolácie bodov}
+\end{figure}
