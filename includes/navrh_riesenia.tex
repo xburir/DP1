@@ -51,7 +51,32 @@ Používateľ sa bude musiet po otvorení webovej aplikácie prihlásiť alebo r
     \label{fig:seq-show-errors}
 \end{figure}
 
+\subsection{Ukladanie údajov}
+V aplikácii sú vytvorené priečinky \textit{uploads} a \textit{routes}. Do priečinka \textit{uploads} sa budú ukladať všetky nahrané súbory. Po nahratí ZIP súboru na server bude pre používateľa vytvorený priečinok, ktorého názov bude zodpovedať prihlasovaciemu menu používateľa. V priečinku používateľa sa vytvorí nový priečinok \textit{unzipped}, v ktorom sa vytvorí priečinok s názvom nahraného ZIP súboru. Do tohto priečinku sa rozbalí nahraný ZIP súbor. Cesta k tomuto priečinku sa uloží do premennej, s ktorou algoritmus neskôr bude pracovať. Po skončení algoritmu prebehne kontrola, ktorá určí či boli všetky trasy v ZIP súbore spracované správne. V prípade, že v ZIP súbore bude nejaká chybová trasa, ZIP súbor spolu s rozbalenými súbormi ostane na serveri pre neskoršie stiahnutie používateľom alebo prípadné znovu-spustenie algoritmu. V opačnom prípade sa priečinok aj s nahraným ZIP súborom vymaže, aby sa ušetrilo miesto na serveri.
+
+Štruktúra priečinka \textit{routes} bude podobná priečinku \textit{uploads}. Do priečinka \textit{routes} sa po dokončení algoritmu vytvorí priečinok (ak ešte neexistuje), ktorého názov bude zodpovedať prihlasovaciemu menu používateľa. V priečinku používateľa bude vytvorený priečinok s názvom zodpovedajúcim názvu nahraného ZIP súboru. Do priečinku s názvom súboru budú vytvorené priečinky, ktorých názov bude zodpovedať názvom trás, ktoré boli nahrané v ZIP súbore a ktoré boli úspešne spracované algoritmom pripínania trás k cestnej sieti. V každom takomto priečinku budú dva súbory s názvom \textit{original.csv} a \textit{map-match.csv}, ktoré budú obsahovať konkrétne body trasy. 
+
+Štuktúry priečinkov sú vizualizované na obrázkoch . Priečinky sú zobrazené zaobleným obdĺžnikom a súbory sú zobrazené obdĺžnikom. Tri bodky \textit{"..."} vertikálne medzi priečinkami a súbormi symbolizujú, že v priečinku môže byť 0 až N súborov. To znamená, že môže byť priečinok prázdny, alebo v ňom môže byť ľubovoľný počet súborov/priečinkov. Tri bodky \textit{"..."} horizontálne za priečinkom symbolizujú, že graf pokračuje ale pre zjednodušenie obrázka bol graf skrátený.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{\textwidth}
+      \centering
+      \includegraphics[width=1\textwidth]{img/struktura priecinkov/routes.png}
+      \caption{Štruktúra priečinku \textit{routes}}
+      \label{fig:routes-structure}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+      \centering
+      \includegraphics[width=1\textwidth]{img/struktura priecinkov/uploads.png}
+      \caption{Štruktúra priečinku \textit{uploads}}
+      \label{fig:uploads-structure}
+    \end{subfigure}
+    \caption{Štruktúry priečinkov \textit{uploads} a \textit{routes}.}
+    \label{fig:uploads-routes-structure}
+  \end{figure}
 
 
-\subsection{Routing}
-\subsection{Map matching}
+\subsection{Spôsoby pripínania trás k cestnej sieti}
+\subsubsection{Routing}
+\subsubsection{Map matching}
