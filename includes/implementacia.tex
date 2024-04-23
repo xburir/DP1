@@ -1,1 +1,129 @@
-\section{Implementáia}
+\section{Implementácia}
+\subsection{Pripínanie trasy k cestnej sieti}
+
+Ukladanie trás spracovaných funkciou \textit{map-match}, rovnako ako ukladanie pôvodných bodov trás prebieha pomocou skriptu, ktorý je napísaný v \textit{Python}. Tento skript dostane na vstup slovník, ktorý obsahuje konfiguračné nastavenia skriptu, ako aj parametre pripínania trás k cestnej sieti. Medzi nastavenia skriptu patrí:
+\begin{itemize}
+    \item unzipdir - cesta k priečinku, ktorý má byť spracovaný \textit{map-match} algoritmom
+    \item container - názov \textit{Valhalla} kontajnera, ktorý poskytuje \textit{map-match} funkcionalitu.
+    \item user - meno používateľa, ktorý nahral súbor alebo požiadal o znovu-spustenie algoritmu
+    \item zipname - názov nahraného ZIP súboru
+    \item parameters - vnorený slovník, ktorý obsahuje parametre pripínania trás k cestnej sieti.
+\end{itemize}
+
+Po načítaní nastavení skriptu prebehne inicializácia pomocných premenných, do ktorých sa bude ukladať priebeh pripnutia trás k cestnej sieti. Inicializuje sa \textit{successful} premenná, ktorá reprezentuje pole, do ktorého sa budú ukladať názvy úspešne spracovaných trás. Taktiež sa inicialuzuje \textit{failed} premenná, ktorá reprezentuje slovník, do ktorého sa budú ukladať názvy neúspešne spracovaných trás ako kľúče a textový reťazec informujúci chybu ktorá nastala ako hodnotu ku kľúču.
+
+Po inicializácii prebehne kontrola \textit{unzipdir} nastavenia. Kontroluje sa, či zadaná cesta odkazuje na priečinok, ktorý obsahuje len priečinky. V prípade, že cesta odkazuje na priečinok, ktorý obsahuje súbor, algoritmus končí a výstupom algoritmu je slovník, ktorý obsahuje chybovú hlášku \textit{"\textbf{názov\textunderscore súboru} is not a directory, check the zip structure."}, ktorá je neskôr zobrazená používateľovi. Ďalej sa kontrolujú názovy podpriečinkov, ktoré priečinok s cestou \textit{unzipdir} obsahuje. Ak sa v priečinku nachádza priečinok s názvom iným ako \textit{Walk} alebo \textit{Drive}, algoritmus končí a výstupom je slovník, ktorý obsahuje chybovú hlášku "\textit{\textbf{názov\textunderscore podpriečinku} does not match the specified directory name 'Walk' or 'Drive', check the zip structure.}" Následne sa prechádzajú jednotlivé súbory (trasy) najprv v \textit{Drive} priečinku, neskôr v \textit{Walk} priečinku. Skript na základe mena súboru identifikuje, o aký typ súboru ide a podľa toho načíta body trasy do premennej. Skript dokáže načítať body z \textit{csv}, \textit{geojson} a \textit{gpx} súboru. V prípade, že je súbor iného typu, do premennej \textit{failed} sa uloží meno trasy ako kľúč a chybová hľáška \textit{"Points couldn't be extracted."}  ako hodnota.
+
+Po načítaní bodov do premennej vstupuje táto premenná do funkcie \textit{map-match}. Do tejto funkcie vstupujú aj ďalšie argumenty, \textit{container}, \textit{parameters} a \textit{costing}. Premenná \textit{costing} je určuje typ dopravy a je nastavená na základe priečinka, z ktorého bola trasa načítaná. Ak bola trasa načítaná z priečinka \textit{Walk}, ide o pešiu chôdzu a do premennej sa uloží hodnota \textit{pedestrian}. V opačnom prípade sa do nej uloží hodnota \textit{auto}, reprezentujúca jazdu autom. Premenná \textit{parameters} reprezentuje slovník parametrov pripínania trás k cestnej sieti. Patria sem parametre, ktoré určujú presnosť \acrshort{gps} zariadenia v metroch, ktorým bola trasa meraná, dĺžku polomeru kruhu, v ktorom sa majú hladať kandidáti cestnej siete, ku ktorým sa má bod v trase pripnúť, taktiež v metroch a penalizácia odbáčania na druhú cestu určená celočíselnou hodnotou. Vo funkcii sa naformátujú body spolu s parametrami a druhom dopravy do textového reťazca, ktorý je vložený do požiadavky na \textit{Valhalla} kontajner. Ukážku textového reťazca je možné vidieť vo výpise \ref{lst:request}.
+\begin{lstlisting}[
+    caption={Dáta požiadavky na \textit{Valhalla} kontajner},
+    label={lst:request}
+  ]
+  {
+    "shape": [{"lat": 47.993351,"lon": 18.174553},{"lat": 47.993351,"lon": 18.174553}],
+    "shape_match": "map_snap",
+    "costing": "auto",
+    "costing_options": {"pedestrian": {"ignore_access": true}},
+    "format": "osrm",
+    "trace_options": {
+        "search_radius": 50,
+        "turn_penalty_factor": 200,
+        "gps_accuracy": 5
+    }
+}
+  \end{lstlisting}
+Je možné vidieť jednotlivé parametre pripínania a ostatné nastavenia. Nastavenie \textit{ignore\textunderscore access} pre pešiu chôdzu nastavujeme, aby sme algoritmu oznámili, že má ignorovať typy ciest pri hľadaní kandidátov cestnej siete, ku ktorým má trasu pripnúť. Vďaka tomuto nastaveniu môže algoritmus pripnúť pešiu chôdzu aj na cyklotrasu.
+
+Po odoslaní požiadavky na \textit{Valhalla} kontajner a prijatí odpovede funkcia vráti odpoveď, ktorá je neskôr spracovaná. Z ukážky \ref{lst:response} možno vidieť, že trasa je zložená z rôznych segmentov, označenými atribútom \textit{legs}. V ukážke \ref{lst:response} je zobrazený len jeden segment, aby výpis nebol zbytočne veľký. Je možné vidieť, že geometria nájdenej trasy obsahuje geometriu z prvého segmentu v \textit{legs} atribúte.
+
+\begin{lstlisting}[
+    caption={Odpoveď z \textit{Valhalla} kontajnera},
+    label={lst:response}
+  ]
+  {
+    {
+    "matchings": [
+        { "weight_name": "pedestrian", "weight": 10027.532, "duration": 7257.535, "distance": 10239.001,
+          "legs": [{
+                    "via_waypoints": [], "admins": [ {} ], "weight": 10027.532, "duration": 7257.535,
+                    "steps": [ { 
+                        "intersections": [ 
+                            { "bearings": [ 253 ], "entry": [ true ], "admin_index": 0, "out": 0, "geometry_index": 0, "location": [ 17.063915, 48.158126 ] } 
+                            ],
+                        "maneuver": {
+                            "instruction": "Walk west.",
+                            "type": "depart",
+                            "bearing_after": 253,
+                            "bearing_before": 0,
+                            "location": [ 17.063915, 48.158126 ]
+                        },
+                        "name": "",
+                        "duration": 4.941,
+                        "distance": 7,
+                        "driving_side": "left",
+                        "weight": 4.941,
+                        "mode": "walking",
+                        "geometry": "{yizzAu}np_@b@rD"
+                    }],
+                    "distance": 10239.001,
+                    "summary": "Stare Grunty, Dvorakovo nabrezie"
+                }
+            ],
+            "geometry": 
+                "{yizzAu}np_@b@rDxHaD~GsGjHiH|BsBpAdAgFnUs@~CzIoClp@mSni@}Oj\\kJt@UltBun@jLgD|\\gKnKaG~QyKrBaA~
+                EoCjK{GfNgKzLcK~AcC~CqFxc@{j@jIoKrB}CjGiJxt@q`AlLKjLbCtSlCbEeCtDiGr@}J~@_b@NcHRyIhByz@|@e`@f@}T
+                VcJhL^hJl@tETlIh@d@mSt@DcA|c@GdA_AYq@GhAmd@f@gJh@ag@z@g^pAiQjCaQbAaEhAeDbEkKdBgEhCkEhByBdDoC`Ri
+                MnAg@bEk@`@UTq@jBmFvBiGXYjAgAfPuArBn@hSvFdYbIjFtAjh@vN|InCdGh@NiEd@gNeAGD{A@]Bu@HuBhAJGvBEpAw@I
+                DqADwAr@}Wf~Hny@jw@fHla@tBBg@@]lLl@F_BkYmBiEu]sHio@{CcWcCcWkAkQgA{WYyNO{N@yMHsM\\sOt@qQr@yL`A}L
+                dCgV|C_VzFgc@bs@qsF|m@omGxs@ynHbC_WjAoZVqSEkS_AeZkBkZeD{W_Gq]}BuN_BoNaAeRUgO~AexAJuKnA{jAm@wSgB
+                qNiCyNgGiSmAkHQoCYeEqIsmBMkCo@wMh@A|@CnEK?}@egEpHs^gAq@CAeLj@?x@ACuKAgCbJYnC?bA?r@?v@?p@?hA?rC?
+                fAhJDbTFzPBrNgC|zA}AjrA_BxrA_|@}Iht@kIrw@", "confidence": 1
+        }
+    ],
+    "tracepoints": [
+        {
+            "matchings_index": 0, "waypoint_index": 0, "alternatives_count": 0,
+            "distance": 43.15, "name": "", "location": [ 17.063915, 48.158126 ]
+        }, { ... }
+    ],
+    "code": "Ok"
+    } 
+}
+  \end{lstlisting}
+
+Z odpovede získame atribút \textit{geometry}, ktorý reprezentuje zakódovanú geometriu cestnej siete, po ktorej sa predpokladá, že trasa prechádzala. Táto geometria sa dekóduje na body, ktoré sú uložené do súboru s názvom \textit{map-match.csv}. Pôvodné body sú uložené do súboru s názvom \textit{original.csv}. Tieto dva súbory sú potom uložené do priečinka \textit{routes} pre príslušného používateľa, príslušný nahraný súbor a príslušnú trasu. Viac o štruktúre \textit{routes} priečinka je popísané v kapitole \ref{section:saving-files}.
+
+Nakoniec sa inicializuje premenná \textit{retDict}, ktorá bude reprezentovať slovník. Príklad \textit{retDict} premennej vidno na výpise \ref{lst:retdict}, obsahuje nasledujúce kľúč-hodnota páry:
+\begin{itemize}
+    \item failed -  počet neúspešne spracovaných trás
+    \item successful - počet úspešne spracovaných trás
+    \item failed-info - premenná \textit{failed}, ktorá obsahuje názov trasy ako kľúč a textový reťazec s informáciou o chybe, ktorá nastala ako hodnotu
+\end{itemize}
+Výstupom skriptu je premenná \textit{retDict} konvertovaná na textový reťazec. Informácie z tohto slovníka sú neskôr zobrazené používateľovi, aby v prípade neúspešného pripnutia trás dostal informáciu o chybe a chybnej trase.
+
+
+
+
+\begin{lstlisting}[
+    caption={\textit{retDict} premenná},
+    label={lst:retdict}
+  ]
+  {
+    {
+        "failed": 3,
+        "successful": 519,
+        "failed_info": {
+            "u16112023_187923-189171_2024-01-13200431": "b'{\"code\":\"NoRoute\",\"message\":\"Impossible route between points\"}'",
+            "u16112023_74346-75016_2023-12-09121131": "b'{\"code\":\"NoSegment\",\"message\":\"One of the supplied input coordinates could not snap to street segment.\"}'",
+            "u16112023_85191-85958_2023-12-09151521": "b'{\"code\":\"NoSegment\",\"message\":\"One of the supplied input coordinates could not snap to street segment.\"}'"
+        }
+    }
+}
+  \end{lstlisting}
+
+
+
+
+
+
+
