@@ -80,7 +80,33 @@ V aplikácii sú vytvorené priečinky \textit{uploads} a \textit{routes}. Do pr
 \subsection{Pripínanie trás k cestnej sieti}
 \textbf{Základná myšlienka}
 
-Po oboznámení sa s knižnicami, ktoré poskytujú funkciu pripínania trás k cestnej sieti sme dospeli k záveru, že trasy môžeme pripnúť dvoma spôsobmi. Pomocou funkcie \textit{routing} alebo pomocou funkcie \textit{map-match}. Prostredníctvom funkcie \textit{routing} by sme medzi každým bodom v trase našli optimálnu trasu, podobne ako v navigácii. Spojením týchto trás by sme dostali výslednú trasu pripnutú k cestnej sieti.
+Po oboznámení sa s knižnicami, ktoré poskytujú funkciu pripínania trás k cestnej sieti sme dospeli k záveru, že trasy môžeme pripnúť dvoma spôsobmi. Pomocou funkcie \textit{routing} alebo pomocou funkcie \textit{map-match}. 
+
+Prostredníctvom funkcie \textit{routing} by sme medzi každým bodom v trase našli optimálnu trasu, podobne ako v navigácii. Spojením týchto trás dostaneme výslednú trasu pripnutú k cestnej sieti. Môže však nastať situácia, kedy \textit{routing} funkcia kvôli nepresnosti \acrshort{gps} pripne bod k druhej ceste, viditeľné na obrázku \ref{fig:routing-after}. Pre odstránenie takýchto situácii vytvoríme skript, ktorý odstráni body, ktoré sa v trase opakujú dva alebo viackrát. Takisto odstráni aj body medzi týmito dvoma opakujúcimi sa bodmi. Výslednok je možné vidieť na obrázku \ref{fig:routing-after-after}. Po otestovaní zistili, že algoritmus odstraňujúci duplicitné body môže odstrániť aj dôležité body, ktoré by v trase mali ostať. Rozhodli sme sa v tomto riešení nepokračovať.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.9\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/routing/pred.png}
+        \caption{Pôvodná trasa}
+        \label{fig:routing-original}
+    \end{subfigure}
+    \begin{subfigure}{0.9\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/routing/po.png}
+        \caption{Trasa po použití \textit{routing} funkcie}
+        \label{fig:routing-after}
+    \end{subfigure}
+    \begin{subfigure}{0.9\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/routing/po po.png}
+        \caption{Trasa po použití \textit{routing} funkcie s odstránením duplicitných bodov}
+        \label{fig:routing-after-after}
+    \end{subfigure}
+    \caption{Trasa pripnutá pomocou \textit{routing} funkcie}
+    \label{fig:routing}
+\end{figure}
 
 Druhou možnosťou je použit funkciu \textit{map-match}, ktorá body v trase posunie k cestnej sieti. V prípade, že body v trase nie sú dostatočne husté, môže byť výsledná trasa hranatá a jej tvar nemusí zodpovedať cestnej sieti. Toto je možné vidieť na obrázku \ref{fig:map-match-low-points-after}. Obrázok \ref{fig:map-match-low-points-before} znázorňuje trasu pred použitím \textit{map-match} funkcie. Na obrázku \ref{fig:map-match-low-points-after} vidieť, že body trasy boli pripnuté k ceste, avšak nebolo ich dosť a výsledná trasa nezodpovedá cestnej sieti.
 
