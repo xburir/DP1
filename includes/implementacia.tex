@@ -3,11 +3,11 @@
 
 Ukladanie trás spracovaných funkciou \textit{map-match}, rovnako ako ukladanie pôvodných bodov trás prebieha pomocou skriptu, ktorý je napísaný v \textit{Python}. Tento skript dostane na vstup slovník, ktorý obsahuje konfiguračné nastavenia skriptu, ako aj parametre pripínania trás k cestnej sieti. Medzi nastavenia skriptu patrí:
 \begin{itemize}
-    \item unzipdir - cesta k priečinku, ktorý má byť spracovaný \textit{map-match} algoritmom
-    \item container - názov \textit{Valhalla} kontajnera, ktorý poskytuje \textit{map-match} funkcionalitu.
-    \item user - meno používateľa, ktorý nahral súbor alebo požiadal o znovu-spustenie algoritmu
-    \item zipname - názov nahraného ZIP súboru
-    \item parameters - vnorený slovník, ktorý obsahuje parametre pripínania trás k cestnej sieti.
+  \item unzipdir - cesta k priečinku, ktorý má byť spracovaný \textit{map-match} algoritmom
+  \item container - názov \textit{Valhalla} kontajnera, ktorý poskytuje \textit{map-match} funkcionalitu.
+  \item user - meno používateľa, ktorý nahral súbor alebo požiadal o znovu-spustenie algoritmu
+  \item zipname - názov nahraného ZIP súboru
+  \item parameters - vnorený slovník, ktorý obsahuje parametre pripínania trás k cestnej sieti.
 \end{itemize}
 
 Po načítaní nastavení skriptu prebehne inicializácia pomocných premenných, do ktorých sa bude ukladať priebeh pripnutia trás k cestnej sieti. Inicializuje sa \textit{successful} premenná, ktorá reprezentuje pole, do ktorého sa budú ukladať názvy úspešne spracovaných trás. Taktiež sa inicialuzuje \textit{failed} premenná, ktorá reprezentuje slovník, do ktorého sa budú ukladať názvy neúspešne spracovaných trás ako kľúče a textový reťazec informujúci chybu ktorá nastala ako hodnotu ku kľúču.
@@ -95,9 +95,9 @@ Z odpovede získame atribút \textit{geometry}, ktorý reprezentuje zakódovanú
 
 Nakoniec sa inicializuje premenná \textit{retDict}, ktorá bude reprezentovať slovník. Príklad \textit{retDict} premennej vidno na výpise \ref{lst:retdict}, obsahuje nasledujúce kľúč-hodnota páry:
 \begin{itemize}
-    \item failed -  počet neúspešne spracovaných trás
-    \item successful - počet úspešne spracovaných trás
-    \item failed-info - premenná \textit{failed}, ktorá obsahuje názov trasy ako kľúč a textový reťazec s informáciou o chybe, ktorá nastala ako hodnotu
+  \item failed -  počet neúspešne spracovaných trás
+  \item successful - počet úspešne spracovaných trás
+  \item failed-info - premenná \textit{failed}, ktorá obsahuje názov trasy ako kľúč a textový reťazec s informáciou o chybe, ktorá nastala ako hodnotu
 \end{itemize}
 Výstupom skriptu je premenná \textit{retDict} konvertovaná na textový reťazec. Informácie z tohto slovníka sú neskôr zobrazené používateľovi, aby v prípade neúspešného pripnutia trás dostal informáciu o chybe a chybnej trase.
 
@@ -122,8 +122,120 @@ Výstupom skriptu je premenná \textit{retDict} konvertovaná na textový reťaz
   \end{lstlisting}
 
 
+\subsection{Webová aplikácia}
+\subsubsection{Autentifikácia}
+Po otvorení webovej aplikácie je používateľovi zobrazená stránka, na ktorej sa musí autentifikovať. Pre použitie aplikácie je potrebné, aby sa používateľ zaregistroval a neskôr prihlásil. Pri registrácii je nutné zadať používateľské meno, ktoré musí byť unikátne. To znamená, že nemôžu existovať dvaja používatelia s tým istým používateľským menom. Pri pokuse o registráciu používateľského mena, ktoré je už registrované, je používateľovi zobrazená chybová hláška viditeľná na obrázku \ref{fig:username-already-exists}. Pri registrácii je taktiež nutné zadať heslo. Toto heslo je nutné zopakovať znova, aby sa predišlo prípadným chybám alebo preklepom v hesle. Pri pokuse o registráciu s nezhodnými heslami je používateľovi zobrazená chybová hláška viditeľná na obrázku \ref{fig:passwords_dont_match}.
 
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{.45\textwidth}
+    \centering
+    \includegraphics[width=.9\textwidth]{img/auth/username_already_exists.png}
+    \caption{Chybová hláška pri pokuse o registráciu existujúceho používateľského mena.}
+    \label{fig:username-already-exists}
+  \end{subfigure}
+  \begin{subfigure}{.45\textwidth}
+    \centering
+    \includegraphics[width=.9\textwidth]{img/auth/passwords_dont_match.png}
+    \caption{Chybová hláška pri pokuse o registráciu s nezhodnými heslami.}
+    \label{fig:passwords_dont_match}
+  \end{subfigure}
+  \caption{Možné chybové hlášky pri registrácií pri chybe používateľa.}
+\end{figure}
 
+Chyba môže nastať aj na strane aplikácie, napríklad ak je databáza nedostupná alebo nie je zapnutá. Pri vypnutej alebo nedostupnej databáze sa zobrazí chybová hláška zobrazená na obrázku \ref{fig:database_error}. Pri inej možnej chyba sa zobrazí chyba podobne s chybovým kódom.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/auth/database_error.png}
+  \caption{Chybová hláška pri nedostupnej databáze.}
+  \label{fig:database_error}
+\end{figure}
 
+Po vyplnení údajov a kliknutí na tlačidlo \textit{Submit} sú údaje z polí vložené do požidavky, ktorá je odoslaná na server. Na serveri sa z požiadavky extrahuje meno a heslo. Heslo je \textit{zahashované} pomocou knižnice \textit{Bcrypt}\cite{nodejs-bcrypt}. \textit{Zahashované} heslo spolu s používateľským menom je vložené do databázy. Pri chybe, napríklad duplicitnom zázname používateľského mena, nastane konflikt a databáza vygeneruje chybovú hlášku, ktorá je spracovaná a zobrazená používateľovi. Pri správnom vložení údajov do databázy je používateľ presmerovaný na stránku prihlásenia.
 
+Na stránke prihlásenia používateľ zadá používateľské meno a heslo. Po kliknutí na tlačidlo \textit{Submit} sú údaje vložené do požiadavky, ktorá je odoslaná na server. Tieto údaje sú na serveri extrahované z požiadavky. Na databázu je vytvorený dotaz s používateľským menom. V prípade, že sa používateľské meno nenachádza v databáze, používateľovi je zobrazená chybová hláška \textit{"Invalid username or password"}. V prípade, že sa používateľské meno nachádza v databáze, heslo z požiadavky je zahashované pomocou \textit{Bcrypt} funkcie a porovnané so \textit{zahashovaným} heslom z databázy. V prípade, že sa heslá rovnajú, používateľ je presmerovaný na stránku s mapou. V opačnom prípade je používateľovi zobrazená hláška \textit{"Invalid username or password"}.
+
+\subsubsection{Stránka s mapou}
+Po autentifikácií je používateľ presmerovaný na stránku s mapou. Stránka je zložená z troch vždy viditeľných častí a šiestich častí viditeľných na základe akcií vykonaných používateľom. Tieto časti stránky sú vytvorené pomocou \textit{div} \acrshort{html} tagov. \textit{Div} tagy slúžia na definovanie rozdelenia stránky alebo sekcií na stránke. Vždy viditeľné časti stránky sú zobrazené na obrázku \ref{fig:map} a sú vyznačené farebnými obdĺžnikmi:
+\begin{itemize}
+  \item mapa - žltý obdĺžnik
+  \item tlačidlá na priblíženie mapy - fialový obdĺžnik
+  \item panel akcií - modrý obdĺžnik
+\end{itemize}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{img/map.png}
+  \caption{Stránka s mapou}
+  \label{fig:map}
+\end{figure}
+
+\noindent\textbf{Mapa}\\
+\indent Pomocou \acrshort{html} je definovaný \textit{div} tag, ktorý je prázdny. Má nastavený identifikátor s hodnotou \textit{"map"}. Mapa je inicializovaná pomocou \textit{Leaflet} knižnice\cite{leaflet}. Pri inicializácii konštruktora mapy sa poskytuje identifikátor HTML elementu \textit{div} a nastavujú sa súradnice pre zobrazenie mapy. V súčasnosti je predvolená konfigurácia mapy nastavená tak, aby zobrazovala Bratislavu, pričom stred mapy sa nachádza v Mlynskej Doline v Bratislave. Po inicializácii bude mapa zobrazená na stránke. Je responzívna, takže pri rôznych veľkostiach displejov alebo pri rôznych veľkostiach okna je mapa vždy zobrazená na celej stránke.  Trasy na mape sú zobrazené modrou a červenou čiarou. Červenou čiarou sú zobrazené pôvodné trasy a modrou farbou trasy pripnuté k cestnej sieti. Pri prejdení myšou ponad zobrazené trasy sa zobrazí okno, ktoré obsahuje trasy ležiace pod ukazovateľom myši. Táto funkcionalita je implementovaná z dôvodu, že môže na jednej ceste ležať niekoľko trás po pripnutí.  \\
+
+\noindent\textbf{Tlačidlá na priblíženie mapy}\\
+\indent Tlačidlá na priblíženie sú súčasťou mapy a poloha tlačidiel je nastavená pomocou \textit{Leaflet} knižnice\cite{leaflet}. Tlačidlo s označením '\textit{+}' slúži na priblíženie mapy a '\textit{-}' slúži na oddialenie. Na počítačoch je možné mapu priblížiť alebo oddialiť pomocou rolovacieho kolieska na myši. Na mobilných zariadeniach sa tento efekt dosiahne gestom priblíženia alebo oddialenia, potiahnutím prstami po obrazovke. Mapu je možné priblížiť aj dvojklikom, či už na mobilnom zariadení alebo počítači.\\
+
+\noindent\textbf{Panel akcii}\\
+\indent Panel sa skladá z niekoľkých tlačidiel, ktoré po kliknutí vykonávajú rôzne akcie:
+\begin{itemize}
+  \item Profile \includegraphics{img/icons/profile.png}
+  \item About \includegraphics{img/icons/info.png}
+  \item Show Files \includegraphics{img/icons/files.png}
+  \item Upload File \includegraphics{img/icons/upload.png}
+  \item Error Files \includegraphics{img/icons/error.png}
+\end{itemize}
+
+Po kliknutí na tlačidlo \textit{Profile} sa otvorí  okno, ktoré zobrazuje uvítaciu hlášku s používateľským menom. Taktiež obsahuje prepínač, ktorý nastavuje, či sa má mapa prispôsobiť zobrazeným trasám pri zobrazení alebo skrytí trasy a tlačidlo, ktoré po kliknutí odhlási používateľa. Okno je zobrazené na obrázku \ref{fig:profile_dialog}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.2 \textwidth]{img/tools-panel/profile-dialog.png}
+  \caption{Dialógové okno zobrazené po kliknutí \textit{Profile} tlačidla.}
+  \label{fig:profile_dialog}
+\end{figure}
+
+Tlačidlo \textit{About} používateľa presmeruje na druhú stránku, kde je možné vidieť informácie o webovej aplikácii spolu s návodom na použitie aplikácie.
+
+Pre zobrazenie nahraných súborov používateľ klikne na tlačidlo \textit{Show Files}. Otvorí sa dialógové okno viditeľné na obrázku \ref{fig:uploaded_routes_dialog}, ktoré zobrazí zoznam nahraných súborov v tabuľke. Riadok v tabuľke reprezentuje nahraný súbor.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8 \textwidth]{img/tools-panel/uploaded-routes.png}
+  \caption{Dialógové okno zobrazené po kliknutí \textit{Show Files} tlačidla.}
+  \label{fig:uploaded_routes_dialog}
+\end{figure}
+\noindent Tabuľka obsahuje stĺpce:
+\begin{itemize}
+  \item File Name - názov nahraného ZIP súboru, po kliknutí na názov súboru sa otvorí nové dialógové menu, ktoré zobrazuje trasy, ktoré obsahuje nahraný ZIP súbor
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=0.8 \textwidth]{img/tools-panel/routes-of-zip.png}
+          \caption{Dialógové okno zobrazené po kliknutí na názov nahraného ZIP súboru.}
+        \end{figure}
+  \item Creation Date - dátum a čas, kedy bol ZIP súbor spracovaný
+  \item Original route - prepínač, ktorý zobrazí na mape všetky pôvodné trasy, ktoré ZIP súbor obsahuje
+  \item Map-matched route - prepínač, ktorý zobrazí na mape všetky trasy pripnuté k cestnej sieti, ktoré ZIP súbor obsahuje
+  \item Bad map-match - ak trasa nie je správne pripnutá k cestnej sieti, stlačením tohto tlačidla používateľ odošle informácie správcovi systému. Tieto informácie zahŕňajú názov trasy, názov nahraného súboru a používateľské meno
+\end{itemize}
+
+Po kliknutí na tlačidlo \textit{Upload file} sa otvorí dialógové okno, ktoré obsahuje vstupné polia a tlačidlo. V okne sú tri vstupné polia typu \textit{slider}, ktoré nastavujú parametre pripnutia trasy k cestnej sieti. Každý parameter je nastavený na predvolenú hodnotu, no používateľ môže hodnotu meniť. Ku jednotlivým parametrom sú vysvetlivky, ktoré sa zobrazia po prejdení myšou po ikone \includegraphics[scale=0.5]{img/icons/info.png}. Posledné vstupné pole slúži na výber ZIP súboru. Nahranie súboru je nutné potvrdiť stlačením tlačidla \textit{Upload}.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1 \textwidth]{img/tools-panel/upload-dialog.png}
+  \caption{Dialógové okno zobrazené po kliknutí \textit{Upload File} tlačidla.}
+\end{figure}
+
+Pre zobrazenie chybových nahraných súborov používateľ klikne na tlačidlo \textit{Error Files}. Kliknutím otvorí dialógové okno, ktoré pomocou tabuľky zobrazí nahrané ZIP súbory, v ktorých sa pri pripínaní trás k cestnej sieti vyskytla chyba. Každý riadok v tabuľke reprezentuje nahraný súbor. Tabuľka obsahuje stĺpce:
+\begin{itemize}
+  \item File Name - názov nahraného ZIP súboru
+  \item Download zip - tlačidlo, ktorým je možné stiahnuť nahraný ZIP súbor. Je zobrazené vždy, keď je na serveri nahraný ZIP súbor. Nie je zobrazené iba v špeciálnom prípade, kedy sa používateľ pripojí na server pomocou \textit{FTP} a nahrá súbory na server bez komprimovania alebo rozbaľovania trás do ZIP súboru.
+  \item Rerun map-matching - tlačidlo, ktorým sa znovu-spustí algoritmus pripínania trás k cestnej sieti. Je viditeľné vždy, keď je v priečinku pouźívateľa rozbalený nahraný ZIP súbor. Nie je zobrazené len v prípade, kedy sa nepodarilo rozbaliť nahraný súbor.
+  \item Delete zip and unzipped files - tlačidlá, ktoré vymažú zo servera nahraný ZIP súbor, alebo rozbalený ZIP súbor. Sú zobrazené pod podmienkou, že sa na serveri nachádza v priečinku používateľa rozbalený ZIP súbor, alebo/aj samotný ZIP súbor.
+\end{itemize}
+Ukážku okna je možné vidieť na obrázku nižšie.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1 \textwidth]{img/tools-panel/errors-dialog.png}
+  \caption{Dialógové okno zobrazené po kliknutí \textit{Error Files} tlačidla.}
+\end{figure}
+\noindent Po znovu-spustení algoritmu pripínania trás k cestnej sieti je po úspešnom pripnutí nutné manuálne vymazať nahraný ZIP súbor a rozbalené súbory ZIP súboru tlačidlami zobrazenými v \textit{Delete zip and unzipped files}.
