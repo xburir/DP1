@@ -1,7 +1,7 @@
 \section{Implementácia}
 \subsection{Pripínanie trasy k cestnej sieti}
 
-Ukladanie trás spracovaných funkciou \textit{map-match}, rovnako ako ukladanie pôvodných bodov trás prebieha pomocou skriptu, ktorý je napísaný v \textit{Python}. Tento skript dostane na vstup slovník, ktorý obsahuje konfiguračné nastavenia skriptu, ako aj parametre pripínania trás k cestnej sieti. Medzi nastavenia skriptu patrí:
+Ukladanie trás spracovaných funkciou \textit{map-match}, rovnako ako ukladanie pôvodných bodov trás prebieha pomocou skriptu, ktorý je implementovaný v \textit{Python}. Tento skript dostane na vstup slovník, ktorý obsahuje konfiguračné nastavenia skriptu, ako aj parametre pripínania trás k cestnej sieti. Medzi nastavenia skriptu patrí:
 \begin{itemize}
   \item unzipdir - cesta k priečinku, ktorý má byť spracovaný \textit{map-match} algoritmom
   \item container - názov \textit{Valhalla} kontajnera, ktorý poskytuje \textit{map-match} funkcionalitu.
@@ -179,12 +179,14 @@ Po autentifikácií je používateľ presmerovaný na stránku s mapou. Stránka
 \noindent\textbf{Panel akcii}\\
 \indent Panel sa skladá z niekoľkých tlačidiel, ktoré po kliknutí vykonávajú rôzne akcie:
 \begin{itemize}
-  \item Profile \includegraphics{img/icons/profile.png}
-  \item About \includegraphics{img/icons/info.png}
-  \item Show Files \includegraphics{img/icons/files.png}
-  \item Upload File \includegraphics{img/icons/upload.png}
-  \item Error Files \includegraphics{img/icons/error.png}
+  \item Profile \includegraphics{img/icons/profile.png} \footnotemark{}
+  \item About \includegraphics{img/icons/info.png} \footnotemark[\value{footnote}]
+  \item Show Files \includegraphics{img/icons/files.png} \footnotemark[\value{footnote}]
+  \item Upload File \includegraphics{img/icons/upload.png} \footnotemark[\value{footnote}]
+  \item Error Files \includegraphics{img/icons/error.png} \footnotemark[\value{footnote}]
 \end{itemize}
+
+\footnotetext{Obrázok prevzaný z \textit{https://fonts.google.com/icons}.}
 
 Po kliknutí na tlačidlo \textit{Profile} sa otvorí  okno, ktoré zobrazuje uvítaciu hlášku s používateľským menom. Taktiež obsahuje prepínač, ktorý nastavuje, či sa má mapa prispôsobiť zobrazeným trasám pri zobrazení alebo skrytí trasy a tlačidlo, ktoré po kliknutí odhlási používateľa. Okno je zobrazené na obrázku \ref{fig:profile_dialog}.
 

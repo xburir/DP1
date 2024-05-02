@@ -1,0 +1,42 @@
+\section{Problematika vývoja webových aplikácii}
+\indent \indent V sekcií si predstavíme webové aplikácie a ich výhody. Vymenujeme technológie, s ktorými sa môžeme stretnúť pri vývoji a predstavíme technológie, ktoré sme zvolili na vývoj našej webovej aplikácie. Taktiež si predstavíme vývojový proces webovej aplikácie.
+\subsection{Webové aplikácie a ich vývoj}
+
+\indent \indent Webové aplikácie a ich vývoj je veľmi dôležitý v oblasti informačných technológií. Umožňuje vývojárom tvoriť a distribuovať softvér cez internet. Výhodou webových aplikácií je, že poskytujú interaktívne a dynamické prostredie pre používateľov prostredníctvom internetových prehliadačov. Pri vývoji webových aplikácii je možné sa stretnúť s mnoho technológiami a programovacími jazykmi\cite{create_web_app}:
+\begin{itemize}
+    \item \textbf{Frontend} Predstavuje prezentačnú vrstvu, ktorú vidí používateľ. Je tvorená pomocou \textit{\acrshort{html}}, ktorý tvorí obsah webovej stránky a \textit{\acrshort{css}}, ktoré upravujú vzhľad obsahu na stránke. Pre zjednodušnie vývoja a zlepšenie efektivity je možné použiť rôzne knižnice a frameworky, napríklad  \textit{React}\cite{react} alebo \textit{Tailwind}\cite{tailwind}. Pre vytvorenie dynamickej a interaktívnej webovej stránky je možné použiť \textit{Javascript}\cite{javascript}.
+    \item \textbf{Backend} Jazyk, ktorý je použitý na serverovú časť webovej aplikácie, ako napríklad prihlásenie, prácu s databázou a inej logiky na pozadí, ktorú používateľ nevidí. Patria sem napríklad: \textit{Javascript}\cite{javascript}, \textit{Python}\cite{python}, \textit{PHP}\cite{php}, \textit{Java}\cite{java} a ďalšie.
+    \item \textbf{Databázy} V mnoho aplikáciach treba dáta ukladať a tieto dáta sa ukladajú v databázach. Uložené dáta je možné prehľadávať alebo inak s nimi manipulovať. Medzi rôzne databázy patria napríklad \textit{MySQL}\cite{mysql}, \textit{PostgreSQL}\cite{postgre}, \textit{MongoDB}\cite{mongodb} a ďalšie.
+    \item \textbf{Knižnice a frameworky} Používajú sa pre zjednodušnie vývoja a zlepšenie efektivity. Patria sem napríklad \textit{Angular}\cite{angular}, \textit{React}\cite{react}, \textit{Vue.js}\cite{vuejs} pre frontend alebo \textit{Django}\cite{django}, \textit{Laravel}\cite{laravel}, \textit{Express}\cite{express}, \textit{Flask}\cite{flask} pre backend.
+\end{itemize}
+\subsection{Vývojový proces v 8 krokoch\cite{create_web_app}:}
+\indent \indent Nižšie sa nachádza osem krokov. Splnením týchto ôsmich krokov získame webovú aplikáciu.
+\begin{enumerate}
+    \item \textbf{Prieskum trhu}: V prvom rade treba zistiť, aký problém používateľ má. Treba naštudovať existujúce riešenia problému. Pri existujúcich riešeniach treba zvážiť výhody a nevýhody riešení. Vo vlastnej webovej aplikácii sa budeme snažiť nevýhody odstrániť.
+    \item \textbf{Definovanie funkcionality}: Aplikácia musí mať určené, aké funkcionality bude ponúkať. Tieto funkcionality majú riešiť problém používateľa. Chceme dosiahnuť, aby naša aplikácia riešila všetky problémy používateľa a aby nemala zbytočnú funkcionalitu, ktorú používateľ nebude používať a bude nevyužitá. Touto zbytočnou funkcionalitou sa proces vývoja zbytočne predĺži. 
+    \item  \textbf{\acrshort{mvp}}: Vytvorenie základnej verzie aplikácie, kde sa nedáva špeciálny dôraz na dizajn. Je to návrh ako by mala aplikácia fungovať s implementáciou hlavných funkcionalít.
+    \item \textbf{Databáza}: Vytvorenie a pripojenie aplikácie na databázu, kde sa budú dáta bezpećne ukladať pre neskoršie načítanie a používanie v aplikácii.
+    \item \textbf{Frontend}: V tomto kroku vytvoríme dizajn aplikácie. S týmto dizajnom budú používatelia pracovať, preto by mal byť prehľadný, pekný a zaujímavý.
+    \item \textbf{Backend}: Vytvorenie serverovej časti. Patrí sem komunikácia s databázou, výpočty na pozadí, ktoré používateľ nevidí.
+    \item \textbf{Testovanie}: Testovanie aplikácie, či funguje správne. Odskúšame funkcionalitu aplikácie a odhalíme prípadné chyby a zistíme, či sa aplikácia správa podľa očakávaní.
+    \item \textbf{Nasadenie}: Nahranie aplikácie na server, aby ju mohol používať používateľ odkialkoľvek.
+\end{enumerate}
+
+
+\subsection{Výber technológií}
+\indent \indent V sekií si predstavíme technológie, s ktorými budeme pracovať a v krátkosti ich opíšeme. 
+
+\noindent\textbf{Javascript}\cite{javascript}\\
+\indent Javascript je jedným z najpopulárnejších a najuniverzálnejších programovacích jazykov pre vytváranie webových aplikácií. Umožňuje dynamické a interaktívne funkcie, ktoré zlepšujú používateľskú skúsenosť s aplikáciou a funkčnosť webových stránok. Môže bežať na strane klienta aj na strane servera. Je to interpretovaný jazyk. Má bohatý ekosystém knižníc a frameworkov, ktoré poskytujú rôzne nástroje a abstrakcie pre vývoj webových aplikácii. Jedným z týchto frameworkov je aj Express, ktorý sme použili na vytvorenie serverovej časti. \textit{Express} bližšie opíšeme v sekcii \ref{section:express}.\\
+
+\noindent\textbf{Visual Studio Code}\\
+\indent Spomedzi viacerých vývojových prostredí a textových editorov, v ktorých je možné vytvárať webové aplikácie sme si vybrali \textit{Visual Studio Code}. \textit{Visual Studio Code} je textový editor, ktorý podporuje množstvo rozšírení a programovacích jazykov. Prináša mnoho výhod, ktoré sú opísané nižšie v sekcii \ref{section:vscode}.\\
+
+\noindent\textbf{MySQL}\\
+\indent Aplikačné údaje, napríklad údaje o registrovaných používateľoch, informáciu o prihlásení a podobne ukladáme do aplikačných databáz. Tieto databázy umožňujú štrukturalizáciu dát do tabuliek, čo pomáha efektívnej správe informácií. \textit{MySQL} je najpopulárnejšia open-source databáza\cite{mysql}. Použili sme ju na uloženie informácií o používateľoch a na uloženie informácie pre správcu aplikácie v prípade zlého pripnutiu trasy k cestnej sieti. Viac o \textit{MySQL} je popísané v sekcii \ref{section:mysql}.\\
+
+\noindent\textbf{Valhalla}\\
+\indent Existuje viacero služieb, ktoré pripínajú trasy k cestnej sieti, napríklad MapBox, Google Maps alebo Valhalla. Valhallu sme si vybrali, pretože je open-source,  dokáže pracovať s veľkým množstvom dát a nastavenia pripínania trasy k cestnej siete sú dostatočne nastaviteľné. To znamená, že vieme meniť parametre ako napríklad presnosť GPS zariadenia, dĺžka polomera okruhu, v ktorom sa od bodu hľadajú kandidáti na pripnutie alebo penalizácia odbočovania na cestnej sieti. Všetky tieto parametre pomáhajú k lepšiemu pripnutiu trasy k cestnej sieti. Viac o \textit{Valhalle} si v sekcii \ref{section:valhalla}.\\
+
+\noindent\textbf{Leaflet}\\
+\indent Aby sme mohli na mape zobraziť trasy, potrebujeme najprv v našej aplikácii zobraziť mapu. Na toto sme zvolili Leaflet. Leaflet je open-source knižnica napísaná v \textit{Javascripte}. Ponúka vývojárom silnú a flexibilnú platformu na vytváranie interaktívnych máp pre webové aplikácie. Je jednoduchá na použitie a pre našu webovú aplikáciu ideálna. Viac o \textit{Leaflet} v sekcii \ref{section:leaflet}.

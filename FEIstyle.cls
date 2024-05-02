@@ -89,6 +89,7 @@
 \usepackage{xifthen}
 \usepackage{amsmath}
 \usepackage{ifmtarg}
+\usepackage[symbol]{footmisc}
 \usepackage{xstring}
 \usepackage[compact]{titlesec}
 \usepackage{xcolor}
