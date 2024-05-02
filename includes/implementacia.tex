@@ -1,7 +1,7 @@
 \section{Implementácia}
 \subsection{Pripínanie trasy k cestnej sieti}
 
-Ukladanie trás spracovaných funkciou \textit{map-match}, rovnako ako ukladanie pôvodných bodov trás prebieha pomocou skriptu, ktorý je implementovaný v \textit{Python}. Tento skript dostane na vstup slovník, ktorý obsahuje konfiguračné nastavenia skriptu, ako aj parametre pripínania trás k cestnej sieti. Medzi nastavenia skriptu patrí:
+\indent \indent Ukladanie trás spracovaných funkciou \textit{map-match}, rovnako ako ukladanie pôvodných bodov trás prebieha pomocou skriptu, ktorý je implementovaný v \textit{Python}. Tento skript dostane na vstup slovník, ktorý obsahuje konfiguračné nastavenia skriptu, ako aj parametre pripínania trás k cestnej sieti. Medzi nastavenia skriptu patrí:
 \begin{itemize}
   \item unzipdir - cesta k priečinku, ktorý má byť spracovaný \textit{map-match} algoritmom
   \item container - názov \textit{Valhalla} kontajnera, ktorý poskytuje \textit{map-match} funkcionalitu.
@@ -124,7 +124,7 @@ Výstupom skriptu je premenná \textit{retDict} konvertovaná na textový reťaz
 
 \subsection{Webová aplikácia}
 \subsubsection{Autentifikácia}
-Po otvorení webovej aplikácie je používateľovi zobrazená stránka, na ktorej sa musí autentifikovať. Pre použitie aplikácie je potrebné, aby sa používateľ zaregistroval a neskôr prihlásil. Pri registrácii je nutné zadať používateľské meno, ktoré musí byť unikátne. To znamená, že nemôžu existovať dvaja používatelia s tým istým používateľským menom. Pri pokuse o registráciu používateľského mena, ktoré je už registrované, je používateľovi zobrazená chybová hláška viditeľná na obrázku \ref{fig:username-already-exists}. Pri registrácii je taktiež nutné zadať heslo. Toto heslo je nutné zopakovať znova, aby sa predišlo prípadným chybám alebo preklepom v hesle. Pri pokuse o registráciu s nezhodnými heslami je používateľovi zobrazená chybová hláška viditeľná na obrázku \ref{fig:passwords_dont_match}.
+\indent \indent Po otvorení webovej aplikácie je používateľovi zobrazená stránka, na ktorej sa musí autentifikovať. Pre použitie aplikácie je potrebné, aby sa používateľ zaregistroval a neskôr prihlásil. Pri registrácii je nutné zadať používateľské meno, ktoré musí byť unikátne. To znamená, že nemôžu existovať dvaja používatelia s tým istým používateľským menom. Pri pokuse o registráciu používateľského mena, ktoré je už registrované, je používateľovi zobrazená chybová hláška viditeľná na obrázku \ref{fig:username-already-exists}. Pri registrácii je taktiež nutné zadať heslo. Toto heslo je nutné zopakovať znova, aby sa predišlo prípadným chybám alebo preklepom v hesle. Pri pokuse o registráciu s nezhodnými heslami je používateľovi zobrazená chybová hláška viditeľná na obrázku \ref{fig:passwords_dont_match}.
 
 \begin{figure}[H]
   \centering
