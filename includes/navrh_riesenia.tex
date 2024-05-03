@@ -77,10 +77,10 @@
 \end{figure}
 
 
-\subsection{Pripínanie trás k cestnej sieti}
+\subsection{Pripínanie trás k cestnej sieti \label{section:pripinanie}}
 \textbf{Základná myšlienka}
 
-Po oboznámení sa s knižnicami, ktoré poskytujú funkciu pripínania trás k cestnej sieti sme dospeli k záveru, že trasy môžeme pripnúť dvoma spôsobmi. Pomocou funkcie \textit{routing} alebo pomocou funkcie \textit{map-match}. 
+Po oboznámení sa s knižnicami, ktoré poskytujú funkciu pripínania trás k cestnej sieti sme dospeli k záveru, že trasy môžeme pripnúť dvoma spôsobmi\cite{mapbox}\cite{valhalla}\cite{graphopper}. Pomocou funkcie \textit{routing} alebo pomocou funkcie \textit{map-match}. 
 
 Prostredníctvom funkcie \textit{routing} by sme medzi každým bodom v trase našli optimálnu trasu, podobne ako v navigácii. Spojením týchto trás dostaneme výslednú trasu pripnutú k cestnej sieti. Môže však nastať situácia, kedy \textit{routing} funkcia kvôli nepresnosti \acrshort{gps} pripne bod k druhej ceste, viditeľné na obrázku \ref{fig:routing-after}. Pre odstránenie takýchto situácii vytvoríme skript, ktorý odstráni body, ktoré sa v trase opakujú dva alebo viackrát. Takisto odstráni aj body medzi týmito dvoma opakujúcimi sa bodmi. Výslednok je možné vidieť na obrázku \ref{fig:routing-after-after}. Po otestovaní zistili, že algoritmus odstraňujúci duplicitné body môže odstrániť aj dôležité body, ktoré by v trase mali ostať. Rozhodli sme sa v tomto riešení nepokračovať.
 
