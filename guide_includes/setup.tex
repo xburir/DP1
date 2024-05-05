@@ -1,0 +1,61 @@
+\section{Inštalácie webovej aplikácie}
+V tejto sekcií si ukážeme, ako nainštalovať webovú aplikáciu pre použitie.
+
+\subsection{Most pre komunikáciu}
+
+Na správne fungovanie webovej aplikácie je potrebné stiahnuť dva \textit{Docker} kontajnery. Tieto kontajnery spolu budú komunikovať, preto je nutné vytvoriť most pre komunikáciu.\\
+
+\textbf{Vytvorenie}\\
+Pre vytvorenie mostu zadajte nasledujúci príkaz do terminálu:\\
+\indent \verb|docker network create BRIDGE_NAME --driver bridge|\\\\
+Nasledujúci príkaz vytvorí most s názvom \textit{web\textunderscore server}:\\
+\indent \verb|docker network create web_server --driver bridge|\\\\
+
+\textbf{Kontrola}\\
+Informácie o moste je možné zistiť pomocou príkazu\\
+\indent \verb|docker inspect BRIDGE_NAME|\\\\
+Vypíšu sa informácie ako názov mostu a kontajnery, ktoré ho používajú. V prípade, že most nebol vytvorený a neexistuje, bude vypísaná chybová hláška: \textit{Error: No such object: BRIDGE\textunderscore NAME}
+
+\subsection{Kontajner webovej aplikácie}
+
+Táto sekcia sa venuje inštalácií samotnej webovej aplikácie, s ktorou budeme neskôr pracovať\\
+
+\textbf{Vytvorenie \textit{Docker image}}\\
+Pre vytvorenie obrazu je nutné otvoriť terminál v priečinku, v ktorom sa nachádza súbor \textit{Dockerfile}. Obraz sa vytvorí pomocou príkazu:\\
+\indent \verb|docker build -t IMAGE_NAME . |\\\\
+V prípade, že terminál nebol otvorený v priečinku so súborom \textit{Dockerfile}, je možné namiesto bodky napísať cestu k priečinku, v ktorom sa súbor \textit{Dockerfile} nachádza. Nasledujúci príkaz vytvorí obraz s názvom \textit{dp\textunderscore webapp}\\
+\indent \verb|docker build -t dp_webapp .|\\
+
+\textbf{Spustenie kontajnera}\\
+Po vytvorení obrazu spustíme kontajner pomocou príkazu: \\
+\indent \verb|docker run -dit --name CONTAINER_NAME --network BRIDGE_NAME -p PORT:PORT|\\
+\indent \verb|-v PATH:/CONTAINER_PATH IMAGE_NAME| \\\\ \pagebreak \\
+Pre spustenie kontajnera z obrazu \textit{dp\textunderscore webapp}, ktorý má bežať na porte \textit{8090}, s pripojením na most s názvom \textit{web\textunderscore server} a prepojením priečinka \textit{C:\textbackslash Users\textbackslash richard.buri\textbackslash Desktop\textbackslash docker\textbackslash DP1} na vnútorný priečinok kontajnera s názvom \textit{DP1}, spustíme nasledujúci príkaz: \\
+\indent \verb|docker run -dit --name dp_webapp --network web_server -p 8090:8090| \\
+\indent \verb|-v C:\Users\richard.buri\Desktop\docker\DP1:/DP1 dp_webapp|\\
+
+\textbf{Prístup ku kontajneru}\\
+Pristúpiť ku kontajneru je možné buď pomocou \textit{Docker desktop} alebo pomocou príkazu:\\
+\indent \verb|docker container exec -it CONTAINER_NAME /bin/bash|\\\\
+
+\textbf{Doplňujúce príkazy}\\
+Pre správne fungovanie aplikácie je nutné zapnúť a nastaviť databázu. Taktiež je nutné aplikáciu spustiť. Databázu je možné zapnúť nasledujúcim príkazom:\\
+\indent \verb|service mysql start|\\\\
+Nasledujúci príkaz nastaví databázu:\\
+\indent \verb|mysql < db.sql|
+Pre spustenie aplikácie použite nasledujúci príkaz, pričom \textit{PORT} musí byť rovnaký ako pri spustení kontajnera:\\
+\indent \verb|PORT = 8090 npm run start|
+
+\subsection{Valhalla kontajner}
+V tejto sekcií ukážeme, ako zapnúť \textit{Valhalla} kontajner, na ktorý budeme posielať požiadavky na pripnutie trás k cestnej sieti. Kontajner je možné prepojiť s priečinkom na zariadení, v ktorom sú uložené mapy, alebo pomocou jednoriadkového príkazu, ktorý mapy stiahne automaticky. Prvé spustenie kontajnera môže trvať niekoľko minút. Kontajner je pripravený na použitie po vypísaní \textit{INFO: Found config file. Starting valhalla service!} \\\\
+\textbf{Spustenie pomocou jednoriadkového príkazu}\\
+\indent \verb|docker run -dit --name CONTAINER_NAME --network BRIDGE_NAME|\\
+\indent \verb|-p PORT:PORT -e tile_urls=MAP_URL ghcr.io/gis-ops/docker-valhalla/valhalla:latest|\\\\
+\textbf{Spustenie s prepojeným priečinkom}\\
+\indent \verb|docker run -dit --name CONTAINER_NAME --network BRIDGE_NAME -p PORT:PORT |\\
+\indent \verb|-v PATH\custom_files:/custom_files ghcr.io/gis-ops/docker-valhalla/valhalla:latest|\\\\
+
+\noindent Poznámka: Predvolené nastavenie pre \\
+\textit{PORT} = "8002", \\
+\textit{CONTAINER \textunderscore NAME} = "valhalla". \\
+V prípade, že sa kontajner spúšťa s iným nastavením, je nutné v zdrojovom kóde webovej aplikácie zmeniť hodnoty premenných. Konkrétne pre \textit{PORT} v súbore \textit{map\textunderscore match.py} vo funkcií \textit{map\textunderscore match} premennú \textit{port} a pre \textit{CONTAINER\textunderscore NAME} v súbore \textit{upload.js} vo funkcií \textit{handleUploadAndUnzip} premennú \textit{valhalla\textunderscore container\textunderscore name}. 

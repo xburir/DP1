@@ -1,18 +1,21 @@
 \documentclass{article}
+\usepackage[textwidth=5cm,textheight=5cm]{geometry}
 \usepackage{graphicx} % Required for inserting images
+\usepackage{float}
+\usepackage{subcaption}
 
 \title{Routiak - používateľská príručka}
 \author{Richard Búri}
 \date{May 2024}
 
 \begin{document}
-
+\newgeometry{textwidth=17cm}
 \maketitle
 
 \tableofcontents
 \newpage
 
-
-\section{Introduction}
+\input{guide_includes/setup.tex}
+\input{guide_includes/use.tex}
 
 \end{document}
