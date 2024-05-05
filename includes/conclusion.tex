@@ -1,1 +1,11 @@
-Conclusion is going to be where? \newline Here.
+\indent Cieľom práce bolo navrhnúť a implementovať algoritmus, ktorý bude zobrazovať väčšie datasety GPS trajektórií prehľadne. To znamená, že používateľ bude vedieť zrakovo rozlíšiť pohybové vzory. Výstup práce má byť zobrazený interaktívne vo webovom prehliadači, preto sme vytvorili webovú aplikáciu, v ktorej budeme trajektórie zobrazovať. 
+
+Najprv sme analyzovali problematiku zobrazovania GPS trajektórií na mape. Zistili sme, že pri veľkom množstve trás zobrazených na mape sa trasy prekrižujú a mapa sa stáva neprehľadnou. Tieto prekríženia vznikajú kvôli nepresnosti GPS zariadení, ktoré snímajú polohu používateľa. 
+
+Urobili sme prieskum trhu a zistili sme dostupné riešenia zobrazovania GPS trás. Tieto riešenia sme vyskúšali a analyzovali sme ich nedostatky, ktoré sme sa v našej aplikácií snažili odstrániť. 
+
+Rozhodli sme sa, že pre sprehľadnenie mapy budeme GPS trajektórie pripínať k cestnej sieti. To znamená, že každú trasu upravíme tak, aby ležala na ceste, po ktorej sa používateľ reálne pohyboval pri snímaní polohy pomocou GPS zariadenia. Vyskúšali sme dve metódy, ktorými môžeme trasy upravovať a rozhodli sme sa pre \textit{map-match} metodiku, ktorá mala lepšie výsledky. Implementovali sme algoritmus, ktorý využíva funkciu \textit{map-match}  \textit{Valhalla} enginu. 
+
+Po implementácií algoritmu sme naštudovali problematiku vývoja webových aplikácii a vytvorili sme webovú aplikáciu. V tejto webovej aplikácií sme integrovali náš algoritmus. Používateľ sa v aplikácií autentifikuje a nahrá svoje trasy, ktoré môže neskôr zobraziť pred a po úprave naším algoritmom. Používateľ môže meniť parametre pripínania trás k cestnej sieti a v prípade zlých výsledkov upozorniť správcu aplikácie. 
+
+Nakoniec sme vytvorili používateľský manuál, ktorý sme spolu s aplikáciou odovzdali testerom, ktorý aplikáciu testovali. Pre testerov sme vytvorili krátky dotazník, ktorý po otestovaní aplikácie vyplnili. Odpovede z dotazníka sme vyhodnotili a na základe odpovedí vieme povedať, že naša aplikácia dokáže zobraziť väčší počet GPS trajektórií tak, aby používateľ vedel zrakovo určiť pohybové vzory. 

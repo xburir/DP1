@@ -41,7 +41,26 @@ Pre odhlásenie kliknite na tlačidlo \textit{Profile} v pravej hornej časti ma
 
 
 \subsection{Nahranie trás}
-Kliknite na tlačidlo \textit{Upload file} v pravej hornej časti mapy. Po otvorení okna zvoľte parametre pripínania trás k cestnej sieti. Po prejdení myšou ponad obrázok \includegraphics[scale=0.5]{img/icons/info.png} sa zobrazí vysvetlivka pre každý parameter. Pre výber ZIP súboru kliknite na tlačidlo \textit{Choose File} a vyberte súbor. Pre potvrdenie kliknite na tlačidlo \textit{Upload} a čakajte. Po skončení spracovania ZIP súboru uvidíte okno oznamujúce výsledok spracovania. 
+Kliknite na tlačidlo \textit{Upload file} v pravej hornej časti mapy. Po otvorení okna zvoľte parametre pripínania trás k cestnej sieti. Po prejdení myšou ponad obrázok \includegraphics[scale=0.5]{img/icons/info.png} sa zobrazí vysvetlivka pre každý parameter. Pre výber ZIP súboru kliknite na tlačidlo \textit{Choose File} a vyberte súbor. Nahraný súbor musí byť ZIP súbor s dodržanou štruktúrou priečinkov v ňom. ZIP súbor má obsahovať priečinky s názvam \textit{Drive} alebo \textit{Walk}. Na základe týchto priečinkov sa bude pripínať trasa k cestnej sieti. 
+\begin{verbatim}
+    |-- Drive
+    |   |-- 33718.csv
+    |   |-- 31783.geojson
+    |-- Walk
+    |   |-- 93293.gpx
+    |   |-- 44352.csv
+    |   |-- 764555.geojson
+    |   |-- 354852.gpx
+\end{verbatim}
+V ZIP súbore sa môžu nachádzať len súbory typu \textit{csv}, \textit{geojson} a \textit{gpx}.
+\textit{Csv} súbor musí mať dva stĺpce, ktorých názvy obsahujú reťazec \textit{lat} a \textit{lon}, napríklad:
+\begin{verbatim}
+lon,lat                   INDEX,TAG,DATE,TIME,LATITUDE N/S,LONGITUDE E/W,HEIGHT,SPEED
+17.07299,48.151611        1,T,240215,144813,48.166046N,17.178055E,132,0.4,356
+17.073095,48.151878       2,T,240215,144815,48.165985N,17.178095E,127,5.8,54
+17.073084,48.15184        3,T,240215,144816,48.165962N,17.178116E,130,4.0,97 
+\end{verbatim}
+Pre potvrdenie kliknite na tlačidlo \textit{Upload} a čakajte. Po skončení spracovania ZIP súboru uvidíte okno oznamujúce výsledok spracovania.
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.2\textwidth}
@@ -70,7 +89,7 @@ Kliknite na tlačidlo \textit{Show Files}. Otvorí sa okno, ktoré v tabuľke zo
 \end{figure}
 
 \subsection{Zobrazenie všetkyćh trás v nahranom súbore}
-Otvorte okno s nahratými súbormi podľa návodu v sekcií \ref{section:how_to_open_uploaded_files}. Po otvorení okna kliknite na prepínač. 
+Otvorte okno s nahratými súbormi podľa návodu v sekcií \ref{section:how_to_open_uploaded_files}. Po otvorení okna kliknite na prepínač.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{guide_includes/img/toggle_all_routes.png}
@@ -78,7 +97,7 @@ Otvorte okno s nahratými súbormi podľa návodu v sekcií \ref{section:how_to_
 
 \pagebreak
 \subsection{Zobrazenie jednotlivých trás v nahranom súbore}
-Otvorte okno s nahratými súbormi podľa návodu v sekcií \ref{section:how_to_open_uploaded_files}. Po otvorení okna kliknite na názov súboru, ktorého trasy chcete zobraziť. Po otvorení okna so zoznamom trás, ktoré zvolený súbor obsahuje kliknite na prepínač. 
+Otvorte okno s nahratými súbormi podľa návodu v sekcií \ref{section:how_to_open_uploaded_files}. Po otvorení okna kliknite na názov súboru, ktorého trasy chcete zobraziť. Po otvorení okna so zoznamom trás, ktoré zvolený súbor obsahuje kliknite na prepínač.
 \begin{figure}[H]
     \centering
     \begin{subfigure}{1\textwidth}
@@ -106,7 +125,7 @@ Kliknite na tlačidlo \textit{Error files} v pravej hornej časti mapy. Otvorí 
 \end{figure}
 
 \subsection{Znovu-spustenie chybových súborov}
-Otvorte okno s chybovými súbormi podľa návodu v sekcií \ref{section:how_to_open_error_files}. Kliknite na tlačidlo znovu-spustenia. V prípade, že sa nahraný ZIP súbor nepodarilo rozbaliť tlačidlo nebude zobrazené. 
+Otvorte okno s chybovými súbormi podľa návodu v sekcií \ref{section:how_to_open_error_files}. Kliknite na tlačidlo znovu-spustenia. V prípade, že sa nahraný ZIP súbor nepodarilo rozbaliť tlačidlo nebude zobrazené.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{guide_includes/img/rerun_map_match.png}
@@ -114,7 +133,7 @@ Otvorte okno s chybovými súbormi podľa návodu v sekcií \ref{section:how_to_
 
 \pagebreak
 \subsection{Upozornenie na zlé pripnutie trasy k cestnej sieti}
-Otvorte okno s nahratými súbormi podľa návodu v sekcií \ref{section:how_to_open_uploaded_files}. Po otvorení okna kliknite na tlačidlo upozornenia. 
+Otvorte okno s nahratými súbormi podľa návodu v sekcií \ref{section:how_to_open_uploaded_files}. Po otvorení okna kliknite na tlačidlo upozornenia.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{guide_includes/img/bad_map_match_notify.png}
