@@ -134,8 +134,6 @@ The csv file should consist of two columns longitude and latitude.
     17.073048,48.151672
     17.073011,48.151714
 
-
-
 ## Notes for myself
 
 prepare database with db.sql, maybe need to create root root user or change variables in index.js
@@ -190,3 +188,8 @@ after depenencies are instlled, you can just `node index.js`
 - urobit dokumentaciu k jednotlivemu zobrazovaniu routes
 - pridat do dp to co mam v druhej vetve poznamky
 - ~~pridat do dp parametre na map-match~~
+- pridat informácie o appke do guide
+- prepisat contents na obsah
+- cely guide prelozit
+- pridat na register a login ten guide
+- trajektorie/trasy zjednotit slovo

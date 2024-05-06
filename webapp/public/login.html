@@ -29,6 +29,9 @@
                 <div class="register-forget opacity">
                     <a href="./register">REGISTER</a>
                 </div>
+                <div class="register-forget opacity">
+                    <a href="./about">NEED HELP?</a>
+                </div>
             </div>
             <div class="circle circle-two"></div>
         </div>
@@ -141,7 +144,9 @@
                 if (text === "SUCCESS") {
                     window.location.href = "/";
                 } else if (text === "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR") {
-                    showAlert("The database is probably down.")
+                    showAlert("Cannot establish database connection.")
+                } else if (text == "ECONNREFUSED"){
+                    showAlert("Cannot establish database connection.")
                 } else {
                     showAlert(text)
                 }
