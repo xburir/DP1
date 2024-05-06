@@ -1,0 +1,63 @@
+\section{Installing the web application}
+In this section, we will show you how to install the web application for use.
+
+\subsection{Bridge for communication}
+
+Two \textit{Docker} containers need to be downloaded for the web application to work properly. These containers will communicate with each other, so it is necessary to create a bridge for communication.\\
+
+\textbf{Create}\\
+To create a bridge, enter the following command in the terminal:\\
+\indent \verb|docker network create BRIDGE_NAME --driver bridge|\\\\
+The following command creates a bridge named \textit{web\textunderscore server}:\\
+\indent \verb|docker network create web_server --driver bridge|\\\\
+
+\textbf{Check}\\
+Information about the bridge can be found using the command\\
+\indent \verb|docker inspect BRIDGE_NAME|\\\\
+Information such as the name of the bridge and the containers that use it will be listed. If the bridge has not been created and does not exist, an error message will be displayed: \textit{Error: No such object: BRIDGE\textunderscore NAME}
+
+\subsection{Kontajner webovej aplikácie}
+
+\subsection{Web Application Container}
+
+This section is dedicated to installing the web application itself, which we will work with later\\
+
+\textbf{Creating \textit{Docker image}}\\
+To create an image, it is necessary to open a terminal in the folder where the \textit{Dockerfile} file is located. The image is created using the command:\\
+\indent \verb|docker build -t IMAGE_NAME . |\\\\
+If the terminal was not opened in the folder with the file \textit{Dockerfile}, it is possible to write the path to the folder where the file \textit{Dockerfile} is located instead of a dot. The following command creates an image named \textit{dp\textunderscore webapp}\\
+\indent \verb|docker build -t dp_webapp .|\\
+
+\textbf{Starting the container}\\
+After creating the image, we start the container using the command: \\
+\indent \verb|docker run -dit --name CONTAINER_NAME --network BRIDGE_NAME -p PORT:PORT|\\
+\indent \verb|-in PATH:/CONTAINER_PATH IMAGE_NAME| \\\\ \pagebreak \\
+To run a container from the image \textit{dp\textunderscore webapp} to run on port \textit{8090}, connecting to a bridge called \textit{web\textunderscore server} and linking the folder \textit{C:\textbackslash Users \textbackslash richard.buri\textbackslash Desktop\textbackslash docker\textbackslash DP1} to the inner container folder named \textit{DP1}, we run the following command: \\
+\indent \verb|docker run -dit --name dp_webapp --network web_server -p 8090:8090| \\
+\indent \verb|-in C:\Users\richard.buri\Desktop\docker\DP1:/DP1 dp_webapp|\\
+
+\textbf{Container access}\\
+The container can be accessed either using \textit{Docker desktop} or using the command:\\
+\indent \verb|docker container exec -it CONTAINER_NAME /bin/bash|\\\\
+
+\textbf{Additional commands}\\
+For the application to function properly, it is necessary to turn on and set up the database. It is also necessary to start the application. The database can be turned on with the following command:\\
+\indent \verb|service mysql start|\\\\
+The following command sets up the database:\\
+\indent \verb|mysql < db.sql|
+To start the application, use the following command, where the \textit{PORT} must be the same as when starting the container:\\
+\indent \verb|PORT = 8090 npm run start|
+
+\subsection{Valhalla container}
+In this section, we will show how to enable the \textit{Valhalla} container to which we will send requests to attach routes to the road network. The container can be linked to a folder on the device where the maps are stored, or with a one-line command that will download the maps automatically. The container may take several minutes to run for the first time. The container is ready for use after typing \textit{INFO: Found config file. Starting valhalla service!} \\\\
+\textbf{Starting with a one-line command}\\
+\indent \verb|docker run -dit --name CONTAINER_NAME --network BRIDGE_NAME|\\
+\indent \verb|-p PORT:PORT -e tile_urls=MAP_URL ghcr.io/gis-ops/docker-valhalla/valhalla:latest|\\\\
+\textbf{Start with Linked Folder}\\
+\indent \verb|docker run -dit --name CONTAINER_NAME --network BRIDGE_NAME -p PORT:PORT |\\
+\indent \verb|-v PATH\custom_files:/custom_files ghcr.io/gis-ops/docker-valhalla/valhalla:latest|\\\\
+
+\noindent Note: Default setting for \\
+\textit{PORT} = "8002", \\
+\textit{CONTAINER \textunderscore NAME} = "valhalla". \\
+If the container is started with different settings, it is necessary to change the values of the variables in the source code of the web application. Specifically, for \textit{PORT} in the file \textit{map\textunderscore match.py} in the functions \textit{map\textunderscore match} the variable \textit{port} and for \textit{CONTAINER\textunderscore NAME} in the file \textit{ upload.js} in the functions \textit{handleUploadAndUnzip} the variable \textit{valhalla\textunderscore container\textunderscore name}.
