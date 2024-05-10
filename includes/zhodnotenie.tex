@@ -4,7 +4,7 @@
 
 \indent \indent Vytvorili sme webovú aplikáciu pomocou knižnice \textit{Node.js}. Naštudovali sme trasovací engine \textit{Valhalla} a spôsoby jeho použitia. Funkcie, ktoré \textit{Valhalla} poskytuje sa nám podarilo integrovať do našej webovej aplikácie \textit{Routiak}. 
 
-\indent Routiak je webová aplikácia, pomocou ktorej si môže používateľ vizualizovať vlastné trasy na mape prehľadne. To znamená, že aj pri veľkom počte trás (10 a viac) prechádzajúcich tým istým miestom, môže používateľ nastaviť zobrazenie tak, aby bolo prehľadné a na mape nevznikali tzv. "špagety"(obr.\ref{fig:spagety}). Vďaka správnemu nastaveniu zobrazenia je možné vidieť trasy a cestnú sieť prehľadne. Používateľ sa môže v aplikácii registrovať a prihlásiť a teda je možné nahrané trasy zobraziť neskôr bez nutnosti znova trasy do aplikácie nahrať. Trasy sa do aplikácie nahrávajú v ZIP súbore, čo umožňuje nahrať viac trás súčasne. Tieto trasy je možné zobraziť na mape jednotlivo, alebo všetky naraz obsiahnuté v ZIP súbore. Aplikácia ponúka map-match funkcionalitu, čo znamená, že trasy budú pripnuté na cestnú sieť a tým sa zlepší viditeľnosť mapy a trás na mape, obrázok \ref{fig:niespagety}. 
+\indent \textit{Routiak} je webová aplikácia, pomocou ktorej si môže používateľ vizualizovať vlastné trasy na mape prehľadne. To znamená, že aj pri veľkom počte trás (10 a viac) prechádzajúcich tým istým miestom, môže používateľ nastaviť zobrazenie tak, aby bolo prehľadné a na mape nevznikali tzv. ``špagety'' (obr.\ref{fig:spagety}). Vďaka správnemu nastaveniu zobrazenia je možné vidieť trasy a cestnú sieť prehľadne. Používateľ sa môže v aplikácii registrovať a prihlásiť a teda je možné nahrané trasy zobraziť neskôr bez nutnosti znova trasy do aplikácie nahrať. Trasy sa do aplikácie nahrávajú v ZIP súbore, čo umožňuje nahrať viac trás súčasne. Trasy je možné zobraziť na mape jednotlivo, alebo všetky naraz obsiahnuté v ZIP súbore. Aplikácia ponúka map-match funkcionalitu, čo znamená, že trasy budú pripnuté na cestnú sieť a tým sa zlepší viditeľnosť mapy a trás na mape, obrázok \ref{fig:niespagety}. 
 \newline Výhody:
 \begin{itemize}
   \item map-match, pripnutie trás na cestnú sieť pre zlepšenie viditeľnosti
@@ -19,7 +19,7 @@ Nevýhody:
 \begin{itemize}
   \item trasa môže obsahovať maximálne 20 tisíc bodov
   \item nie je možné pripnúť trasu zaznamenanú rôznymi typmi dopravy (auto + pešia chôdza)
-  \item priebeh \textit{map-match} ZIP súboru nie je zobrazený, iba informácia po dokončení
+  \item priebeh map-match ZIP súboru nie je zobrazený, iba informácia po dokončení
   \item pri nahratí jednej trasy je nutné vložiť trasu do ZIP súboru so špeciálne určenou štruktúrou
 \end{itemize}
 \begin{figure}[H]
@@ -31,13 +31,14 @@ Nevýhody:
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{img/map-match rozdiel/po map-match.png}
-  \caption{Zobrazenie väčšieho množstva trás upravených map-matchom na rovnakom mieste}
+  \caption{Zobrazenie väčšieho množstva trás upravených map-match funkciou na rovnakom mieste}
   \label{fig:niespagety}
 \end{figure}
 
 \pagebreak
 \subsection{Hodnotenie práce reálnymi používateľmi}
-Aplikáciu sme poslali TODO testérom, ktorý aplikáciu otestovali na vlastných trajektóriách. Pripravili sme dotazník s ôsmimi otázkami, ktorý sme dali testérom vyplniť. Otázky a odpovede je možné vidieť nižšie. 
+
+Aplikáciu sme poslali ôsmim testérom, ktorí aplikáciu otestovali na vlastných trajektóriách. Pripravili sme dotazník s ôsmimi otázkami, ktorý sme dali testérom vyplniť. Otázky a odpovede je možné vidieť nižšie. 
 \begin{figure}[H]
   \centering
   \includegraphics[width=.7\textwidth]{img/dotaznik/1.png}
@@ -56,8 +57,7 @@ Aplikáciu sme poslali TODO testérom, ktorý aplikáciu otestovali na vlastnýc
 \end{figure}
 \indent Ktorá operácia nebola vysvetlená v príručke?
 \begin{itemize}
-  \item 0
-  \item 1
+  \item Zavolať majiteľovi - Keďže aplikácia zatiaľ nie je reálne používaná, nepovažovali sme za podstatné pridávať funkcionalitu kontaktovať administrátora aplikácie. Funkcionalitu môžeme v budúcnosti pridať.
 \end{itemize}
 \begin{figure}[H]
   \centering
@@ -65,8 +65,7 @@ Aplikáciu sme poslali TODO testérom, ktorý aplikáciu otestovali na vlastnýc
 \end{figure}
 \indent Technické problémy:
 \begin{itemize}
-  \item problem 0
-  \item problem 1
+  \item Bug v príručke, PDF vidím cca v hornom 20\% okna - Chyba nastala pri interpretácií \acrshort{html} kódu prehliadačom \textit{Mozilla Firefox}. Chyba je už odstránená
 \end{itemize}
 \begin{figure}[H]
   \centering
@@ -79,11 +78,11 @@ Aplikáciu sme poslali TODO testérom, ktorý aplikáciu otestovali na vlastnýc
 \indent Iné podobné aplikácie:
 \begin{itemize}
   \item strava - Aplikácia neslúži primárne na zobrazovanie trás. Áno, dajú sa v nej zobraziť trasy. Trasa sa daá zobraziť len jedna naraz, čo znamená že mapa bude vždy prehľadná.
-  \item apple watch - Apple watch nie je aplikácia, možno mal testér na mysli Apple Health, ktoré neslúži na zobrazovanie vlastných trás. V Apple Health sa dá zobraziť trasa, no dá sa zobraziť len jedna naraz. Taktiež to nemôže byť ľubovoľná trasa, ale trasa nasnímaná počas tréningu. Apple Health neponúka \textit{map-match}.
+  \item apple watch - Apple watch nie je aplikácia, možno mal testér na mysli Apple Health, ktoré neslúži na zobrazovanie vlastných trás. V Apple Health sa dá zobraziť trasa, no dá sa zobraziť len jedna naraz. Taktiež to nemôže byť ľubovoľná trasa, ale trasa nasnímaná počas tréningu. Apple Health neponúka map-match.
 \end{itemize}
 \begin{figure}[H]
   \centering
   \includegraphics[width=.7\textwidth]{img/dotaznik/11.png}
 \end{figure}
 
-Na základe odpovedí z dotazníka môžeme povedať, že aplikácia funguje správne. Nenastali žiadne technické problémy a aplikácia bola s pomocou príručky na použitie ľahko použiteľná. 
+Na základe odpovedí z dotazníka môžeme povedať, že aplikácia funguje správne. Nastal jeden technický problém. Používateľská príručka nebola správne zobrazená na stránke v prehliadači \textit{Mozilla Firefox}. Aplikáciu sme testovali na inom prehliadači (\textit{Google Chrome}). Vďaka testovaniu aplikácie a dotazníku sme na tento problém narazili a odstránili sme ho. Jeden z testérov navrhol, aby sme po prvom prihlásení hneď otvorili okno nahrávania trás, keďže je zbytočné zobrazovať mapu bez toho aby boli nahrané trasy, ktoré by sa na nej dali zobraziť. V budúcnosti môžeme toto správanie implementovať. 

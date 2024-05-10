@@ -594,6 +594,7 @@
 }
 
 \renewcommand{\glsnamefont}[1]{\textbf{#1}}
+\renewcommand{\lstlistingname}{Výpis}
 
 \newcommand\FEIglossaries[1]{
     \setglossarystyle{long}

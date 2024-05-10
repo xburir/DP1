@@ -9,18 +9,19 @@
     \item \textbf{prihlásenie} - používateľ sa môže prihlásiť pomocou používateľského mena a hesla
     \item \textbf{odhlásenie} - používateľ sa môže z aplikácie odhlásiť
     \item \textbf{nahranie trás} - používateľ môže do aplikácie nahrať ZIP súbor obsahujúci trasy
-    \item \textbf{zobrazenie nahraných trás} - používateľ môže zobraziť zoznam všetkých súborov, ktoré nahral a boli úspešne spracované aplikáciou
-    \item \textbf{zobrazenie všetkých trás v nahranom súbore} - používateľ môže na mape zobraziť trasy, ktoré nahral v ZIP súbore
-    \item \textbf{zobrazenie jednotlivých trás v nahranom súbore} - používateľ môže na mape zobraziť jednodlivo trasy, ktoré obsahuje ZIP súbor, ktorý nahral
-    \item \textbf{pripnutie trás k cestnej sieti} - používateľ môže zobraziť trasy spracované aplikáciou, ktoré sú pripnuté k cesnej sieti. Zobraziť môže všetky trasy, ktoré obsahuje ZIP súbor, ktorý nahral, alebo jednotlivo.
+    \item \textbf{zobrazenie nahraných trás} - používateľ môže zobraziť zoznam všetkých súborov, ktoré nahral\footnotemark{} 
+    \item \textbf{zobrazenie všetkých trás v nahranom súbore} - používateľ môže na mape zobraziť trasy, ktoré nahral v ZIP súbore\footnotemark[\value{footnote}]
+    \item \textbf{zobrazenie jednotlivých trás v nahranom súbore} - používateľ môže na mape zobraziť jednodlivo trasy, ktoré obsahuje ZIP súbor, ktorý nahral\footnotemark[\value{footnote}]
+    \item \textbf{pripnutie trás k cestnej sieti} - používateľ môže zobraziť trasy spracované algoritmom, ktoré sú pripnuté k cesnej sieti. Zobraziť môže všetky trasy, ktoré obsahuje ZIP súbor, ktorý nahral, alebo jednotlivo. 
     \item \textbf{zobrazenie chybových nahraných súborov} - v prípade, že nahraný súbor nemal správny formát alebo bola jeho štruktúra nevhodná, sa tento súbor uloží na neskoršie stiahnutie a používateľ je informovaný o chybe, ktorá nastala
+    \footnotetext{Pod podmienkou, že nahraný súbor a trasy, ktoré obsahuje boli úspešne spracované.}
     \item \textbf{znovu-spustenie chybných súborov} - v prípade, že sa nejaké trasy nachádzajú v priečinku chybových súborov, je možné na týchto trasách znova spustiť algoritmus pripnutia trás k cestnej sieti. Ide o špeciálny prípad použitia, keď si používateľ nahrá na server súbory bez toho, aby ich dával do ZIP súboru. Týmto sa ušetrí čas pri komprimovaní trás do ZIP súboru a pri rozbaľovaní ZIP súboru.
 \end{itemize}
 \subsubsection{Nefunkcionálne požiadavky}
-\indent \indent Nefunkcionálne požiadavky sa týkajú toho, ako má systém pracovať. Popisujú parametre systému a nie to, čo má systém robiť.\\
+\indent \indent Nefunkcionálne požiadavky opisujú, ako má systém pracovať. Popisujú parametre systému a nie to, čo má systém robiť.\\
 \textbf{Zoznam nefunkcionálnych požiadaviek}
 \begin{itemize}
-    \item \textbf{jednoduchosť a prehľadnosť} - aplikácia má byť jednoduchá na použitie a po prečítaní návodu na použitie má byť jasné ako má byť použitá
+    \item \textbf{jednoduchosť a prehľadnosť} - aplikácia má byť jednoduchá na použitie a po prečítaní návodu na použitie má byť jasné ako má byť používaná
     \item \textbf{prehľadný kód} - kód má byť písaný prehľadne, aby sa v budúcnosti dal jednoducho rozšíriť a aby bol udržateľný
     \item \textbf{jasná informácia o chybnej trase} - ak nastane chyba pri nahraní alebo spracovaní trás, používateľ má byť jasne informovaný, kde nastala chyba
 \end{itemize}
@@ -31,7 +32,7 @@
     \caption{Diagram prípadov použitia}
     \label{fig:use-case}
 \end{figure}
-\indent \indent Používateľ sa bude musiet po otvorení webovej aplikácie prihlásiť alebo registrovať. Po prihlásení sa roľa pouźívateľa zmení na prihláseného. Ako prihlásený bude používateľ môcť nahrať trasy vo formáte ZIP. Pri nahrávaní súboru musí taktiež zvoliť parametre, ktoré budú použité systémom pri pripínaní trás k cestnej sieti. Prihlásený používateľ si bude môcť zobraziť trasy rozdelené podľa súborov, ktoré nahral. Trasy v týchto súboroch bude potom môcť zobraziť všetky naraz, alebo jednotlivo. Taktiež si bude môcť zobraziť chybové nahrané súbory v prípade, že nejaké chybové súbory nahral. Na týchto chybových súboroch bude potom môcť spustiť algoritmus pripínania trás k cestnej sieti znova. Nižšie je možné vidieť priebeh procesov nahrania súborov (obr.\ref{fig:seq-upload-zip}), zobrazenia trás (obr.\ref{fig:seq-show-routes}) alebo zobrazenia chybových súborov (obr. \ref{fig:seq-show-errors}) pomocou sekvenčných diagramov.
+\indent \indent Používateľ sa bude musieť po otvorení webovej aplikácie prihlásiť alebo registrovať. Po prihlásení sa roľa používateľa zmení na prihláseného. Ako prihlásený bude používateľ môcť nahrať trasy vo formáte ZIP. Pri nahrávaní súboru musí taktiež zvoliť parametre, ktoré budú použité systémom pri pripínaní trás k cestnej sieti. Prihlásený používateľ si bude môcť zobraziť trasy rozdelené podľa súborov, ktoré nahral. Trasy v súboroch bude potom môcť zobraziť všetky naraz, alebo jednotlivo. Taktiež si bude môcť zobraziť chybové nahrané súbory v prípade, že nejaké chybové súbory nahral. Na chybových súboroch bude potom môcť spustiť algoritmus pripínania trás k cestnej sieti znova. Nižšie je možné vidieť priebeh procesov nahrania súborov (obr.\ref{fig:seq-upload-zip}), zobrazenia trás (obr.\ref{fig:seq-show-routes}) alebo zobrazenia chybových súborov (obr. \ref{fig:seq-show-errors}) pomocou sekvenčných diagramov.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{img/diagramy/sekvencny-nahranie.png}
@@ -52,24 +53,24 @@
 \end{figure}
 
 \subsection{Ukladanie údajov  \label{section:saving-files}}
-\indent \indent V aplikácii sú vytvorené priečinky \textit{uploads} a \textit{routes}. Do priečinka \textit{uploads} sa budú ukladať všetky nahrané súbory. Po nahratí ZIP súboru na server bude pre používateľa vytvorený priečinok, ktorého názov bude zodpovedať prihlasovaciemu menu používateľa. V priečinku používateľa sa vytvorí nový priečinok \textit{unzipped}, v ktorom sa vytvorí priečinok s názvom nahraného ZIP súboru. Do tohto priečinku sa rozbalí nahraný ZIP súbor. Cesta k tomuto priečinku sa uloží do premennej, s ktorou algoritmus neskôr bude pracovať. Po skončení algoritmu prebehne kontrola, ktorá určí či boli všetky trasy v ZIP súbore spracované správne. V prípade, že v ZIP súbore bude nejaká chybová trasa, ZIP súbor spolu s rozbalenými súbormi ostane na serveri pre neskoršie stiahnutie používateľom alebo prípadné znovu-spustenie algoritmu. V opačnom prípade sa priečinok aj s nahraným ZIP súborom vymaže, aby sa ušetrilo miesto na serveri.
+\indent \indent V aplikácií sú vytvorené priečinky \textit{uploads} a \textit{routes}. Do priečinka \textit{uploads} sa budú ukladať všetky nahrané súbory. Po nahratí ZIP súboru na server bude pre používateľa vytvorený priečinok, ktorého názov bude zodpovedať prihlasovaciemu menu používateľa. V priečinku používateľa sa vytvorí nový priečinok \textit{unzipped}, v ktorom sa vytvorí priečinok s názvom nahraného ZIP súboru. Do tohto priečinku sa rozbalí nahraný ZIP súbor. Cesta k tomuto priečinku sa uloží do premennej, s ktorou bude algoritmus neskôr pracovať. Po skončení algoritmu prebehne kontrola, ktorá určí či boli všetky trasy v ZIP súbore správne spracované. V prípade, že v ZIP súbore bude chybová trasa, ZIP súbor spolu s rozbalenými súbormi ostane uložený na serveri pre neskoršie stiahnutie používateľom alebo prípadné znovu-spustenie algoritmu. V opačnom prípade sa priečinok aj s nahraným ZIP súborom vymaže, aby sa ušetrilo miesto na serveri.
 
-Štruktúra priečinka \textit{routes} bude podobná priečinku \textit{uploads}. Do priečinka \textit{routes} sa po dokončení algoritmu vytvorí priečinok (ak ešte neexistuje), ktorého názov bude zodpovedať prihlasovaciemu menu používateľa. V priečinku používateľa bude vytvorený priečinok s názvom zodpovedajúcim názvu nahraného ZIP súboru. Do priečinku s názvom súboru budú vytvorené priečinky, ktorých názov bude zodpovedať názvom trás, ktoré boli nahrané v ZIP súbore a ktoré boli úspešne spracované algoritmom pripínania trás k cestnej sieti. V každom takomto priečinku budú dva súbory s názvom \textit{original.csv} a \textit{map-match.csv}, ktoré budú obsahovať konkrétne body trasy.
+Štruktúra priečinka \textit{routes} bude podobná priečinku \textit{uploads}. Do priečinka \textit{routes} sa po dokončení algoritmu vytvorí priečinok (ak ešte neexistuje), ktorého názov bude zodpovedať prihlasovaciemu menu používateľa. V priečinku používateľa bude vytvorený priečinok s názvom zodpovedajúcim názvu nahraného ZIP súboru. Do priečinku s názvom súboru budú vytvorené priečinky, ktorých názov bude zodpovedať názvom trás, ktoré boli nahrané v ZIP súbore a ktoré boli úspešne spracované algoritmom pripínania trás k cestnej sieti. V každom takomto priečinku budú dva súbory s názvom \textit{original.csv} a \textit{map-match.csv}, ktoré budú obsahovať body trasy.
 
-Štuktúry priečinkov sú vizualizované na obrázkoch . Priečinky sú zobrazené zaobleným obdĺžnikom a súbory sú zobrazené obdĺžnikom. Tri bodky \textit{"..."} vertikálne medzi priečinkami a súbormi symbolizujú, že v priečinku môže byť 0 až N súborov. To znamená, že môže byť priečinok prázdny, alebo v ňom môže byť ľubovoľný počet súborov/priečinkov. Tri bodky \textit{"..."} horizontálne za priečinkom symbolizujú, že graf pokračuje ale pre zjednodušenie obrázka bol graf skrátený.
+Štuktúry priečinkov sú vizualizované na obrázkoch. Priečinky sú zobrazené zaobleným obdĺžnikom a súbory sú zobrazené obdĺžnikom. Tri bodky \textit{``...''} vertikálne medzi priečinkami a súbormi symbolizujú, že v priečinku môže byť 0 až N súborov. To znamená, že môže byť priečinok prázdny, alebo v ňom môže byť ľubovoľný počet súborov/priečinkov. Tri bodky \textit{``...''} horizontálne za priečinkom symbolizujú, že graf pokračuje ale pre zjednodušenie obrázka bol skrátený.
 
 \begin{figure}[H]
     \centering
     \begin{subfigure}{\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{img/struktura priecinkov/routes.png}
-        \caption{Štruktúra priečinku \textit{routes}}
+        \caption{Štruktúra priečinka \textit{routes}}
         \label{fig:routes-structure}
     \end{subfigure}
     \begin{subfigure}{\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{img/struktura priecinkov/uploads.png}
-        \caption{Štruktúra priečinku \textit{uploads}}
+        \caption{Štruktúra priečinka \textit{uploads}}
         \label{fig:uploads-structure}
     \end{subfigure}
     \caption{Štruktúry priečinkov \textit{uploads} a \textit{routes}.}
@@ -82,7 +83,7 @@
 
 Po oboznámení sa s knižnicami, ktoré poskytujú funkciu pripínania trás k cestnej sieti sme dospeli k záveru, že trasy môžeme pripnúť dvoma spôsobmi\cite{mapbox}\cite{valhalla}\cite{graphopper}. Pomocou funkcie \textit{routing} alebo pomocou funkcie \textit{map-match}. 
 
-Prostredníctvom funkcie \textit{routing} by sme medzi každým bodom v trase našli optimálnu trasu, podobne ako v navigácii. Spojením týchto trás dostaneme výslednú trasu pripnutú k cestnej sieti. Môže však nastať situácia, kedy \textit{routing} funkcia kvôli nepresnosti \acrshort{gps} pripne bod k druhej ceste, viditeľné na obrázku \ref{fig:routing-after}. Pre odstránenie takýchto situácii vytvoríme skript, ktorý odstráni body, ktoré sa v trase opakujú dva alebo viackrát. Takisto odstráni aj body medzi týmito dvoma opakujúcimi sa bodmi. Výslednok je možné vidieť na obrázku \ref{fig:routing-after-after}. Po otestovaní zistili, že algoritmus odstraňujúci duplicitné body môže odstrániť aj dôležité body, ktoré by v trase mali ostať. Rozhodli sme sa v tomto riešení nepokračovať.
+Prostredníctvom funkcie \textit{routing} by sme medzi každým bodom v trase našli optimálnu trasu, podobne ako v navigácii. Spojením týchto trás dostaneme výslednú trasu pripnutú k cestnej sieti. Môže však nastať situácia, kedy routing funkcia kvôli nepresnosti \acrshort{gps} pripne bod k druhej ceste, viditeľné na obrázku \ref{fig:routing-after}. Pre odstránenie takýchto situácii vytvoríme skript, ktorý odstráni body, ktoré sa v trase opakujú dva alebo viackrát. Takisto odstráni aj body medzi týmito dvoma opakujúcimi sa bodmi. Výslednok je možné vidieť na obrázku \ref{fig:routing-after-after}. Po otestovaní zistili, že algoritmus odstraňujúci duplicitné body môže odstrániť aj dôležité body, ktoré by v trase mali ostať. Rozhodli sme sa v tomto riešení nepokračovať.
 
 \begin{figure}
     \centering
@@ -95,33 +96,33 @@ Prostredníctvom funkcie \textit{routing} by sme medzi každým bodom v trase na
     \begin{subfigure}{0.9\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/routing/po.png}
-        \caption{Trasa po použití \textit{routing} funkcie}
+        \caption{Trasa po použití routing funkcie}
         \label{fig:routing-after}
     \end{subfigure}
     \begin{subfigure}{0.9\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/routing/po po.png}
-        \caption{Trasa po použití \textit{routing} funkcie s odstránením duplicitných bodov}
+        \caption{Trasa po použití routing funkcie s odstránením duplicitných bodov}
         \label{fig:routing-after-after}
     \end{subfigure}
-    \caption{Trasa pripnutá pomocou \textit{routing} funkcie}
+    \caption{Trasa pripnutá pomocou routing funkcie}
     \label{fig:routing}
 \end{figure}
 
-Druhou možnosťou je použit funkciu \textit{map-match}, ktorá body v trase posunie k cestnej sieti. V prípade, že body v trase nie sú dostatočne husté, môže byť výsledná trasa hranatá a jej tvar nemusí zodpovedať cestnej sieti. Toto je možné vidieť na obrázku \ref{fig:map-match-low-points-after}. Obrázok \ref{fig:map-match-low-points-before} znázorňuje trasu pred použitím \textit{map-match} funkcie. Na obrázku \ref{fig:map-match-low-points-after} vidieť, že body trasy boli pripnuté k ceste, avšak nebolo ich dosť a výsledná trasa nezodpovedá cestnej sieti.
+Druhou možnosťou je použit funkciu \textit{map-match}, ktorá body v trase posunie k cestnej sieti. V prípade, že body v trase nie sú dostatočne husté, môže byť výsledná trasa hranatá a jej tvar nemusí zodpovedať cestnej sieti. Toto je možné vidieť na obrázku \ref{fig:map-match-low-points-after}. Obrázok \ref{fig:map-match-low-points-before} znázorňuje trasu pred použitím map-match funkcie. Na obrázku \ref{fig:map-match-low-points-after} vidieť, že body trasy boli pripnuté k ceste, avšak nebolo ich dosť a výsledná trasa nezodpovedá cestnej sieti.
 
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=.5\textwidth]{img/map-match rozdiel/malo bodov pred.png}
-        \caption{Trasa pred použitím \textit{map-match} funkcie}
+        \caption{Trasa pred použitím map-match funkcie}
         \label{fig:map-match-low-points-before}
     \end{subfigure}
     \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=.5\textwidth]{img/map-match rozdiel/malo bodov po.png}
-        \caption{Trasa po použití \textit{map-match} funkcie}
+        \caption{Trasa po použití map-match funkcie}
         \label{fig:map-match-low-points-after}
     \end{subfigure}
     \caption{Trasa s nedostatočne hustým počtom bodov}
